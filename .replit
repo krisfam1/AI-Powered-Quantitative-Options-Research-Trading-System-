@@ -1,18 +1,19 @@
-modules = ["nodejs-24"]
-
-[deployment]
-router = "application"
-deploymentTarget = "autoscale"
-
-[deployment.postBuild]
-args = ["pnpm", "store", "prune"]
-env = { "CI" = "true" }
+modules = ["python-base-3.11"]
+run = "python main.py"
 
 [workflows]
-runButton = "Project"
+runButton = "Run Python script"
+
+[[workflows.workflow]]
+name = "Run Python script"
+mode = "parallel"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python main.py"
 
 [agent]
-stack = "PNPM_WORKSPACE"
+stack = "PYTHON"
 expertMode = true
 
 [postMerge]
