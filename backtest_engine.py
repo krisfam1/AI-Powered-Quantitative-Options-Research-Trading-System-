@@ -4,12 +4,15 @@ import os
 import sqlite3
 from datetime import date, datetime, time, timezone
 from typing import Any, Mapping
+from zoneinfo import ZoneInfo
 
 from alpaca.data import StockBarsRequest, StockHistoricalDataClient
 from alpaca.data.enums import DataFeed
 from alpaca.data.timeframe import TimeFrame, TimeFrameUnit
 
 import trade_log
+
+_ET = ZoneInfo("America/New_York")
 
 
 def _as_utc_datetime(value: date | datetime | str) -> datetime:
@@ -50,9 +53,16 @@ def get_historical_bars(
 
 
 def calculate_relative_volume(
-    bars: list[Any], current_index: int, lookback: int = 20
+    bars: list[Any],
+    current_index: int,
+    lookback: int = 20,
+    confirmation_bars: int = 1,
 ) -> float:
-    """Return current volume divided by the average prior-bar volume."""
+    """Return current volume divided by the average prior-bar volume.
+
+    When confirmation_bars > 1 the average of the last N bars' relative volumes
+    is returned, providing a multi-bar confirmation window.
+    """
     if current_index < lookback:
         return 0.0
 
@@ -60,7 +70,17 @@ def calculate_relative_volume(
     average_volume = sum(float(bar.volume) for bar in prior_bars) / lookback
     if average_volume == 0:
         return 0.0
-    return float(bars[current_index].volume) / average_volume
+
+    if confirmation_bars <= 1:
+        return float(bars[current_index].volume) / average_volume
+
+    # Multi-bar confirmation: average rv over last confirmation_bars bars
+    start = max(current_index - confirmation_bars + 1, lookback)
+    rv_values = [
+        float(bars[i].volume) / average_volume
+        for i in range(start, current_index + 1)
+    ]
+    return sum(rv_values) / len(rv_values) if rv_values else 0.0
 
 
 def check_breakout(
@@ -103,6 +123,75 @@ def calculate_atr(
         )
 
     return sum(true_ranges) / len(true_ranges)
+
+
+def is_valid_time_window(
+    bar_timestamp: datetime,
+    windows: list[tuple[str, str]],
+) -> bool:
+    """Return True if the bar's ET time falls within any configured window.
+
+    Parameters
+    ----------
+    bar_timestamp:
+        The bar's timestamp (timezone-aware).
+    windows:
+        List of (start, end) string pairs in "HH:MM" 24-hour ET format,
+        e.g. [("09:30", "10:30"), ("14:00", "15:00")].
+    """
+    et_time = bar_timestamp.astimezone(_ET).time()
+    for start_str, end_str in windows:
+        h_s, m_s = (int(x) for x in start_str.split(":"))
+        h_e, m_e = (int(x) for x in end_str.split(":"))
+        window_start = time(h_s, m_s)
+        window_end = time(h_e, m_e)
+        if window_start <= et_time <= window_end:
+            return True
+    return False
+
+
+def check_vwap_uptrend(
+    bars: list[Any], current_index: int, lookback: int = 20
+) -> bool:
+    """Return True if the current close is above the rolling VWAP.
+
+    Uses a simple volume-weighted average price over the prior ``lookback``
+    bars as a trend proxy.
+    """
+    if current_index < lookback:
+        return False
+
+    prior = bars[current_index - lookback : current_index]
+    total_volume = sum(float(b.volume) for b in prior)
+    if total_volume == 0:
+        return False
+
+    vwap = sum(float(b.close) * float(b.volume) for b in prior) / total_volume
+    return float(bars[current_index].close) > vwap
+
+
+def calculate_atr_percentile(
+    bars: list[Any], current_index: int, lookback: int = 40
+) -> float:
+    """Return the percentile rank (0–100) of the current ATR vs prior bars.
+
+    Computes a single-bar ATR (true range) for the current bar and ranks it
+    against the true ranges of the prior ``lookback`` bars.
+    """
+    if current_index < lookback + 1:
+        return 0.0
+
+    def _true_range(index: int) -> float:
+        bar = bars[index]
+        high = float(bar.high)
+        low = float(bar.low)
+        prev_close = float(bars[index - 1].close)
+        return max(high - low, abs(high - prev_close), abs(low - prev_close))
+
+    current_tr = _true_range(current_index)
+    prior_trs = [_true_range(i) for i in range(current_index - lookback, current_index)]
+    count_below = sum(1 for tr in prior_trs if tr < current_tr)
+    return count_below / lookback * 100.0
 
 
 def _is_last_bar_of_day(bars: list[Any], index: int) -> bool:
@@ -162,23 +251,64 @@ def run_backtest(
     ticker: str,
     start_date: date | datetime | str,
     end_date: date | datetime | str,
-    exit_strategy: Mapping[str, Any],
-    relative_volume_threshold: float = 1.5,
+    config: Mapping[str, Any],
     trade_id_prefix: str | None = None,
 ) -> dict[str, float]:
-    """Run a long-only breakout/volume backtest with a configured exit mode."""
-    mode = exit_strategy.get("mode")
+    """Run a long-only breakout/volume backtest with a unified config dict.
+
+    The ``config`` dict replaces the old ``exit_strategy`` + separate
+    ``relative_volume_threshold`` parameters.  All entry-filter toggles
+    default to disabled so callers that pass only exit keys are unaffected.
+
+    Exit keys
+    ---------
+    mode : "fixed_pct" | "atr"
+    For fixed_pct: stop_loss_pct, take_profit_pct
+    For atr: atr_stop_multiplier, atr_target_multiplier,
+             atr_trail_trigger, atr_trail_distance
+
+    Entry / filter keys (all optional with safe defaults)
+    ------------------------------------------------------
+    relative_volume_threshold : float  (default 1.5)
+    rv_confirmation_bars      : int    (default 1)
+    breakout_lookback         : int    (default 20)
+    use_time_window           : bool   (default False)
+    time_windows              : list[tuple[str,str]]  ET "HH:MM" pairs
+    use_vwap_trend            : bool   (default False)
+    vwap_lookback             : int    (default 20)
+    use_atr_percentile        : bool   (default False)
+    atr_percentile_min        : float  (default 40.0)
+    atr_percentile_lookback   : int    (default 40)
+    """
+    mode = config.get("mode")
     if mode not in {"fixed_pct", "atr"}:
-        raise ValueError("exit_strategy mode must be 'fixed_pct' or 'atr'")
+        raise ValueError("config 'mode' must be 'fixed_pct' or 'atr'")
 
     if mode == "fixed_pct":
-        stop_loss_pct = float(exit_strategy["stop_loss_pct"])
-        take_profit_pct = float(exit_strategy["take_profit_pct"])
+        stop_loss_pct = float(config["stop_loss_pct"])
+        take_profit_pct = float(config["take_profit_pct"])
     else:
-        atr_stop_multiplier = float(exit_strategy["atr_stop_multiplier"])
-        atr_target_multiplier = float(exit_strategy["atr_target_multiplier"])
-        atr_trail_trigger = float(exit_strategy["atr_trail_trigger"])
-        atr_trail_distance = float(exit_strategy["atr_trail_distance"])
+        atr_stop_multiplier = float(config["atr_stop_multiplier"])
+        atr_target_multiplier = float(config["atr_target_multiplier"])
+        atr_trail_trigger = float(config["atr_trail_trigger"])
+        atr_trail_distance = float(config["atr_trail_distance"])
+
+    # Entry filter config
+    rv_threshold = float(config.get("relative_volume_threshold", 1.5))
+    rv_confirmation = int(config.get("rv_confirmation_bars", 1))
+    breakout_lookback = int(config.get("breakout_lookback", 20))
+
+    use_time_window = bool(config.get("use_time_window", False))
+    time_windows: list[tuple[str, str]] = list(
+        config.get("time_windows", [("09:30", "10:30"), ("14:00", "15:00")])
+    )
+
+    use_vwap_trend = bool(config.get("use_vwap_trend", False))
+    vwap_lookback = int(config.get("vwap_lookback", 20))
+
+    use_atr_percentile = bool(config.get("use_atr_percentile", False))
+    atr_percentile_min = float(config.get("atr_percentile_min", 40.0))
+    atr_percentile_lookback = int(config.get("atr_percentile_lookback", 40))
 
     trade_log.init_db()
     bars = get_historical_bars(ticker, start_date, end_date)
@@ -265,54 +395,67 @@ def run_backtest(
                 continue
 
         if open_position is None and not _is_last_bar_of_day(bars, index):
-            relative_volume = calculate_relative_volume(bars, index)
-            if (
-                relative_volume >= relative_volume_threshold
-                and check_breakout(bars, index)
-            ):
-                entry_price = close_price
-                position_size = 1.0
+            # ── Entry filter checks ────────────────────────────────────────
+            if use_time_window and not is_valid_time_window(timestamp, time_windows):
+                continue
 
-                if mode == "fixed_pct":
-                    stop_loss_price = entry_price * (1 - stop_loss_pct)
-                    target_price = entry_price * (1 + take_profit_pct)
-                else:
-                    atr = calculate_atr(bars, index)
-                    if atr <= 0:
-                        continue
-                    stop_loss_price = entry_price - (
-                        atr_stop_multiplier * atr
-                    )
-                    target_price = entry_price + (
-                        atr_target_multiplier * atr
-                    )
+            relative_volume = calculate_relative_volume(
+                bars, index, confirmation_bars=rv_confirmation
+            )
+            if relative_volume < rv_threshold:
+                continue
 
-                trade_id = _trade_id(prefix, timestamp)
-                trade_log.log_trade_entry(
-                    {
-                        "trade_id": trade_id,
-                        "timestamp_entry": timestamp.isoformat(),
-                        "ticker": ticker,
-                        "signal_type": "breakout_volume_confluence",
-                        "volume_at_entry": float(bar.volume),
-                        "relative_volume": relative_volume,
-                        "price_action_pattern": "breakout",
-                        "news_present": 0,
-                        "entry_price": entry_price,
-                        "position_size": position_size,
-                        "stop_loss_price": stop_loss_price,
-                        "target_price": target_price,
-                        "risk_amount": entry_price - stop_loss_price,
-                    }
-                )
-                open_position = {
+            if not check_breakout(bars, index, lookback=breakout_lookback):
+                continue
+
+            if use_vwap_trend and not check_vwap_uptrend(bars, index, lookback=vwap_lookback):
+                continue
+
+            if use_atr_percentile:
+                pct = calculate_atr_percentile(bars, index, lookback=atr_percentile_lookback)
+                if pct < atr_percentile_min:
+                    continue
+
+            # ── Open position ──────────────────────────────────────────────
+            entry_price = close_price
+            position_size = 1.0
+
+            if mode == "fixed_pct":
+                stop_loss_price = entry_price * (1 - stop_loss_pct)
+                target_price = entry_price * (1 + take_profit_pct)
+            else:
+                atr = calculate_atr(bars, index)
+                if atr <= 0:
+                    continue
+                stop_loss_price = entry_price - (atr_stop_multiplier * atr)
+                target_price = entry_price + (atr_target_multiplier * atr)
+
+            trade_id = _trade_id(prefix, timestamp)
+            trade_log.log_trade_entry(
+                {
                     "trade_id": trade_id,
+                    "timestamp_entry": timestamp.isoformat(),
+                    "ticker": ticker,
+                    "signal_type": "breakout_volume_confluence",
+                    "volume_at_entry": float(bar.volume),
+                    "relative_volume": relative_volume,
+                    "price_action_pattern": "breakout",
+                    "news_present": 0,
                     "entry_price": entry_price,
                     "position_size": position_size,
                     "stop_loss_price": stop_loss_price,
                     "target_price": target_price,
-                    "stop_is_trailing": False,
+                    "risk_amount": entry_price - stop_loss_price,
                 }
+            )
+            open_position = {
+                "trade_id": trade_id,
+                "entry_price": entry_price,
+                "position_size": position_size,
+                "stop_loss_price": stop_loss_price,
+                "target_price": target_price,
+                "stop_is_trailing": False,
+            }
 
     print(f"\nBacktest complete for {ticker}: {completed_trades} trades closed.")
     return _stats(_completed_rows([prefix]))
@@ -322,19 +465,32 @@ def run_multi_ticker_backtest(
     tickers: list[str],
     start_date: date | datetime | str,
     end_date: date | datetime | str,
-    exit_strategy: Mapping[str, Any],
-) -> dict[str, float]:
-    """Run one strategy across tickers and return combined statistics."""
-    strategy_name = str(exit_strategy.get("name", exit_strategy["mode"]))
+    config: Mapping[str, Any],
+) -> tuple[dict[str, float], dict[str, dict[str, float]]]:
+    """Run one strategy across tickers; return (overall_stats, per_ticker_stats).
+
+    Returns
+    -------
+    overall_stats : dict[str, float]
+        Aggregate statistics across all tickers.
+    per_ticker_stats : dict[str, dict[str, float]]
+        Per-ticker statistics keyed by ticker symbol.
+    """
+    strategy_name = str(config.get("name", config.get("mode", "backtest")))
     prefixes: list[str] = []
+    per_ticker_stats: dict[str, dict[str, float]] = {}
+
     for ticker in tickers:
         prefix = f"{strategy_name}-{ticker.upper()}"
         prefixes.append(prefix)
-        run_backtest(
+        stats = run_backtest(
             ticker,
             start_date,
             end_date,
-            exit_strategy,
+            config,
             trade_id_prefix=prefix,
         )
-    return _stats(_completed_rows(prefixes))
+        per_ticker_stats[ticker] = stats
+
+    overall = _stats(_completed_rows(prefixes))
+    return overall, per_ticker_stats

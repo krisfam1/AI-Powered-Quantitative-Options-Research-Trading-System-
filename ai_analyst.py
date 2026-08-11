@@ -117,6 +117,159 @@ Structure your brief under exactly these four headers:
     return _ask(prompt, max_tokens=1200)
 
 
+def diagnose_and_suggest(
+    history: list[dict],
+) -> dict:
+    """Diagnose backtest failures and suggest config changes for the next iteration.
+
+    Parameters
+    ----------
+    history:
+        List of iteration records, each containing:
+        ``{iteration, config, overall_stats, per_ticker_stats}``.
+
+    Returns
+    -------
+    dict with keys:
+        diagnosis        — plain-text analysis of what is failing and why
+        config_changes   — flat dict of parameter changes to apply next
+        iteration_theme  — one-line label for the change being tested
+        expected_impact  — brief prediction of effect on win rate / P&L
+    """
+    import json
+
+    def _fmt_stats(s: dict) -> str:
+        return (
+            f"trades={int(s['total_trades'])}  "
+            f"win_rate={s['win_rate']:.1f}%  "
+            f"avg_win={s['average_win_pct']:.2f}%  "
+            f"avg_loss={s['average_loss_pct']:.2f}%  "
+            f"net_pnl={s['net_pnl_pct']:.2f}%"
+        )
+
+    history_blocks: list[str] = []
+    for entry in history:
+        it = entry["iteration"]
+        cfg = entry["config"]
+        overall = entry["overall_stats"]
+        per_ticker = entry.get("per_ticker_stats", {})
+
+        ticker_lines = "\n".join(
+            f"    {t}: {_fmt_stats(s)}" for t, s in per_ticker.items()
+        )
+
+        cfg_summary = (
+            f"mode={cfg.get('mode')}  "
+            f"rv_threshold={cfg.get('relative_volume_threshold', 1.5)}  "
+            f"rv_bars={cfg.get('rv_confirmation_bars', 1)}  "
+            f"breakout_lookback={cfg.get('breakout_lookback', 20)}  "
+            f"time_window={'ON' if cfg.get('use_time_window') else 'OFF'}  "
+            f"vwap_trend={'ON' if cfg.get('use_vwap_trend') else 'OFF'}  "
+            f"atr_pct={'ON' if cfg.get('use_atr_percentile') else 'OFF'}"
+        )
+        if cfg.get("mode") == "atr":
+            cfg_summary += (
+                f"  stop={cfg.get('atr_stop_multiplier')}×ATR"
+                f"  target={cfg.get('atr_target_multiplier')}×ATR"
+                f"  trail_trigger={cfg.get('atr_trail_trigger')}×ATR"
+                f"  trail_dist={cfg.get('atr_trail_distance')}×ATR"
+            )
+
+        history_blocks.append(
+            f"Iteration {it}:\n"
+            f"  Config: {cfg_summary}\n"
+            f"  Overall: {_fmt_stats(overall)}\n"
+            f"  Per-ticker:\n{ticker_lines}"
+        )
+
+    history_text = "\n\n".join(history_blocks)
+
+    tunable_params = """{
+  "mode": "fixed_pct" | "atr",
+  "atr_stop_multiplier": float,
+  "atr_target_multiplier": float,
+  "atr_trail_trigger": float,
+  "atr_trail_distance": float,
+  "stop_loss_pct": float,          // only for fixed_pct mode
+  "take_profit_pct": float,        // only for fixed_pct mode
+  "relative_volume_threshold": float,
+  "rv_confirmation_bars": int,
+  "breakout_lookback": int,
+  "use_time_window": bool,
+  "time_windows": [["HH:MM","HH:MM"], ...],   // ET 24h pairs
+  "use_vwap_trend": bool,
+  "vwap_lookback": int,
+  "use_atr_percentile": bool,
+  "atr_percentile_min": float,     // 0–100
+  "atr_percentile_lookback": int
+}"""
+
+    prompt = f"""
+You are the quantitative portfolio manager in our research desk.
+We are running an iterative backtest optimization loop targeting an 80% win rate.
+
+Below is the full iteration history so far:
+
+{history_text}
+
+Your task:
+1. Diagnose WHY the current win rate is below 80%. Be specific: which tickers drag performance, what exit/entry problems are visible in the numbers (high avg loss, low trade count, frequent eod closes, etc.).
+2. Propose concrete parameter changes for the NEXT iteration. Choose changes that address the root cause, not cosmetic tweaks.
+3. Change at most 3-4 parameters per iteration so causation is clear.
+
+Tunable parameters (JSON keys and types):
+{tunable_params}
+
+IMPORTANT: Your response MUST end with a JSON block between ```json and ``` markers containing ONLY the parameters to change (not the full config). Include these four keys inside the JSON:
+  "diagnosis"        — string, 2-4 sentence summary of root cause
+  "config_changes"   — object of parameter name → new value (only changed params)
+  "iteration_theme"  — string, ≤8 words describing the change, e.g. "Tighten stops + VWAP filter on"
+  "expected_impact"  — string, 1-2 sentences predicting effect on win rate / P&L
+
+Example JSON:
+```json
+{{
+  "diagnosis": "Win rate is low because stops are too wide relative to ATR, allowing trades to trend against position before hitting target. TSLA and NVDA in particular show large avg losses.",
+  "config_changes": {{
+    "atr_stop_multiplier": 1.0,
+    "use_vwap_trend": true
+  }},
+  "iteration_theme": "Tighten stops + VWAP filter on",
+  "expected_impact": "Reducing stop width cuts loss magnitude; VWAP filter should remove counter-trend entries, raising win rate by 10-15 pp."
+}}
+```
+""".strip()
+
+    def _parse(text: str) -> dict:
+        import re
+        match = re.search(r"```json\s*(.*?)```", text, re.DOTALL)
+        if not match:
+            raise ValueError("No JSON block found in Claude response")
+        block = match.group(1).strip()
+        return json.loads(block)
+
+    raw = _ask(prompt, max_tokens=1600)
+
+    try:
+        result = _parse(raw)
+    except (ValueError, json.JSONDecodeError):
+        # Retry once with a stricter reminder
+        retry_prompt = (
+            prompt
+            + "\n\nYour previous response did not contain a valid ```json ... ``` block. "
+            "Please restate your diagnosis and end with valid JSON in the required format."
+        )
+        raw = _ask(retry_prompt, max_tokens=1600)
+        result = _parse(raw)
+
+    # Ensure required keys exist
+    result.setdefault("diagnosis", "No diagnosis provided.")
+    result.setdefault("config_changes", {})
+    result.setdefault("iteration_theme", "—")
+    result.setdefault("expected_impact", "—")
+    return result
+
+
 def compare_strategies(
     tickers: list[str],
     comparison: dict[str, dict[str, float]],
