@@ -36,6 +36,22 @@ The strategy never exceeded 50% win rate across 10 iterations. The ceiling is a 
 | `use_time_window=True (10:00–15:00)` | Reduces trade count 50-60%, modestly lifts WR |
 | `rv_threshold > 1.7` | Over-filters — kills too many valid setups (trade count <50) |
 
+## Filter results with MA-trend + news-sentiment ON
+
+Same 60/30 split, atr_loose baseline, both new filters active:
+
+| Period   | Trades | Win%  | AvgWin | AvgLoss | NetP&L |
+|----------|--------|-------|--------|---------|--------|
+| Training |   181  | 37.0% | +0.42% | −0.24%  | +0.85% |
+| Holdout  |    79  | 32.9% | +0.59% | −0.27%  | +1.35% |
+
+Previous holdout (no new filters, best config iter 4): 105 trades, 26.7% WR, −0.99% P&L.
+Adding the two filters **flipped holdout P&L from −0.99% to +1.35%** and lifted holdout WR by +6 pp.
+News sentiment filter does most of the work (blocks ~23% of trades); MA-trend filter has minimal impact on uptrending AAPL but may help on NVDA/TSLA in sideways regimes.
+
+Holdout problem tickers: KO (18.8% WR) and JPM (22.2% WR) are the remaining drags.
+AAPL holdout: 45% WR, +3.29% — strongest and most consistent ticker by far.
+
 ## What to try next
 
 To break past 50% ceiling:
