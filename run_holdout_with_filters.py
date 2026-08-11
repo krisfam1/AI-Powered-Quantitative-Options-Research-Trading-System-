@@ -15,7 +15,8 @@ from backtest_engine import (
 )
 
 # ── Universe & date range ─────────────────────────────────────────────────────
-TICKERS = ["AAPL", "TSLA", "NVDA"]
+TICKERS  = ["AAPL", "TSLA", "NVDA"]
+ACCOUNT_EQUITY = 100_000.0
 
 end_date      = datetime.now(timezone.utc)
 start_date    = end_date - timedelta(days=90)
@@ -56,28 +57,34 @@ def print_results(
     overall: dict,
     per_ticker: dict,
 ) -> None:
-    width = 72
+    width = 80
     print(f"\n{'█' * width}")
     print(f"  {label}")
     print(f"  Period: {period_str}")
     print(f"{'█' * width}")
-    print(f"\n  {'Ticker':<8} {'Trades':>7} {'Win%':>8} {'AvgWin%':>10} {'AvgLoss%':>10} {'NetP&L%':>10}")
-    print(f"  {'-'*8} {'-'*7} {'-'*8} {'-'*10} {'-'*10} {'-'*10}")
+    print(
+        f"\n  {'Ticker':<8} {'Trades':>7} {'Win%':>8} "
+        f"{'AvgWin%':>9} {'AvgLoss%':>10} {'NetP&L%':>9} {'Net$':>10}"
+    )
+    print(f"  {'-'*8} {'-'*7} {'-'*8} {'-'*9} {'-'*10} {'-'*9} {'-'*10}")
     for ticker, s in per_ticker.items():
         print(
             f"  {ticker:<8} {int(s['total_trades']):>7} "
             f"{s['win_rate']:>7.1f}% "
-            f"{s['average_win_pct']:>9.2f}% "
+            f"{s['average_win_pct']:>8.2f}% "
             f"{s['average_loss_pct']:>9.2f}% "
-            f"{s['net_pnl_pct']:>9.2f}%"
+            f"{s['net_pnl_pct']:>8.2f}% "
+            f"${s['net_pnl_dollars']:>9,.0f}"
         )
     o = overall
+    net_ret_pct = o['net_pnl_dollars'] / ACCOUNT_EQUITY * 100
     print(
         f"\n  {'OVERALL':<8} {int(o['total_trades']):>7} "
         f"{o['win_rate']:>7.1f}% "
-        f"{o['average_win_pct']:>9.2f}% "
+        f"{o['average_win_pct']:>8.2f}% "
         f"{o['average_loss_pct']:>9.2f}% "
-        f"{o['net_pnl_pct']:>9.2f}%"
+        f"{net_ret_pct:>8.2f}% "
+        f"${o['net_pnl_dollars']:>9,.0f}"
     )
     print(f"{'█' * width}")
 
@@ -134,6 +141,7 @@ train_overall, train_per_ticker = run_multi_ticker_backtest(
     CONFIG,
     prefetched_bars=train_bars,
     prefetched_news=all_news,
+    account_equity=ACCOUNT_EQUITY,
 )
 
 print_results(
@@ -153,6 +161,7 @@ hold_overall, hold_per_ticker = run_multi_ticker_backtest(
     CONFIG,
     prefetched_bars=hold_bars,
     prefetched_news=all_news,
+    account_equity=ACCOUNT_EQUITY,
 )
 
 print_results(
@@ -166,13 +175,17 @@ print_results(
 print(f"\n{'═' * 72}")
 print("  TRAIN vs HOLDOUT SUMMARY")
 print(f"{'═' * 72}")
-print(f"\n  {'Period':<14} {'Trades':>7} {'Win%':>8} {'AvgWin%':>10} {'AvgLoss%':>10} {'NetP&L%':>10}")
-print(f"  {'-'*14} {'-'*7} {'-'*8} {'-'*10} {'-'*10} {'-'*10}")
+print(
+    f"\n  {'Period':<14} {'Trades':>7} {'Win%':>8} "
+    f"{'AvgWin%':>9} {'AvgLoss%':>10} {'Net%':>8} {'Net$':>10}"
+)
+print(f"  {'-'*14} {'-'*7} {'-'*8} {'-'*9} {'-'*10} {'-'*8} {'-'*10}")
 for label, s in [("Training", train_overall), ("Holdout", hold_overall)]:
+    net_ret = s['net_pnl_dollars'] / ACCOUNT_EQUITY * 100
     print(
         f"  {label:<14} {int(s['total_trades']):>7} {s['win_rate']:>7.1f}% "
-        f"{s['average_win_pct']:>9.2f}% {s['average_loss_pct']:>9.2f}% "
-        f"{s['net_pnl_pct']:>9.2f}%"
+        f"{s['average_win_pct']:>8.2f}% {s['average_loss_pct']:>9.2f}% "
+        f"{net_ret:>7.2f}% ${s['net_pnl_dollars']:>9,.0f}"
     )
 
 generalises = hold_overall["win_rate"] >= 40.0 and hold_overall["net_pnl_pct"] > 0

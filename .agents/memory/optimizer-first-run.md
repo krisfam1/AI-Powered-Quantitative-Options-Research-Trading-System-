@@ -52,6 +52,23 @@ News sentiment filter does most of the work (blocks ~23% of trades); MA-trend fi
 Holdout problem tickers: KO (18.8% WR) and JPM (22.2% WR) are the remaining drags.
 AAPL holdout: 45% WR, +3.29% — strongest and most consistent ticker by far.
 
+## Risk-controls run (1% risk per trade, $100K equity)
+
+Same 3-ticker setup. Risk controls fired heavily during training:
+AAPL: 46 → 24 trades, NVDA: 32 → 15 trades — daily loss / drawdown limits triggered.
+Holdout: 54 trades (same as without controls — no limits triggered in holdout month).
+
+| Period   | Trades | Win%  | Net$      |
+|----------|--------|-------|-----------|
+| Training |   83   | 37.3% | −$15,007  |
+| Holdout  |   54   | 38.9% | +$7,563   |
+
+AAPL holdout alone: +$9,745. TSLA nearly flat (−$112). NVDA: −$2,070.
+Training loss was real — May–Jul was a genuinely bad period for AAPL and NVDA signals.
+Position sizing note: at 1% risk per trade, tight ATR stops on high-price stocks
+produce large share counts (e.g. 600+ shares of $200 AAPL). Portfolio is not
+dollar-capped per position — may want a `max_position_value` guard in future.
+
 ## What to try next
 
 To break past 50% ceiling:

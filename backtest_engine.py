@@ -13,6 +13,12 @@ from alpaca.data.requests import NewsRequest
 from alpaca.data.timeframe import TimeFrame, TimeFrameUnit
 
 import trade_log
+from risk_manager import (
+    calculate_position_size,
+    check_daily_loss_limit,
+    check_drawdown_pause,
+    check_max_positions,
+)
 
 _ET = ZoneInfo("America/New_York")
 
@@ -360,6 +366,9 @@ def _stats(rows: list[tuple[Any, ...]]) -> dict[str, float]:
         "average_win_pct": sum(wins) / len(wins) if wins else 0.0,
         "average_loss_pct": sum(losses) / len(losses) if losses else 0.0,
         "net_pnl_pct": sum(float(row[1]) for row in rows),
+        "net_pnl_dollars": sum(
+            float(row[0]) for row in rows if row[0] is not None
+        ),
     }
 
 
@@ -371,6 +380,7 @@ def run_backtest(
     trade_id_prefix: str | None = None,
     prefetched_bars: list[Any] | None = None,
     prefetched_news: list[Any] | None = None,
+    account_equity: float = 100_000.0,
 ) -> dict[str, float]:
     """Run a long-only breakout/volume backtest with a unified config dict.
 
@@ -441,6 +451,8 @@ def run_backtest(
     use_news_sentiment = bool(config.get("use_news_sentiment", False))
     news_sentiment_lookback_hours = int(config.get("news_sentiment_lookback_hours", 24))
 
+    position_risk_pct = float(config.get("position_risk_pct", 0.01))
+
     trade_log.init_db()
     bars = prefetched_bars if prefetched_bars is not None else get_historical_bars(ticker, start_date, end_date)
     prefix = trade_id_prefix or f"backtest-{ticker.upper()}"
@@ -459,9 +471,22 @@ def run_backtest(
     open_position: dict[str, Any] | None = None
     completed_trades = 0
 
+    # ── Risk-manager state ────────────────────────────────────────────────────
+    current_equity: float = account_equity
+    peak_equity: float = account_equity
+    daily_start_equity: float = account_equity
+    current_day: date | None = None
+    open_pos_count: int = 0
+
     for index, bar in enumerate(bars):
         timestamp = bar.timestamp
         close_price = float(bar.close)
+
+        # Reset daily P&L tracker at the start of each new trading day
+        bar_day = timestamp.astimezone(_ET).date()
+        if bar_day != current_day:
+            current_day = bar_day
+            daily_start_equity = current_equity
 
         if open_position is not None:
             stop_price = float(open_position["stop_loss_price"])
@@ -529,6 +554,9 @@ def run_backtest(
                         "rule_change_description": "",
                     },
                 )
+                current_equity += pnl_dollars
+                peak_equity = max(peak_equity, current_equity)
+                open_pos_count -= 1
                 completed_trades += 1
                 open_position = None
                 continue
@@ -564,9 +592,18 @@ def run_backtest(
             ):
                 continue
 
+            # ── Risk-manager gate ──────────────────────────────────────────
+            if not check_max_positions(open_pos_count):
+                continue
+            daily_pnl_frac = (current_equity - daily_start_equity) / account_equity
+            if not check_daily_loss_limit(daily_pnl_frac):
+                continue
+            rolling_pnl_frac = (current_equity - peak_equity) / account_equity
+            if not check_drawdown_pause(rolling_pnl_frac):
+                continue
+
             # ── Open position ──────────────────────────────────────────────
             entry_price = close_price
-            position_size = 1.0
 
             if mode == "fixed_pct":
                 stop_loss_price = entry_price * (1 - stop_loss_pct)
@@ -577,6 +614,13 @@ def run_backtest(
                     continue
                 stop_loss_price = entry_price - (atr_stop_multiplier * atr)
                 target_price = entry_price + (atr_target_multiplier * atr)
+
+            position_size = float(calculate_position_size(
+                current_equity, entry_price, stop_loss_price,
+                risk_pct=position_risk_pct,
+            ))
+            if position_size < 1:
+                continue
 
             trade_id = _trade_id(prefix, timestamp)
             trade_log.log_trade_entry(
@@ -604,6 +648,7 @@ def run_backtest(
                 "target_price": target_price,
                 "stop_is_trailing": False,
             }
+            open_pos_count += 1
 
     print(f"\nBacktest complete for {ticker}: {completed_trades} trades closed.")
     return _stats(_completed_rows([prefix]))
@@ -616,6 +661,7 @@ def run_multi_ticker_backtest(
     config: Mapping[str, Any],
     prefetched_bars: dict[str, list[Any]] | None = None,
     prefetched_news: dict[str, list[Any]] | None = None,
+    account_equity: float = 100_000.0,
 ) -> tuple[dict[str, float], dict[str, dict[str, float]]]:
     """Run one strategy across tickers; return (overall_stats, per_ticker_stats).
 
@@ -650,6 +696,7 @@ def run_multi_ticker_backtest(
             trade_id_prefix=prefix,
             prefetched_bars=(prefetched_bars or {}).get(ticker),
             prefetched_news=(prefetched_news or {}).get(ticker),
+            account_equity=account_equity,
         )
         per_ticker_stats[ticker] = stats
 
