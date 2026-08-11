@@ -7,7 +7,7 @@ from typing import Any
 
 import ai_analyst
 import trade_log
-from backtest_engine import run_multi_ticker_backtest
+from backtest_engine import get_historical_bars, run_multi_ticker_backtest
 
 
 DEFAULT_CONFIG: dict[str, Any] = {
@@ -119,6 +119,15 @@ def run(
     print(f"  Tickers: {', '.join(tickers)}")
     print(f"{'█' * 70}")
 
+    # Pre-fetch 5-min bars once — reused across every iteration to avoid
+    # redundant Alpaca API calls.
+    print("\n  Pre-fetching 5-min bars (one-time)...")
+    prefetched: dict[str, list] = {}
+    for ticker in tickers:
+        bars = get_historical_bars(ticker, start_date, end_date)
+        prefetched[ticker] = bars
+        print(f"    {ticker}: {len(bars):,} bars")
+
     for iteration in range(1, max_iterations + 1):
         _print_header(iteration, config)
 
@@ -126,7 +135,8 @@ def run(
         trade_log.clear_trades()
 
         overall_stats, per_ticker_stats = run_multi_ticker_backtest(
-            tickers, start_date, end_date, config
+            tickers, start_date, end_date, config,
+            prefetched_bars=prefetched,
         )
 
         _print_per_ticker_table(per_ticker_stats)

@@ -253,6 +253,7 @@ def run_backtest(
     end_date: date | datetime | str,
     config: Mapping[str, Any],
     trade_id_prefix: str | None = None,
+    prefetched_bars: list[Any] | None = None,
 ) -> dict[str, float]:
     """Run a long-only breakout/volume backtest with a unified config dict.
 
@@ -311,7 +312,7 @@ def run_backtest(
     atr_percentile_lookback = int(config.get("atr_percentile_lookback", 40))
 
     trade_log.init_db()
-    bars = get_historical_bars(ticker, start_date, end_date)
+    bars = prefetched_bars if prefetched_bars is not None else get_historical_bars(ticker, start_date, end_date)
     prefix = trade_id_prefix or f"backtest-{ticker.upper()}"
     if not bars:
         print(f"\nNo historical bars returned for {ticker}.")
@@ -466,6 +467,7 @@ def run_multi_ticker_backtest(
     start_date: date | datetime | str,
     end_date: date | datetime | str,
     config: Mapping[str, Any],
+    prefetched_bars: dict[str, list[Any]] | None = None,
 ) -> tuple[dict[str, float], dict[str, dict[str, float]]]:
     """Run one strategy across tickers; return (overall_stats, per_ticker_stats).
 
@@ -489,6 +491,7 @@ def run_multi_ticker_backtest(
             end_date,
             config,
             trade_id_prefix=prefix,
+            prefetched_bars=(prefetched_bars or {}).get(ticker),
         )
         per_ticker_stats[ticker] = stats
 
