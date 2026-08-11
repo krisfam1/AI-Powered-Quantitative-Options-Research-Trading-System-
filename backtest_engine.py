@@ -2,7 +2,7 @@
 
 import os
 import sqlite3
-from datetime import date, datetime, time, timedelta, timezone
+from datetime import date, datetime, time, timezone
 from typing import Any
 
 from alpaca.data import StockBarsRequest, StockHistoricalDataClient
@@ -77,6 +77,34 @@ def check_breakout(
     return float(bars[current_index].close) > prior_high
 
 
+def calculate_atr(
+    bars: list[Any], current_index: int, period: int = 14
+) -> float:
+    """Calculate the simple Average True Range over prior bars."""
+    if period <= 0 or current_index < period:
+        return 0.0
+
+    true_ranges: list[float] = []
+    start_index = current_index - period
+    for index in range(start_index, current_index):
+        bar = bars[index]
+        high = float(bar.high)
+        low = float(bar.low)
+        if index == 0:
+            previous_close = float(bar.close)
+        else:
+            previous_close = float(bars[index - 1].close)
+        true_ranges.append(
+            max(
+                high - low,
+                abs(high - previous_close),
+                abs(low - previous_close),
+            )
+        )
+
+    return sum(true_ranges) / len(true_ranges)
+
+
 def _is_last_bar_of_day(bars: list[Any], index: int) -> bool:
     """Return whether a bar is the final bar for its trading date."""
     if index == len(bars) - 1:
@@ -97,10 +125,11 @@ def run_backtest(
     start_date: date | datetime | str,
     end_date: date | datetime | str,
     relative_volume_threshold: float = 1.5,
-    stop_loss_pct: float = 0.01,
-    take_profit_pct: float = 0.02,
+    atr_stop_multiplier: float = 1.5,
+    atr_target_multiplier: float = 2.5,
+    atr_trail_trigger: float = 1.0,
 ) -> None:
-    """Run a long-only intraday breakout/volume-confluence backtest."""
+    """Run a long-only ATR-adjusted breakout/volume backtest."""
     trade_log.init_db()
     bars = get_historical_bars(ticker, start_date, end_date)
     if not bars:
@@ -119,16 +148,35 @@ def run_backtest(
             target_price = float(open_position["target_price"])
             exit_price: float | None = None
             exit_reason: str | None = None
+            current_atr = calculate_atr(bars, index)
+
+            if current_atr > 0:
+                entry_price = float(open_position["entry_price"])
+                trail_trigger_price = entry_price + (
+                    atr_trail_trigger * current_atr
+                )
+                if float(bar.high) >= trail_trigger_price:
+                    proposed_stop = float(bar.close) - (
+                        atr_stop_multiplier * current_atr
+                    )
+                    if proposed_stop > stop_price:
+                        open_position["stop_loss_price"] = proposed_stop
+                        open_position["stop_is_trailing"] = True
+                        stop_price = proposed_stop
 
             if float(bar.low) <= stop_price:
                 exit_price = stop_price
-                exit_reason = "stop_loss"
+                exit_reason = (
+                    "trailing_stop"
+                    if open_position["stop_is_trailing"]
+                    else "stop_loss"
+                )
             elif float(bar.high) >= target_price:
                 exit_price = target_price
                 exit_reason = "take_profit"
             elif _is_last_bar_of_day(bars, index):
                 exit_price = close_price
-                exit_reason = "end_of_day"
+                exit_reason = "eod_close"
 
             if exit_price is not None and exit_reason is not None:
                 entry_price = float(open_position["entry_price"])
@@ -169,8 +217,15 @@ def run_backtest(
             ):
                 entry_price = close_price
                 position_size = 1.0
-                stop_loss_price = entry_price * (1 - stop_loss_pct)
-                target_price = entry_price * (1 + take_profit_pct)
+                atr = calculate_atr(bars, index)
+                if atr <= 0:
+                    continue
+                stop_loss_price = entry_price - (
+                    atr_stop_multiplier * atr
+                )
+                target_price = entry_price + (
+                    atr_target_multiplier * atr
+                )
                 trade_id = _trade_id(ticker, timestamp)
 
                 trade_log.log_trade_entry(
@@ -196,6 +251,7 @@ def run_backtest(
                     "position_size": position_size,
                     "stop_loss_price": stop_loss_price,
                     "target_price": target_price,
+                    "stop_is_trailing": False,
                 }
 
     print(f"\nBacktest complete for {ticker}: {completed_trades} trades closed.")

@@ -85,6 +85,12 @@ def init_db() -> None:
         )
 
 
+def clear_trades() -> None:
+    """Delete all stored trade records."""
+    with sqlite3.connect(DATABASE_PATH) as connection:
+        connection.execute("DELETE FROM trades")
+
+
 def log_trade_entry(trade_data: Mapping[str, Any]) -> None:
     """Insert a trade entry record, ignoring an already-logged trade ID."""
     columns = tuple(column for column in TRADE_COLUMNS if column in trade_data)

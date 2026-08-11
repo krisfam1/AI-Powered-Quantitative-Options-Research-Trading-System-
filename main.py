@@ -85,5 +85,6 @@ for article in news.data["news"]:
 
 backtest_end = datetime.now(timezone.utc)
 backtest_start = backtest_end - timedelta(days=30)
+trade_log.clear_trades()
 run_backtest("AAPL", backtest_start, backtest_end)
 print_backtest_summary()

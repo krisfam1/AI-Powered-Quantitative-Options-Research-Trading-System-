@@ -1,3 +1,4 @@
 - [Validated Replit config](replit-config.md) — `.replit` changes must go through validated replacement rather than direct edits.
 - [Alpaca market-data feed](alpaca-market-data.md) — this account cannot query recent SIP data; use the permitted IEX feed for stock bars.
 - [Backtest trade IDs](backtest-trade-ids.md) — simulated entries use stable IDs so rerunning the same backtest updates existing records instead of duplicating them.
+- [ATR backtest exits](atr-backtest-exits.md) — backtest risk controls use prior-bar ATR for initial stops, targets, and non-decreasing trailing stops.
