@@ -15,7 +15,7 @@ from backtest_engine import (
 )
 
 # ── Universe & date range ─────────────────────────────────────────────────────
-TICKERS = ["AAPL", "TSLA", "NVDA", "KO", "JPM"]
+TICKERS = ["AAPL", "TSLA", "NVDA"]
 
 end_date      = datetime.now(timezone.utc)
 start_date    = end_date - timedelta(days=90)
