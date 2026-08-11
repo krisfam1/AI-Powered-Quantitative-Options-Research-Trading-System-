@@ -7,6 +7,7 @@ from alpaca.data.historical.news import NewsClient, NewsRequest
 from alpaca.data.timeframe import TimeFrame, TimeFrameUnit
 from alpaca.trading.client import TradingClient
 
+from backtest_engine import print_backtest_summary, run_backtest
 import trade_log
 
 
@@ -81,3 +82,8 @@ print("\nRecent AAPL news:")
 for article in news.data["news"]:
     print(f"{article.created_at.date()}: {article.headline}")
     print(f"  Source: {article.source}")
+
+backtest_end = datetime.now(timezone.utc)
+backtest_start = backtest_end - timedelta(days=30)
+run_backtest("AAPL", backtest_start, backtest_end)
+print_backtest_summary()
