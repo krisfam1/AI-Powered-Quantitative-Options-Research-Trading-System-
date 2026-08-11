@@ -19,11 +19,13 @@ def calculate_position_size(
     entry_price: float,
     stop_loss_price: float,
     risk_pct: float = 0.01,
+    max_position_value_pct: float = 0.20,
 ) -> int:
     """Return the whole-share position size that risks exactly risk_pct of equity.
 
     The position is sized so that a fill at ``stop_loss_price`` produces a
-    loss no greater than ``account_equity * risk_pct``.
+    loss no greater than ``account_equity * risk_pct``, subject to a hard
+    notional cap of ``account_equity * max_position_value_pct``.
 
     Parameters
     ----------
@@ -35,6 +37,10 @@ def calculate_position_size(
         Stop-loss price per share.  Must be below ``entry_price`` for a long.
     risk_pct:
         Fraction of equity to risk per trade (default 0.01 = 1 %).
+    max_position_value_pct:
+        Hard ceiling on a single position's notional value as a fraction of
+        equity (default 0.20 = 20 %).  When the risk-based share count would
+        exceed this, the count is reduced to the cap instead.
 
     Returns
     -------
@@ -47,7 +53,9 @@ def calculate_position_size(
     if risk_per_share <= 0:
         return 0
     max_risk_dollars = account_equity * risk_pct
-    shares = max_risk_dollars / risk_per_share
+    risk_based_shares = max_risk_dollars / risk_per_share
+    max_notional_shares = (account_equity * max_position_value_pct) / entry_price
+    shares = min(risk_based_shares, max_notional_shares)
     return int(shares)  # floor: never risk more than the budget
 
 
