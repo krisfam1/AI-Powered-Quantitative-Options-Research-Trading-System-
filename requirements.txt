@@ -1,1 +1,2 @@
 # Add Python dependencies here, one package per line.
+alpaca-py
