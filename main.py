@@ -26,6 +26,7 @@ import trade_log
 import ai_analyst
 import optimizer
 import live_trader
+import kill_server
 
 # ── Settings ──────────────────────────────────────────────────────────────────
 # In the workspace: set MODE to "live" or "research", leave LOOP = False.
@@ -155,8 +156,12 @@ def run_live_trading_loop() -> None:
     print(f"  Tickers : {', '.join(LIVE_TICKERS)}")
     print(f"  Interval: every {CYCLE_INTERVAL_SEC // 60} minutes during market hours")
     print(f"  Hours   : 9:30 AM – 4:00 PM ET, Mon – Fri")
-    print(f"  Kill sw : create a file named STOP_TRADING to halt immediately")
+    print(f"  Kill sw : visit /stop?token=… on the deployed URL, or create STOP_TRADING file")
     print("█" * 68 + "\n")
+
+    # Start control panel — runs in a background thread on port 8080
+    # From your phone: https://YOUR-APP.replit.app/status?token=YOUR_TOKEN
+    kill_server.start(port=8080)
 
     total_cycles   = 0
     total_orders   = 0
