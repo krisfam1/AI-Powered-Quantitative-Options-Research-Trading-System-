@@ -1,13 +1,20 @@
 """Main entry point.
 
-Set MODE below to choose what happens when you click Run:
+MODE controls what runs when you click Run in the workspace:
 
-  "live"     – single pass of the live paper-trading signal check (fast, ~10 s)
-  "research" – full research briefs + Claude optimisation loop (slow, ~10 min)
+  "live"     – single pass of the live signal check (~10 s, good for manual testing)
+  "research" – full research briefs + Claude optimisation loop (~10 min)
+
+The deployed VM always runs in loop mode regardless of MODE, controlled by the
+TRADING_LOOP environment variable (set to "1" in the deployment secrets).
 """
 
 import os
+import sys
+import time
 from datetime import datetime, timedelta, timezone
+from pathlib import Path
+from zoneinfo import ZoneInfo
 
 from alpaca.data import StockBarsRequest, StockHistoricalDataClient
 from alpaca.data.enums import DataFeed
@@ -20,10 +27,19 @@ import ai_analyst
 import optimizer
 import live_trader
 
-# ── Choose run mode ───────────────────────────────────────────────────────────
-MODE = "live"   # "live" | "research"
+# ── Settings ──────────────────────────────────────────────────────────────────
+# In the workspace: set MODE to "live" or "research", leave LOOP = False.
+# In the deployed VM: TRADING_LOOP=1 is set as an environment secret, which
+#   overrides MODE and always runs the continuous loop.
+MODE = "live"   # "live" | "research"  (workspace only)
+LOOP = os.getenv("TRADING_LOOP", "0") == "1"
 
-# ── Alpaca connection (shared by both modes) ──────────────────────────────────
+LIVE_TICKERS       = ["AAPL", "TSLA", "NVDA"]
+RESEARCH_TICKERS   = ["AAPL", "TSLA", "NVDA", "KO", "JPM"]
+CYCLE_INTERVAL_SEC = 5 * 60     # 5 minutes between signal checks
+ET                 = ZoneInfo("America/New_York")
+
+# ── Alpaca connection ─────────────────────────────────────────────────────────
 api_key    = os.environ.get("ALPACA_API_KEY")
 secret_key = os.environ.get("ALPACA_SECRET_KEY")
 
@@ -37,30 +53,49 @@ print(f"Buying power:      ${float(account.buying_power):,.2f}")
 print(f"Portfolio value:   ${float(account.portfolio_value):,.2f}")
 
 
+# ── Market-hours helpers ───────────────────────────────────────────────────────
+def is_market_open() -> bool:
+    """Return True if US equities market is currently open (9:30–16:00 ET, M–F)."""
+    now_et = datetime.now(ET)
+    if now_et.weekday() >= 5:           # Saturday = 5, Sunday = 6
+        return False
+    t = now_et.time()
+    from datetime import time as dtime
+    return dtime(9, 30) <= t < dtime(16, 0)
+
+
+def market_closed_for_day() -> bool:
+    """Return True after 4:05 PM ET on a weekday — signal to stop the loop today."""
+    now_et = datetime.now(ET)
+    if now_et.weekday() >= 5:
+        return False
+    from datetime import time as dtime
+    return now_et.time() >= dtime(16, 5)
+
+
+def minutes_to_open() -> int:
+    """Return whole minutes until 9:30 AM ET today, or 0 if already past open."""
+    now_et = datetime.now(ET)
+    open_today = now_et.replace(hour=9, minute=30, second=0, microsecond=0)
+    if now_et >= open_today:
+        return 0
+    return int((open_today - now_et).total_seconds() // 60)
+
+
 # ════════════════════════════════════════════════════════════════════════════
-# LIVE MODE — single-pass paper-trading signal check
+# LIVE MODE — single-pass signal check  (used by both loop and manual runs)
 # ════════════════════════════════════════════════════════════════════════════
 
-LIVE_TICKERS = ["AAPL", "TSLA", "NVDA"]
+def run_live_trading_cycle() -> list[dict]:
+    """Check each ticker once and return the list of result dicts.
 
-
-def run_live_trading_cycle() -> None:
-    """Check each ticker for entry signals and submit bracket orders if warranted.
-
-    Loops through LIVE_TICKERS once, calls live_trader.check_signal_and_trade()
-    for each, then prints a cycle summary.  Every check — fired or not — is
-    logged to signal_log.db for review.
+    Also prints a human-readable cycle summary.  Every check is logged to
+    signal_log.db regardless of outcome.
     """
+    ts_str = datetime.now(ET).strftime("%Y-%m-%d %H:%M ET")
     print("\n" + "═" * 68)
-    print("  LIVE TRADING CYCLE  —  paper account")
-    print(f"  {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')}")
+    print(f"  SIGNAL CHECK  —  {ts_str}  —  paper account")
     print("═" * 68)
-
-    from pathlib import Path
-    if Path("STOP_TRADING").exists():
-        print("\n  ⛔  STOP_TRADING file present — all trading is paused.")
-        print("      Remove the file to resume.\n")
-        return
 
     results: list[dict] = []
     for ticker in LIVE_TICKERS:
@@ -69,51 +104,135 @@ def run_live_trading_cycle() -> None:
         results.append(result)
 
         if result["signal_fired"]:
-            print(f"    ✓  ORDER PLACED")
-            print(f"       {result['note']}")
+            print(f"    ✓  ORDER PLACED — {result['note']}")
             print(f"       Order ID: {result['order_id']}")
         else:
-            blocked_by = "; ".join(result["blocks"]) if result["blocks"] else result.get("note", "unknown")
-            print(f"    –  No trade  →  {blocked_by}")
+            reason = (
+                "; ".join(result["blocks"]) if result["blocks"]
+                else result.get("note") or "—"
+            )
+            print(f"    –  No trade  →  {reason}")
 
-    # ── Cycle summary ─────────────────────────────────────────────────────────
-    print("\n" + "─" * 68)
-    print("  CYCLE SUMMARY")
-    print("─" * 68)
     fired   = [r for r in results if r["signal_fired"]]
     skipped = [r for r in results if not r["signal_fired"]]
 
-    print(f"  Tickers checked : {len(results)}")
-    print(f"  Orders placed   : {len(fired)}")
-    print(f"  No signal       : {len(skipped)}")
-
+    print("\n" + "─" * 68)
+    print(f"  Tickers checked: {len(results)}  |  "
+          f"Orders placed: {len(fired)}  |  No signal: {len(skipped)}")
     if fired:
-        print("\n  Orders this cycle:")
         for r in fired:
-            print(
-                f"    {r['ticker']:<6}  {r['position_size']} shares  "
-                f"@ ~${r['entry_price']:.2f}   id={r['order_id']}"
-            )
-
+            print(f"    ✓ {r['ticker']}: {r['position_size']} sh "
+                  f"@ ~${r['entry_price']:.2f}  id={r['order_id']}")
     if skipped:
-        print("\n  Skipped:")
         for r in skipped:
-            reason = (
-                "; ".join(r["blocks"]) if r["blocks"]
-                else r.get("note") or "—"
-            )
-            print(f"    {r['ticker']:<6}  {reason}")
+            reason = "; ".join(r["blocks"]) if r["blocks"] else r.get("note") or "—"
+            print(f"    – {r['ticker']}: {reason}")
+    print("─" * 68)
 
-    print("\n  Full signal history → signal_log.db")
-    print("─" * 68 + "\n")
+    return results
+
+
+# ════════════════════════════════════════════════════════════════════════════
+# LOOP MODE — continuous execution during market hours  (used by the VM)
+# ════════════════════════════════════════════════════════════════════════════
+
+def run_live_trading_loop() -> None:
+    """Run signal checks every 5 minutes during market hours.
+
+    This is the entry point for the deployed VM.  It runs until 4:05 PM ET,
+    then exits so the VM process is clean.  The deployed VM automatically
+    restarts the process — but market-hours logic here ensures no trades are
+    attempted outside 9:30 AM – 4:00 PM ET on weekdays.
+
+    On every iteration (whether market is open or not):
+    - The STOP_TRADING kill switch is checked first.
+    - Outside market hours: logs the status and sleeps 60 s before rechecking.
+    - Inside market hours: runs one full signal cycle, then sleeps 5 min.
+    - After 4:05 PM ET on a weekday: logs end-of-day and exits cleanly.
+    """
+    print("\n" + "█" * 68)
+    print("  LIVE TRADING LOOP  —  paper VM  —  starting up")
+    print(f"  Tickers : {', '.join(LIVE_TICKERS)}")
+    print(f"  Interval: every {CYCLE_INTERVAL_SEC // 60} minutes during market hours")
+    print(f"  Hours   : 9:30 AM – 4:00 PM ET, Mon – Fri")
+    print(f"  Kill sw : create a file named STOP_TRADING to halt immediately")
+    print("█" * 68 + "\n")
+
+    total_cycles   = 0
+    total_orders   = 0
+    today_date_et  = datetime.now(ET).date()
+
+    while True:
+        now_et  = datetime.now(ET)
+        now_str = now_et.strftime("%Y-%m-%d %H:%M ET")
+
+        # ── New day bookkeeping ───────────────────────────────────────────────
+        if now_et.date() != today_date_et:
+            today_date_et  = now_et.date()
+            print(f"\n  ── New trading day: {today_date_et} ──\n")
+
+        # ── Kill switch — checked every single iteration ──────────────────────
+        if Path("STOP_TRADING").exists():
+            print(f"  [{now_str}]  ⛔  STOP_TRADING file present — trading paused. "
+                  f"Rechecking in 60 s.")
+            _log_loop_event("PAUSED", "STOP_TRADING file present")
+            time.sleep(60)
+            continue
+
+        # ── End-of-day exit — clean shutdown after market close ───────────────
+        if market_closed_for_day():
+            print(f"\n  [{now_str}]  Market closed for today ({today_date_et}).")
+            print(f"  Loop ran {total_cycles} cycles, placed {total_orders} orders today.")
+            print("  Exiting — VM will restart; market-hours check guards next session.\n")
+            _log_loop_event("EOD", f"Exiting after {total_cycles} cycles, {total_orders} orders")
+            sys.exit(0)
+
+        # ── Pre-market / weekend wait ─────────────────────────────────────────
+        if not is_market_open():
+            mins = minutes_to_open()
+            if mins > 0:
+                print(f"  [{now_str}]  Pre-market — opens in {mins} min. "
+                      f"Sleeping 60 s.")
+            elif now_et.weekday() >= 5:
+                day = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"][now_et.weekday()]
+                print(f"  [{now_str}]  Weekend ({day}). Sleeping 60 s.")
+            else:
+                print(f"  [{now_str}]  Market closed. Sleeping 60 s.")
+            time.sleep(60)
+            continue
+
+        # ── Market is open — run signal check cycle ───────────────────────────
+        results      = run_live_trading_cycle()
+        total_cycles += 1
+        total_orders += sum(1 for r in results if r["signal_fired"])
+
+        next_check_str = (
+            datetime.now(ET) + timedelta(seconds=CYCLE_INTERVAL_SEC)
+        ).strftime("%H:%M ET")
+        print(f"  Sleeping {CYCLE_INTERVAL_SEC // 60} min — "
+              f"next check at {next_check_str}")
+        time.sleep(CYCLE_INTERVAL_SEC)
+
+
+def _log_loop_event(event_type: str, note: str) -> None:
+    """Write a loop lifecycle event to signal_log.db for the audit trail."""
+    import sqlite3
+    live_trader._init_signal_log()
+    with sqlite3.connect(live_trader.SIGNAL_LOG_DB) as con:
+        con.execute(
+            """
+            INSERT INTO signal_log (checked_at, ticker, signal_fired, blocks, note)
+            VALUES (?, ?, 0, '', ?)
+            """,
+            (datetime.now(timezone.utc).isoformat(), f"[{event_type}]", note),
+        )
 
 
 # ════════════════════════════════════════════════════════════════════════════
 # RESEARCH MODE — full research briefs + Claude optimisation loop
 # ════════════════════════════════════════════════════════════════════════════
 
-RESEARCH_TICKERS        = ["AAPL", "TSLA", "NVDA", "KO", "JPM"]
-NEWS_PER_TICKER         = 8
+NEWS_PER_TICKER          = 8
 DAILY_BARS_LOOKBACK_DAYS = 30
 
 
@@ -159,16 +278,14 @@ def run_research_cycle() -> None:
         if bars:
             print(f"  {len(bars)} daily bars  |  last close ${float(bars[-1].close):.2f}")
         if news:
-            print(f"  {len(news)} news articles  |  latest: {news[0].headline[:60]}…")
+            print(f"  {len(news)} articles  |  latest: {news[0].headline[:60]}…")
 
     print("\n" + "═" * 64)
     print("  WEALTH MANAGEMENT RESEARCH DESK  —  powered by Claude")
     print("═" * 64)
 
     for ticker in RESEARCH_TICKERS:
-        print(f"\n{'─' * 60}")
-        print(f"  RESEARCH BRIEF: {ticker}")
-        print(f"{'─' * 60}")
+        print(f"\n{'─' * 60}\n  RESEARCH BRIEF: {ticker}\n{'─' * 60}")
         brief = ai_analyst.research_ticker(
             ticker=ticker,
             bars=ticker_bars[ticker],
@@ -192,7 +309,11 @@ def run_research_cycle() -> None:
 # Dispatch
 # ════════════════════════════════════════════════════════════════════════════
 
-if MODE == "live":
+if LOOP:
+    # Deployed VM: always run the continuous loop
+    run_live_trading_loop()
+elif MODE == "live":
+    # Workspace: single-pass for quick manual testing
     run_live_trading_cycle()
 elif MODE == "research":
     run_research_cycle()

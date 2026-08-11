@@ -24,5 +24,12 @@ timeoutMs = 20000
 
 [userenv.shared]
 
+[userenv.production]
+TRADING_LOOP = "1"
+
 [nix]
 channel = "stable-25_05"
+
+[deployment]
+deploymentTarget = "vm"
+run = ["python", "main.py"]
