@@ -105,6 +105,7 @@ optimizer.run(
     tickers=TICKERS,
     start_date=backtest_start,
     end_date=backtest_end,
-    target_win_rate=80.0,
-    max_iterations=10,
+    min_win_rate=40.0,
+    max_iterations=4,
+    training_days=60,
 )

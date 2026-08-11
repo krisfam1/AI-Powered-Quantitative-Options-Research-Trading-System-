@@ -117,8 +117,9 @@ Structure your brief under exactly these four headers:
     return _ask(prompt, max_tokens=1200)
 
 
-def diagnose_and_suggest(
+def diagnose_and_suggest(  # noqa: C901
     history: list[dict],
+    min_win_rate: float = 40.0,
 ) -> dict:
     """Diagnose backtest failures and suggest config changes for the next iteration.
 
@@ -206,15 +207,18 @@ def diagnose_and_suggest(
 
     prompt = f"""
 You are the quantitative portfolio manager in our research desk.
-We are running an iterative backtest optimization loop targeting an 80% win rate.
+We are running an iterative backtest optimization loop.
+
+OBJECTIVE: Maximise NET P&L across the training window.
+CONSTRAINT: Keep overall win rate at or above {min_win_rate:.0f}%. Configurations that drop below this floor are disqualified, so do NOT sacrifice win rate just to chase bigger average wins.
 
 Below is the full iteration history so far:
 
 {history_text}
 
 Your task:
-1. Diagnose WHY the current win rate is below 80%. Be specific: which tickers drag performance, what exit/entry problems are visible in the numbers (high avg loss, low trade count, frequent eod closes, etc.).
-2. Propose concrete parameter changes for the NEXT iteration. Choose changes that address the root cause, not cosmetic tweaks.
+1. Diagnose the PRIMARY reason net P&L is not higher. Be specific: which tickers drag performance, is the problem too many losers (low win rate), losses too large (wide stops), or winners too small (tight targets)? Are filters helping or over-filtering?
+2. Propose concrete parameter changes for the NEXT iteration that improve net P&L while keeping win rate ≥ {min_win_rate:.0f}%. Choose changes that address the root cause, not cosmetic tweaks.
 3. Change at most 3-4 parameters per iteration so causation is clear.
 
 Tunable parameters (JSON keys and types):
@@ -229,13 +233,13 @@ IMPORTANT: Your response MUST end with a JSON block between ```json and ``` mark
 Example JSON:
 ```json
 {{
-  "diagnosis": "Win rate is low because stops are too wide relative to ATR, allowing trades to trend against position before hitting target. TSLA and NVDA in particular show large avg losses.",
+  "diagnosis": "Net P&L is negative because avg losses (−0.33%) exceed avg wins (0.27%) on TSLA and NVDA; stops at 1.5×ATR are too wide relative to the target, so losers hurt more than winners help.",
   "config_changes": {{
     "atr_stop_multiplier": 1.0,
-    "use_vwap_trend": true
+    "atr_target_multiplier": 2.0
   }},
-  "iteration_theme": "Tighten stops + VWAP filter on",
-  "expected_impact": "Reducing stop width cuts loss magnitude; VWAP filter should remove counter-trend entries, raising win rate by 10-15 pp."
+  "iteration_theme": "Tighten stop, widen target for better R:R",
+  "expected_impact": "Smaller stop shrinks avg loss; wider target improves win/loss ratio. Net P&L should turn positive while keeping win rate above floor."
 }}
 ```
 """.strip()

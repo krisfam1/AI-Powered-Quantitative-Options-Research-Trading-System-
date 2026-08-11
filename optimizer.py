@@ -1,8 +1,22 @@
-"""Claude-driven iterative backtest optimization loop."""
+"""Claude-driven iterative backtest optimization loop.
+
+Training / holdout split
+------------------------
+The caller passes a 90-day window.  Internally the first 60 days are used as
+the *training* period for the iterative loop; the final 30 days are kept as a
+*holdout* set that is touched only once — after the best config is selected —
+to give an unbiased out-of-sample estimate.
+
+Optimization objective
+----------------------
+Maximise net P&L across the training window while keeping win rate ≥ min_win_rate
+(default 40 %).  The 80 % win-rate stopping condition has been removed; the
+loop always runs to max_iterations (default 4) and then picks the best config.
+"""
 
 from __future__ import annotations
 
-from datetime import date, datetime
+from datetime import datetime, timedelta, timezone
 from typing import Any
 
 import ai_analyst
@@ -32,9 +46,21 @@ DEFAULT_CONFIG: dict[str, Any] = {
 }
 
 
-def _print_header(iteration: int, config: dict[str, Any]) -> None:
+def _split_bars(
+    bars: list[Any],
+    cutoff: datetime,
+) -> tuple[list[Any], list[Any]]:
+    """Split a bar list into (training, holdout) around a UTC cutoff datetime."""
+    cutoff_utc = cutoff.astimezone(timezone.utc)
+    training = [b for b in bars if b.timestamp.astimezone(timezone.utc) < cutoff_utc]
+    holdout  = [b for b in bars if b.timestamp.astimezone(timezone.utc) >= cutoff_utc]
+    return training, holdout
+
+
+def _print_header(iteration: int, config: dict[str, Any], label: str = "") -> None:
+    tag = f"  {label}" if label else ""
     print(f"\n{'═' * 70}")
-    print(f"  ITERATION {iteration}")
+    print(f"  ITERATION {iteration}{tag}")
     print(f"{'═' * 70}")
     print(f"  Config: mode={config['mode']}")
     if config["mode"] == "atr":
@@ -70,11 +96,11 @@ def _print_per_ticker_table(per_ticker: dict[str, dict[str, float]]) -> None:
     print(f"\n  {'Ticker':<8} {'Trades':>7} {'Win%':>8} {'AvgWin%':>10} {'AvgLoss%':>10} {'NetP&L%':>10}")
     print(f"  {'-'*8} {'-'*7} {'-'*8} {'-'*10} {'-'*10} {'-'*10}")
     for ticker, stats in per_ticker.items():
-        trades = int(stats.get("total_trades", 0))
+        trades   = int(stats.get("total_trades", 0))
         win_rate = stats.get("win_rate", 0.0)
-        avg_win = stats.get("average_win_pct", 0.0)
+        avg_win  = stats.get("average_win_pct", 0.0)
         avg_loss = stats.get("average_loss_pct", 0.0)
-        net_pnl = stats.get("net_pnl_pct", 0.0)
+        net_pnl  = stats.get("net_pnl_pct", 0.0)
         print(
             f"  {ticker:<8} {trades:>7} {win_rate:>7.1f}% {avg_win:>9.2f}% "
             f"{avg_loss:>9.2f}% {net_pnl:>9.2f}%"
@@ -82,11 +108,13 @@ def _print_per_ticker_table(per_ticker: dict[str, dict[str, float]]) -> None:
 
 
 def _print_overall(overall: dict[str, float]) -> None:
-    print(f"\n  OVERALL: trades={int(overall['total_trades'])}  "
-          f"win_rate={overall['win_rate']:.1f}%  "
-          f"avg_win={overall['average_win_pct']:.2f}%  "
-          f"avg_loss={overall['average_loss_pct']:.2f}%  "
-          f"net_pnl={overall['net_pnl_pct']:.2f}%")
+    print(
+        f"\n  OVERALL: trades={int(overall['total_trades'])}  "
+        f"win_rate={overall['win_rate']:.1f}%  "
+        f"avg_win={overall['average_win_pct']:.2f}%  "
+        f"avg_loss={overall['average_loss_pct']:.2f}%  "
+        f"net_pnl={overall['net_pnl_pct']:.2f}%"
+    )
 
 
 def _apply_config_changes(
@@ -102,68 +130,109 @@ def _apply_config_changes(
     return updated
 
 
+def _score(overall: dict[str, float], min_win_rate: float) -> float:
+    """Return net P&L if win rate qualifies, else a large negative penalty."""
+    if overall["win_rate"] >= min_win_rate and overall["total_trades"] >= 10:
+        return overall["net_pnl_pct"]
+    # Penalised: still comparable so we can fall back if nothing qualifies
+    return overall["net_pnl_pct"] - 1000.0
+
+
 def run(
     tickers: list[str],
-    start_date: date | datetime | str,
-    end_date: date | datetime | str,
-    target_win_rate: float = 80.0,
-    max_iterations: int = 10,
+    start_date: datetime | str,
+    end_date: datetime | str,
+    min_win_rate: float = 40.0,
+    max_iterations: int = 4,
+    training_days: int = 60,
 ) -> None:
-    """Run the Claude-driven optimization loop."""
+    """Run the Claude-driven optimization loop with a held-out test period.
+
+    Parameters
+    ----------
+    tickers:
+        Universe of tickers to trade.
+    start_date / end_date:
+        Full date range (e.g. 90 days).  The first *training_days* are used for
+        optimization; the remainder form the holdout set.
+    min_win_rate:
+        Win-rate floor (%) enforced when selecting the best config.  Iterations
+        below this threshold are still recorded but penalised in scoring.
+    max_iterations:
+        Number of training iterations to run.
+    training_days:
+        Number of calendar days reserved for training (default 60).
+    """
+    # ── Date arithmetic ───────────────────────────────────────────────────────
+    if isinstance(start_date, str):
+        start_date = datetime.fromisoformat(start_date.replace("Z", "+00:00"))
+    if isinstance(end_date, str):
+        end_date = datetime.fromisoformat(end_date.replace("Z", "+00:00"))
+    if start_date.tzinfo is None:
+        start_date = start_date.replace(tzinfo=timezone.utc)
+    if end_date.tzinfo is None:
+        end_date = end_date.replace(tzinfo=timezone.utc)
+
+    cutoff = start_date + timedelta(days=training_days)
+    holdout_days = (end_date - cutoff).days
+
     config = dict(DEFAULT_CONFIG)
     history: list[dict[str, Any]] = []
 
     print(f"\n{'█' * 70}")
     print(f"  CLAUDE-DRIVEN OPTIMIZATION LOOP")
-    print(f"  Target: {target_win_rate:.0f}% win rate  |  Max iterations: {max_iterations}")
-    print(f"  Tickers: {', '.join(tickers)}")
+    print(f"  Training: {start_date.date()} → {cutoff.date()} ({training_days} days)")
+    print(f"  Holdout:  {cutoff.date()} → {end_date.date()} ({holdout_days} days)")
+    print(f"  Objective: maximise net P&L  |  min win rate: {min_win_rate:.0f}%")
+    print(f"  Max iterations: {max_iterations}  |  Tickers: {', '.join(tickers)}")
     print(f"{'█' * 70}")
 
-    # Pre-fetch 5-min bars once — reused across every iteration to avoid
-    # redundant Alpaca API calls.
-    print("\n  Pre-fetching 5-min bars (one-time)...")
-    prefetched: dict[str, list] = {}
+    # ── Pre-fetch full bars once, then split ──────────────────────────────────
+    print("\n  Pre-fetching bars for full period (one-time)...")
+    train_bars: dict[str, list] = {}
+    hold_bars:  dict[str, list] = {}
     for ticker in tickers:
-        bars = get_historical_bars(ticker, start_date, end_date)
-        prefetched[ticker] = bars
-        print(f"    {ticker}: {len(bars):,} bars")
+        all_bars = get_historical_bars(ticker, start_date, end_date)
+        t, h = _split_bars(all_bars, cutoff)
+        train_bars[ticker] = t
+        hold_bars[ticker]  = h
+        print(f"    {ticker}: {len(all_bars):,} total  →  {len(t):,} training / {len(h):,} holdout")
 
+    # ── Optimization loop (training data only) ────────────────────────────────
     for iteration in range(1, max_iterations + 1):
-        _print_header(iteration, config)
+        _print_header(iteration, config, label="[TRAINING]")
 
-        # Clear DB so each iteration is independent
         trade_log.clear_trades()
-
         overall_stats, per_ticker_stats = run_multi_ticker_backtest(
-            tickers, start_date, end_date, config,
-            prefetched_bars=prefetched,
+            tickers, start_date, cutoff, config,
+            prefetched_bars=train_bars,
         )
 
         _print_per_ticker_table(per_ticker_stats)
         _print_overall(overall_stats)
 
-        # Record this iteration
-        history.append(
-            {
-                "iteration": iteration,
-                "config": dict(config),
-                "overall_stats": overall_stats,
-                "per_ticker_stats": per_ticker_stats,
-            }
+        qualifies = (
+            overall_stats["win_rate"] >= min_win_rate
+            and overall_stats["total_trades"] >= 10
         )
+        flag = "✓" if qualifies else f"✗ (win rate {overall_stats['win_rate']:.1f}% < {min_win_rate:.0f}% floor)"
+        print(f"\n  Qualifies for selection: {flag}")
 
-        # Check target
-        if overall_stats["win_rate"] >= target_win_rate:
-            print(f"\n  ✓ TARGET REACHED: {overall_stats['win_rate']:.1f}% ≥ {target_win_rate:.0f}%")
-            break
+        history.append({
+            "iteration": iteration,
+            "config": dict(config),
+            "overall_stats": overall_stats,
+            "per_ticker_stats": per_ticker_stats,
+            "score": _score(overall_stats, min_win_rate),
+        })
 
         if iteration == max_iterations:
-            print(f"\n  ✗ Max iterations reached without hitting target.")
+            print(f"\n  Max iterations reached — selecting best config.")
             break
 
-        # Claude diagnosis
+        # ── Claude diagnosis ──────────────────────────────────────────────────
         print(f"\n  ── Claude's Diagnosis ──────────────────────────────────────")
-        diagnosis = ai_analyst.diagnose_and_suggest(history)
+        diagnosis = ai_analyst.diagnose_and_suggest(history, min_win_rate=min_win_rate)
         print(f"  Theme: {diagnosis.get('iteration_theme', 'N/A')}")
         print(f"\n  {diagnosis.get('diagnosis', 'No diagnosis provided.')}")
         print(f"\n  Expected impact: {diagnosis.get('expected_impact', 'N/A')}")
@@ -177,22 +246,65 @@ def run(
         else:
             print("\n  No config changes suggested — using same config.")
 
-    # Final summary
+    # ── Select best config ────────────────────────────────────────────────────
+    best_entry = max(history, key=lambda e: e["score"])
+    best_iter  = best_entry["iteration"]
+    best_config = best_entry["config"]
+    best_train  = best_entry["overall_stats"]
+
+    # ── Training summary table ────────────────────────────────────────────────
     print(f"\n{'█' * 70}")
-    print(f"  OPTIMIZATION SUMMARY")
+    print(f"  TRAINING SUMMARY")
     print(f"{'█' * 70}")
-    print(f"\n  {'Iter':>5} {'WinRate':>9} {'NetP&L':>9} {'Trades':>7}  Theme")
-    print(f"  {'-'*5} {'-'*9} {'-'*9} {'-'*7}  {'-'*30}")
+    print(f"\n  {'Iter':>5} {'WinRate':>9} {'NetP&L':>9} {'Trades':>7}  {'Qual':>5}  Theme")
+    print(f"  {'-'*5} {'-'*9} {'-'*9} {'-'*7}  {'-'*5}  {'-'*28}")
     for entry in history:
-        s = entry["overall_stats"]
+        s     = entry["overall_stats"]
+        qual  = "YES" if s["win_rate"] >= min_win_rate and s["total_trades"] >= 10 else "no"
+        mark  = " ◀ best" if entry["iteration"] == best_iter else ""
         theme = entry.get("theme", "—")
         print(
             f"  {entry['iteration']:>5} {s['win_rate']:>8.1f}% "
-            f"{s['net_pnl_pct']:>8.2f}% {int(s['total_trades']):>7}  {theme}"
+            f"{s['net_pnl_pct']:>8.2f}% {int(s['total_trades']):>7}  {qual:>5}  {theme}{mark}"
         )
 
-    best = max(history, key=lambda e: e["overall_stats"]["win_rate"])
-    print(f"\n  Best iteration: #{best['iteration']} "
-          f"({best['overall_stats']['win_rate']:.1f}% win rate, "
-          f"{best['overall_stats']['net_pnl_pct']:.2f}% net P&L)")
+    print(f"\n  Best config: iteration #{best_iter}  "
+          f"(train win rate {best_train['win_rate']:.1f}%,  "
+          f"train net P&L {best_train['net_pnl_pct']:.2f}%)")
+
+    # ── Holdout evaluation (out-of-sample) ────────────────────────────────────
+    print(f"\n{'█' * 70}")
+    print(f"  OUT-OF-SAMPLE HOLDOUT RESULTS")
+    print(f"  Period: {cutoff.date()} → {end_date.date()} ({holdout_days} days)")
+    print(f"  Config: iteration #{best_iter} — NEVER seen during optimization")
+    print(f"{'█' * 70}")
+
+    trade_log.clear_trades()
+    hold_overall, hold_per_ticker = run_multi_ticker_backtest(
+        tickers, cutoff, end_date, best_config,
+        prefetched_bars=hold_bars,
+    )
+
+    _print_per_ticker_table(hold_per_ticker)
+    _print_overall(hold_overall)
+
+    # Side-by-side train vs holdout
+    print(f"\n  ── Train vs Holdout comparison ──────────────────────────────────")
+    print(f"  {'Period':<12} {'Trades':>7} {'Win%':>8} {'AvgWin%':>10} {'AvgLoss%':>10} {'NetP&L%':>10}")
+    print(f"  {'-'*12} {'-'*7} {'-'*8} {'-'*10} {'-'*10} {'-'*10}")
+    for label, s in [("Training", best_train), ("Holdout", hold_overall)]:
+        print(
+            f"  {label:<12} {int(s['total_trades']):>7} {s['win_rate']:>7.1f}% "
+            f"{s['average_win_pct']:>9.2f}% {s['average_loss_pct']:>9.2f}% "
+            f"{s['net_pnl_pct']:>9.2f}%"
+        )
+
+    generalises = (
+        hold_overall["win_rate"] >= min_win_rate
+        and hold_overall["net_pnl_pct"] > 0
+    )
+    verdict = "✓ Strategy generalises (positive P&L + win rate above floor)" \
+              if generalises else \
+              "✗ Strategy does NOT generalise out-of-sample"
+    print(f"\n  {verdict}")
     print(f"{'█' * 70}\n")
