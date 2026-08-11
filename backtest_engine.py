@@ -12,6 +12,9 @@ from alpaca.data.timeframe import TimeFrame, TimeFrameUnit
 import trade_log
 
 
+ATR_TRAIL_DISTANCE_MULTIPLIER = 2.0
+
+
 def _as_utc_datetime(value: date | datetime | str) -> datetime:
     """Convert supported date inputs to timezone-aware UTC datetimes."""
     if isinstance(value, datetime):
@@ -127,7 +130,7 @@ def run_backtest(
     relative_volume_threshold: float = 1.5,
     atr_stop_multiplier: float = 1.5,
     atr_target_multiplier: float = 2.5,
-    atr_trail_trigger: float = 1.0,
+    atr_trail_trigger: float = 2.0,
 ) -> None:
     """Run a long-only ATR-adjusted breakout/volume backtest."""
     trade_log.init_db()
@@ -157,7 +160,7 @@ def run_backtest(
                 )
                 if float(bar.high) >= trail_trigger_price:
                     proposed_stop = float(bar.close) - (
-                        atr_stop_multiplier * current_atr
+                        ATR_TRAIL_DISTANCE_MULTIPLIER * current_atr
                     )
                     if proposed_stop > stop_price:
                         open_position["stop_loss_price"] = proposed_stop
@@ -171,7 +174,10 @@ def run_backtest(
                     if open_position["stop_is_trailing"]
                     else "stop_loss"
                 )
-            elif float(bar.high) >= target_price:
+            elif (
+                not open_position["stop_is_trailing"]
+                and float(bar.high) >= target_price
+            ):
                 exit_price = target_price
                 exit_reason = "take_profit"
             elif _is_last_bar_of_day(bars, index):
