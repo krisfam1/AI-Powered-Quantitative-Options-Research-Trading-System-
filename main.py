@@ -3,6 +3,7 @@ from datetime import datetime, timedelta, timezone
 
 from alpaca.data import StockBarsRequest, StockHistoricalDataClient
 from alpaca.data.enums import DataFeed
+from alpaca.data.historical.news import NewsClient, NewsRequest
 from alpaca.data.timeframe import TimeFrame, TimeFrameUnit
 from alpaca.trading.client import TradingClient
 
@@ -36,3 +37,16 @@ bars = data_client.get_stock_bars(bars_request)
 print("\nRecent AAPL daily bars:")
 for bar in bars["AAPL"]:
     print(f"{bar.timestamp.date()}: close=${bar.close:.2f}, volume={bar.volume:,}")
+
+news_client = NewsClient(api_key, secret_key)
+news_request = NewsRequest(
+    symbols="AAPL",
+    limit=5,
+    sort="desc",
+)
+news = news_client.get_news(news_request)
+
+print("\nRecent AAPL news:")
+for article in news.data["news"]:
+    print(f"{article.created_at.date()}: {article.headline}")
+    print(f"  Source: {article.source}")
