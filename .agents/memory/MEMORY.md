@@ -1,1 +1,2 @@
 - [Validated Replit config](replit-config.md) — `.replit` changes must go through validated replacement rather than direct edits.
+- [Alpaca market-data feed](alpaca-market-data.md) — this account cannot query recent SIP data; use the permitted IEX feed for stock bars.
