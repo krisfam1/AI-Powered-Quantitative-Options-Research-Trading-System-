@@ -2,17 +2,39 @@
 
 import os
 import sqlite3
-from datetime import date, datetime, time, timezone
+from datetime import date, datetime, time, timedelta, timezone
 from typing import Any, Mapping
 from zoneinfo import ZoneInfo
 
 from alpaca.data import StockBarsRequest, StockHistoricalDataClient
 from alpaca.data.enums import DataFeed
+from alpaca.data.historical.news import NewsClient
+from alpaca.data.requests import NewsRequest
 from alpaca.data.timeframe import TimeFrame, TimeFrameUnit
 
 import trade_log
 
 _ET = ZoneInfo("America/New_York")
+
+# ── Sentiment keyword sets ────────────────────────────────────────────────────
+_POSITIVE_WORDS = frozenset({
+    "beat", "beats", "upgrade", "upgraded", "breakout", "surge", "surges",
+    "rally", "rallies", "strong", "strength", "growth", "profit", "profits",
+    "record", "high", "buy", "bullish", "gain", "gains", "jump", "jumps",
+    "rise", "rises", "rising", "outperform", "outperforms", "boost", "boosts",
+    "soar", "soars", "expand", "expands", "win", "wins", "success", "exceed",
+    "exceeds", "accelerate", "positive", "recover", "recovers", "rebound",
+    "rebounding",
+})
+_NEGATIVE_WORDS = frozenset({
+    "miss", "misses", "downgrade", "downgraded", "crash", "crashes", "fall",
+    "falls", "falling", "loss", "losses", "weak", "weakness", "decline",
+    "declines", "drop", "drops", "sell", "bearish", "plunge", "plunges",
+    "cut", "cuts", "warning", "warns", "fail", "fails", "failure", "debt",
+    "lawsuit", "layoff", "layoffs", "recall", "recalls", "disappoint",
+    "disappoints", "negative", "restructure", "restructuring", "concern",
+    "concerns", "short", "default", "investigation", "fine", "penalty",
+})
 
 
 def _as_utc_datetime(value: date | datetime | str) -> datetime:
@@ -194,6 +216,100 @@ def calculate_atr_percentile(
     return count_below / lookback * 100.0
 
 
+def get_news_for_ticker(
+    ticker: str,
+    start_date: date | datetime | str,
+    end_date: date | datetime | str,
+    limit: int = 200,
+) -> list[Any]:
+    """Fetch up to ``limit`` news articles for a ticker over the date range.
+
+    Returns an empty list (rather than raising) if the request fails, so the
+    news sentiment filter degrades gracefully to "allow all".
+    """
+    api_key = os.environ.get("ALPACA_API_KEY")
+    secret_key = os.environ.get("ALPACA_SECRET_KEY")
+    if not api_key or not secret_key:
+        return []
+    try:
+        client = NewsClient(api_key, secret_key)
+        request = NewsRequest(
+            symbols=ticker.upper(),
+            start=_as_utc_datetime(start_date),
+            end=_as_utc_datetime(end_date),
+            limit=limit,
+        )
+        response = client.get_news(request)
+        # NewsSet.data is a dict with key "news" holding a list of News objects
+        return list(response.data.get("news", []))
+    except Exception as exc:  # noqa: BLE001
+        print(f"  [news] Warning: could not fetch news for {ticker}: {exc}")
+        return []
+
+
+def _classify_sentiment(text: str) -> float:
+    """Score a headline: +1 per positive word, -1 per negative word."""
+    score = 0.0
+    for raw in text.lower().split():
+        word = raw.strip(".,!?;:()'\"")
+        if word in _POSITIVE_WORDS:
+            score += 1.0
+        elif word in _NEGATIVE_WORDS:
+            score -= 1.0
+    return score
+
+
+def check_news_sentiment(
+    news_items: list[Any],
+    bar_timestamp: datetime,
+    lookback_hours: int = 24,
+    min_avg_score: float = 0.0,
+) -> bool:
+    """Return True if recent news sentiment is neutral-or-better.
+
+    Articles published within ``lookback_hours`` before the bar are scored
+    via keyword matching.  When there are no recent articles the result is
+    True (no news → neutral, allow entry).
+    """
+    bar_utc = bar_timestamp.astimezone(timezone.utc)
+    cutoff = bar_utc - timedelta(hours=lookback_hours)
+    recent: list[Any] = []
+    for item in news_items:
+        # Alpaca News objects expose created_at; fall back to updated_at
+        ts = getattr(item, "created_at", None) or getattr(item, "updated_at", None)
+        if ts is None:
+            continue
+        ts_utc = ts.astimezone(timezone.utc)
+        if cutoff <= ts_utc <= bar_utc:
+            recent.append(item)
+
+    if not recent:
+        return True  # No news in window → neutral, allow entry
+
+    scores = [_classify_sentiment(getattr(item, "headline", "")) for item in recent]
+    avg = sum(scores) / len(scores)
+    return avg >= min_avg_score
+
+
+def calculate_ma(bars: list[Any], current_index: int, period: int = 50) -> float:
+    """Return the simple moving average of close prices over the prior ``period`` bars."""
+    if current_index < period:
+        return 0.0
+    window = bars[current_index - period : current_index]
+    return sum(float(b.close) for b in window) / period
+
+
+def check_ma_trend(bars: list[Any], current_index: int, period: int = 50) -> bool:
+    """Return True if the current close is above the ``period``-bar MA.
+
+    Uses prior bars only (no look-ahead) so the result is valid for backtesting.
+    """
+    ma = calculate_ma(bars, current_index, period)
+    if ma == 0.0:
+        return False
+    return float(bars[current_index].close) > ma
+
+
 def _is_last_bar_of_day(bars: list[Any], index: int) -> bool:
     """Return whether a bar is the final bar for its trading date."""
     if index == len(bars) - 1:
@@ -254,6 +370,7 @@ def run_backtest(
     config: Mapping[str, Any],
     trade_id_prefix: str | None = None,
     prefetched_bars: list[Any] | None = None,
+    prefetched_news: list[Any] | None = None,
 ) -> dict[str, float]:
     """Run a long-only breakout/volume backtest with a unified config dict.
 
@@ -270,16 +387,23 @@ def run_backtest(
 
     Entry / filter keys (all optional with safe defaults)
     ------------------------------------------------------
-    relative_volume_threshold : float  (default 1.5)
-    rv_confirmation_bars      : int    (default 1)
-    breakout_lookback         : int    (default 20)
-    use_time_window           : bool   (default False)
-    time_windows              : list[tuple[str,str]]  ET "HH:MM" pairs
-    use_vwap_trend            : bool   (default False)
-    vwap_lookback             : int    (default 20)
-    use_atr_percentile        : bool   (default False)
-    atr_percentile_min        : float  (default 40.0)
-    atr_percentile_lookback   : int    (default 40)
+    relative_volume_threshold  : float  (default 1.5)
+    rv_confirmation_bars       : int    (default 1)
+    breakout_lookback          : int    (default 20)
+    use_time_window            : bool   (default False)
+    time_windows               : list[tuple[str,str]]  ET "HH:MM" pairs
+    use_vwap_trend             : bool   (default False)
+    vwap_lookback              : int    (default 20)
+    use_atr_percentile         : bool   (default False)
+    atr_percentile_min         : float  (default 40.0)
+    atr_percentile_lookback    : int    (default 40)
+    use_ma_trend               : bool   (default False)
+      Only enter when close > MA(ma_trend_period).
+    ma_trend_period            : int    (default 50)
+    use_news_sentiment         : bool   (default False)
+      Only enter when avg headline sentiment over the lookback window >= 0.
+      Requires ``prefetched_news`` or live news fetch at the call site.
+    news_sentiment_lookback_hours : int (default 24)
     """
     mode = config.get("mode")
     if mode not in {"fixed_pct", "atr"}:
@@ -311,12 +435,26 @@ def run_backtest(
     atr_percentile_min = float(config.get("atr_percentile_min", 40.0))
     atr_percentile_lookback = int(config.get("atr_percentile_lookback", 40))
 
+    use_ma_trend = bool(config.get("use_ma_trend", False))
+    ma_trend_period = int(config.get("ma_trend_period", 50))
+
+    use_news_sentiment = bool(config.get("use_news_sentiment", False))
+    news_sentiment_lookback_hours = int(config.get("news_sentiment_lookback_hours", 24))
+
     trade_log.init_db()
     bars = prefetched_bars if prefetched_bars is not None else get_historical_bars(ticker, start_date, end_date)
     prefix = trade_id_prefix or f"backtest-{ticker.upper()}"
     if not bars:
         print(f"\nNo historical bars returned for {ticker}.")
         return _stats([])
+
+    # Resolve news items once for this ticker (fetch only when needed)
+    news_items: list[Any] = []
+    if use_news_sentiment:
+        if prefetched_news is not None:
+            news_items = prefetched_news
+        else:
+            news_items = get_news_for_ticker(ticker, start_date, end_date)
 
     open_position: dict[str, Any] | None = None
     completed_trades = 0
@@ -417,6 +555,15 @@ def run_backtest(
                 if pct < atr_percentile_min:
                     continue
 
+            if use_ma_trend and not check_ma_trend(bars, index, period=ma_trend_period):
+                continue
+
+            if use_news_sentiment and not check_news_sentiment(
+                news_items, timestamp,
+                lookback_hours=news_sentiment_lookback_hours,
+            ):
+                continue
+
             # ── Open position ──────────────────────────────────────────────
             entry_price = close_price
             position_size = 1.0
@@ -468,8 +615,18 @@ def run_multi_ticker_backtest(
     end_date: date | datetime | str,
     config: Mapping[str, Any],
     prefetched_bars: dict[str, list[Any]] | None = None,
+    prefetched_news: dict[str, list[Any]] | None = None,
 ) -> tuple[dict[str, float], dict[str, dict[str, float]]]:
     """Run one strategy across tickers; return (overall_stats, per_ticker_stats).
+
+    Parameters
+    ----------
+    prefetched_bars:
+        Optional pre-fetched 5-min bar lists keyed by ticker symbol.
+    prefetched_news:
+        Optional pre-fetched news lists keyed by ticker symbol.  When
+        ``use_news_sentiment`` is True and this is provided, no live
+        news fetch is made during the backtest.
 
     Returns
     -------
@@ -492,6 +649,7 @@ def run_multi_ticker_backtest(
             config,
             trade_id_prefix=prefix,
             prefetched_bars=(prefetched_bars or {}).get(ticker),
+            prefetched_news=(prefetched_news or {}).get(ticker),
         )
         per_ticker_stats[ticker] = stats
 
