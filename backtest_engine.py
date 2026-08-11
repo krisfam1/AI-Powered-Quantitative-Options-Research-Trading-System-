@@ -3,16 +3,13 @@
 import os
 import sqlite3
 from datetime import date, datetime, time, timezone
-from typing import Any
+from typing import Any, Mapping
 
 from alpaca.data import StockBarsRequest, StockHistoricalDataClient
 from alpaca.data.enums import DataFeed
 from alpaca.data.timeframe import TimeFrame, TimeFrameUnit
 
 import trade_log
-
-
-ATR_TRAIL_DISTANCE_MULTIPLIER = 2.0
 
 
 def _as_utc_datetime(value: date | datetime | str) -> datetime:
@@ -88,15 +85,15 @@ def calculate_atr(
         return 0.0
 
     true_ranges: list[float] = []
-    start_index = current_index - period
-    for index in range(start_index, current_index):
+    for index in range(current_index - period, current_index):
         bar = bars[index]
         high = float(bar.high)
         low = float(bar.low)
-        if index == 0:
-            previous_close = float(bar.close)
-        else:
-            previous_close = float(bars[index - 1].close)
+        previous_close = (
+            float(bar.close)
+            if index == 0
+            else float(bars[index - 1].close)
+        )
         true_ranges.append(
             max(
                 high - low,
@@ -115,29 +112,80 @@ def _is_last_bar_of_day(bars: list[Any], index: int) -> bool:
     return bars[index + 1].timestamp.date() != bars[index].timestamp.date()
 
 
-def _trade_id(ticker: str, timestamp: datetime) -> str:
-    """Create a stable ID so repeated backtests do not duplicate entries."""
+def _trade_id(prefix: str, timestamp: datetime) -> str:
+    """Create a stable ID for a ticker and strategy variant."""
     timestamp_key = timestamp.astimezone(timezone.utc).strftime(
         "%Y%m%dT%H%M%S%fZ"
     )
-    return f"backtest-{ticker.upper()}-{timestamp_key}"
+    return f"{prefix}-{timestamp_key}"
+
+
+def _completed_rows(prefixes: list[str] | None = None) -> list[tuple[Any, ...]]:
+    """Read completed trades, optionally filtered by ID prefixes."""
+    with sqlite3.connect(trade_log.DATABASE_PATH) as connection:
+        if not prefixes:
+            return connection.execute(
+                """
+                SELECT pnl_dollars, pnl_percent, outcome_class
+                FROM trades
+                WHERE pnl_percent IS NOT NULL
+                """
+            ).fetchall()
+
+        clauses = " OR ".join("trade_id LIKE ?" for _ in prefixes)
+        values = tuple(f"{prefix}-%" for prefix in prefixes)
+        return connection.execute(
+            f"""
+            SELECT pnl_dollars, pnl_percent, outcome_class
+            FROM trades
+            WHERE pnl_percent IS NOT NULL AND ({clauses})
+            """,
+            values,
+        ).fetchall()
+
+
+def _stats(rows: list[tuple[Any, ...]]) -> dict[str, float]:
+    """Calculate aggregate performance statistics from completed trades."""
+    total_trades = len(rows)
+    wins = [float(row[1]) for row in rows if row[2] == "win"]
+    losses = [float(row[1]) for row in rows if row[2] == "loss"]
+    return {
+        "total_trades": float(total_trades),
+        "win_rate": len(wins) / total_trades * 100 if total_trades else 0.0,
+        "average_win_pct": sum(wins) / len(wins) if wins else 0.0,
+        "average_loss_pct": sum(losses) / len(losses) if losses else 0.0,
+        "net_pnl_pct": sum(float(row[1]) for row in rows),
+    }
 
 
 def run_backtest(
     ticker: str,
     start_date: date | datetime | str,
     end_date: date | datetime | str,
+    exit_strategy: Mapping[str, Any],
     relative_volume_threshold: float = 1.5,
-    atr_stop_multiplier: float = 1.5,
-    atr_target_multiplier: float = 2.5,
-    atr_trail_trigger: float = 2.0,
-) -> None:
-    """Run a long-only ATR-adjusted breakout/volume backtest."""
+    trade_id_prefix: str | None = None,
+) -> dict[str, float]:
+    """Run a long-only breakout/volume backtest with a configured exit mode."""
+    mode = exit_strategy.get("mode")
+    if mode not in {"fixed_pct", "atr"}:
+        raise ValueError("exit_strategy mode must be 'fixed_pct' or 'atr'")
+
+    if mode == "fixed_pct":
+        stop_loss_pct = float(exit_strategy["stop_loss_pct"])
+        take_profit_pct = float(exit_strategy["take_profit_pct"])
+    else:
+        atr_stop_multiplier = float(exit_strategy["atr_stop_multiplier"])
+        atr_target_multiplier = float(exit_strategy["atr_target_multiplier"])
+        atr_trail_trigger = float(exit_strategy["atr_trail_trigger"])
+        atr_trail_distance = float(exit_strategy["atr_trail_distance"])
+
     trade_log.init_db()
     bars = get_historical_bars(ticker, start_date, end_date)
+    prefix = trade_id_prefix or f"backtest-{ticker.upper()}"
     if not bars:
         print(f"\nNo historical bars returned for {ticker}.")
-        return
+        return _stats([])
 
     open_position: dict[str, Any] | None = None
     completed_trades = 0
@@ -151,21 +199,22 @@ def run_backtest(
             target_price = float(open_position["target_price"])
             exit_price: float | None = None
             exit_reason: str | None = None
-            current_atr = calculate_atr(bars, index)
 
-            if current_atr > 0:
-                entry_price = float(open_position["entry_price"])
-                trail_trigger_price = entry_price + (
-                    atr_trail_trigger * current_atr
-                )
-                if float(bar.high) >= trail_trigger_price:
-                    proposed_stop = float(bar.close) - (
-                        ATR_TRAIL_DISTANCE_MULTIPLIER * current_atr
+            if mode == "atr":
+                current_atr = calculate_atr(bars, index)
+                if current_atr > 0:
+                    entry_price = float(open_position["entry_price"])
+                    trigger_price = entry_price + (
+                        atr_trail_trigger * current_atr
                     )
-                    if proposed_stop > stop_price:
-                        open_position["stop_loss_price"] = proposed_stop
-                        open_position["stop_is_trailing"] = True
-                        stop_price = proposed_stop
+                    if float(bar.high) >= trigger_price:
+                        proposed_stop = float(bar.close) - (
+                            atr_trail_distance * current_atr
+                        )
+                        if proposed_stop > stop_price:
+                            open_position["stop_loss_price"] = proposed_stop
+                            open_position["stop_is_trailing"] = True
+                            stop_price = proposed_stop
 
             if float(bar.low) <= stop_price:
                 exit_price = stop_price
@@ -175,7 +224,7 @@ def run_backtest(
                     else "stop_loss"
                 )
             elif (
-                not open_position["stop_is_trailing"]
+                (mode == "fixed_pct" or not open_position["stop_is_trailing"])
                 and float(bar.high) >= target_price
             ):
                 exit_price = target_price
@@ -188,14 +237,14 @@ def run_backtest(
                 entry_price = float(open_position["entry_price"])
                 position_size = float(open_position["position_size"])
                 pnl_dollars = (exit_price - entry_price) * position_size
-                pnl_percent = ((exit_price - entry_price) / entry_price) * 100
-                if pnl_percent > 0:
-                    outcome_class = "win"
-                elif pnl_percent < 0:
-                    outcome_class = "loss"
-                else:
-                    outcome_class = "breakeven"
-
+                pnl_percent = (exit_price - entry_price) / entry_price * 100
+                outcome_class = (
+                    "win"
+                    if pnl_percent > 0
+                    else "loss"
+                    if pnl_percent < 0
+                    else "breakeven"
+                )
                 trade_log.log_trade_exit(
                     open_position["trade_id"],
                     {
@@ -223,17 +272,22 @@ def run_backtest(
             ):
                 entry_price = close_price
                 position_size = 1.0
-                atr = calculate_atr(bars, index)
-                if atr <= 0:
-                    continue
-                stop_loss_price = entry_price - (
-                    atr_stop_multiplier * atr
-                )
-                target_price = entry_price + (
-                    atr_target_multiplier * atr
-                )
-                trade_id = _trade_id(ticker, timestamp)
 
+                if mode == "fixed_pct":
+                    stop_loss_price = entry_price * (1 - stop_loss_pct)
+                    target_price = entry_price * (1 + take_profit_pct)
+                else:
+                    atr = calculate_atr(bars, index)
+                    if atr <= 0:
+                        continue
+                    stop_loss_price = entry_price - (
+                        atr_stop_multiplier * atr
+                    )
+                    target_price = entry_price + (
+                        atr_target_multiplier * atr
+                    )
+
+                trade_id = _trade_id(prefix, timestamp)
                 trade_log.log_trade_entry(
                     {
                         "trade_id": trade_id,
@@ -261,30 +315,26 @@ def run_backtest(
                 }
 
     print(f"\nBacktest complete for {ticker}: {completed_trades} trades closed.")
+    return _stats(_completed_rows([prefix]))
 
 
-def print_backtest_summary() -> None:
-    """Print performance metrics for completed trades in the SQLite log."""
-    with sqlite3.connect(trade_log.DATABASE_PATH) as connection:
-        rows = connection.execute(
-            """
-            SELECT pnl_dollars, pnl_percent, outcome_class
-            FROM trades
-            WHERE pnl_percent IS NOT NULL
-            """
-        ).fetchall()
-
-    total_trades = len(rows)
-    wins = [float(row[1]) for row in rows if row[2] == "win"]
-    losses = [float(row[1]) for row in rows if row[2] == "loss"]
-    net_pnl_percent = sum(float(row[1]) for row in rows)
-    win_rate = (len(wins) / total_trades * 100) if total_trades else 0.0
-    average_win = sum(wins) / len(wins) if wins else 0.0
-    average_loss = sum(losses) / len(losses) if losses else 0.0
-
-    print("\nBacktest summary:")
-    print(f"Total trades: {total_trades}")
-    print(f"Win rate: {win_rate:.2f}%")
-    print(f"Average win %: {average_win:.2f}%")
-    print(f"Average loss %: {average_loss:.2f}%")
-    print(f"Net P&L %: {net_pnl_percent:.2f}%")
+def run_multi_ticker_backtest(
+    tickers: list[str],
+    start_date: date | datetime | str,
+    end_date: date | datetime | str,
+    exit_strategy: Mapping[str, Any],
+) -> dict[str, float]:
+    """Run one strategy across tickers and return combined statistics."""
+    strategy_name = str(exit_strategy.get("name", exit_strategy["mode"]))
+    prefixes: list[str] = []
+    for ticker in tickers:
+        prefix = f"{strategy_name}-{ticker.upper()}"
+        prefixes.append(prefix)
+        run_backtest(
+            ticker,
+            start_date,
+            end_date,
+            exit_strategy,
+            trade_id_prefix=prefix,
+        )
+    return _stats(_completed_rows(prefixes))

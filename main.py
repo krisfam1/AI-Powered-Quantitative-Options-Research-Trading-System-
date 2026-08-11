@@ -7,11 +7,12 @@ from alpaca.data.historical.news import NewsClient, NewsRequest
 from alpaca.data.timeframe import TimeFrame, TimeFrameUnit
 from alpaca.trading.client import TradingClient
 
-from backtest_engine import print_backtest_summary, run_backtest
+from backtest_engine import run_multi_ticker_backtest
 import trade_log
 
 
 trade_log.init_db()
+trade_log.clear_trades()
 trade_log.log_trade_entry(
     {
         "trade_id": "test-trade-001",
@@ -84,7 +85,53 @@ for article in news.data["news"]:
     print(f"  Source: {article.source}")
 
 backtest_end = datetime.now(timezone.utc)
-backtest_start = backtest_end - timedelta(days=30)
-trade_log.clear_trades()
-run_backtest("AAPL", backtest_start, backtest_end)
-print_backtest_summary()
+backtest_start = backtest_end - timedelta(days=90)
+tickers = ["AAPL", "TSLA", "NVDA", "KO", "JPM"]
+exit_strategies = {
+    "fixed_pct": {
+        "name": "fixed_pct",
+        "mode": "fixed_pct",
+        "stop_loss_pct": 0.01,
+        "take_profit_pct": 0.02,
+    },
+    "atr_tight": {
+        "name": "atr_tight",
+        "mode": "atr",
+        "atr_stop_multiplier": 1.5,
+        "atr_target_multiplier": 2.5,
+        "atr_trail_trigger": 1.0,
+        "atr_trail_distance": 1.5,
+    },
+    "atr_loose": {
+        "name": "atr_loose",
+        "mode": "atr",
+        "atr_stop_multiplier": 1.5,
+        "atr_target_multiplier": 2.5,
+        "atr_trail_trigger": 2.0,
+        "atr_trail_distance": 2.0,
+    },
+}
+
+comparison: dict[str, dict[str, float]] = {}
+for variant_name, exit_strategy in exit_strategies.items():
+    print(f"\nRunning {variant_name} across {', '.join(tickers)}...")
+    trade_log.clear_trades()
+    comparison[variant_name] = run_multi_ticker_backtest(
+        tickers,
+        backtest_start,
+        backtest_end,
+        exit_strategy,
+    )
+
+print("\nExit strategy comparison:")
+print(
+    f"{'Variant':<12} {'Trades':>8} {'Win rate':>10} "
+    f"{'Avg win':>10} {'Avg loss':>10} {'Net P&L':>10}"
+)
+print("-" * 64)
+for variant_name, stats in comparison.items():
+    print(
+        f"{variant_name:<12} {int(stats['total_trades']):>8} "
+        f"{stats['win_rate']:>9.2f}% {stats['average_win_pct']:>9.2f}% "
+        f"{stats['average_loss_pct']:>9.2f}% {stats['net_pnl_pct']:>9.2f}%"
+    )
