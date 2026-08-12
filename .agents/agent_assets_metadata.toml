@@ -1,0 +1,9 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "nsKI7MZJPcWppO2G39St8"
+uri = "file://attached_assets/generated_videos/breakout-trader-full.mp4"
+type = "video"
+title = "Breakout Trader — System Overview"
+description = "~56 second animated walkthrough: title → market data ingestion → breakout signal detection → Claude optimizer → risk management → live bracket order execution → kill switch control panel. Dark terminal aesthetic, neon green/cyan accents, technical audience."
