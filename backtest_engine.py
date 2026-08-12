@@ -62,7 +62,21 @@ def get_historical_bars(
     start_date: date | datetime | str,
     end_date: date | datetime | str,
 ) -> list[Any]:
-    """Fetch 5-minute IEX bars for a ticker and date range."""
+    """Fetch 5-minute IEX bars for a ticker and date range.
+
+    Results are cached in memory for the lifetime of the process, keyed by
+    (ticker, start_utc, end_utc).  Subsequent calls with the same arguments
+    return the cached list immediately without hitting the Alpaca API again.
+    The cache is never written to disk, so it is automatically invalidated on
+    process restart.
+    """
+    start_utc = _as_utc_datetime(start_date)
+    end_utc = _as_utc_datetime(end_date)
+    cache_key = (ticker.upper(), start_utc.isoformat(), end_utc.isoformat())
+
+    if cache_key in _bar_cache:
+        return _bar_cache[cache_key]
+
     api_key = os.environ.get("ALPACA_API_KEY")
     secret_key = os.environ.get("ALPACA_SECRET_KEY")
     if not api_key or not secret_key:
@@ -71,13 +85,15 @@ def get_historical_bars(
     request = StockBarsRequest(
         symbol_or_symbols=ticker,
         timeframe=TimeFrame(5, TimeFrameUnit.Minute),
-        start=_as_utc_datetime(start_date),
-        end=_as_utc_datetime(end_date),
+        start=start_utc,
+        end=end_utc,
         feed=DataFeed.IEX,
     )
     client = StockHistoricalDataClient(api_key, secret_key)
     bars = client.get_stock_bars(request)
-    return list(bars[ticker])
+    result = list(bars[ticker])
+    _bar_cache[cache_key] = result
+    return result
 
 
 def calculate_relative_volume(
