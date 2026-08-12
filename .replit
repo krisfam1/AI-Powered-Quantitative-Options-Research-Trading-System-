@@ -1,4 +1,4 @@
-modules = ["python-3.11"]
+modules = ["python-3.11", "nodejs-22"]
 run = "python main.py"
 
 [workflows]
@@ -35,5 +35,5 @@ deploymentTarget = "vm"
 run = ["python", "main.py"]
 
 [[ports]]
-localPort = 8099
+localPort = 8080
 externalPort = 80
