@@ -1,4 +1,4 @@
-"""SQLite-backed trade entry and exit logging."""Before I publish this deployment, show me the exact steps to create the STOP_TRADING file from outside the Repl workspace — specifically from my phone using the Replit mobile app, or from any browser without needing the shell. I want a way to kill trading if I'm away from my computer during market hours.
+"""SQLite-backed trade entry and exit logging."""
 
 import sqlite3
 from pathlib import Path

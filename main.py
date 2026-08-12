@@ -159,9 +159,11 @@ def run_live_trading_loop() -> None:
     print(f"  Kill sw : visit /stop?token=… on the deployed URL, or create STOP_TRADING file")
     print("█" * 68 + "\n")
 
-    # Start control panel — runs in a background thread on port 8080
+    # Start control panel — runs in a background thread.
+    # In production the API Server owns the public port (8080) and proxies
+    # /status, /stop, /resume to us, so we bind to KILL_SERVER_PORT (8081).
     # From your phone: https://YOUR-APP.replit.app/status?token=YOUR_TOKEN
-    kill_server.start(port=8080)
+    kill_server.start(port=int(os.getenv("KILL_SERVER_PORT", "8080")))
 
     total_cycles   = 0
     total_orders   = 0
