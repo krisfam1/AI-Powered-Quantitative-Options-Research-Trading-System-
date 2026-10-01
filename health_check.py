@@ -349,6 +349,33 @@ def check_bots():
         add("bots", svc, "FAIL" if problems else "OK", "; ".join(problems) or f"running; last heartbeat {last_hb}")
 
 
+EXEC_COST_FIRST_SESSION = date(2026, 10, 2)   # sampler loads with the OptionsShadowLoop restart at midnight 10/02
+
+
+def check_execution_cost():
+    """Stream B quote sampler (execution_cost_logger.py) logged the last closed session."""
+    if LAST_CLOSED < EXEC_COST_FIRST_SESSION:
+        add("data", "execution_cost_sampler", "OK", f"not active yet (first session {EXEC_COST_FIRST_SESSION})")
+        return
+    path = os.path.join(ROOT, "execution_cost_log.db")
+    if not os.path.exists(path):
+        add("data", "execution_cost_sampler", "FAIL", "execution_cost_log.db does not exist")
+        return
+    d = LAST_CLOSED.isoformat()
+    with sqlite3.connect(path) as c:
+        nq, feeds = c.execute("SELECT COUNT(*), GROUP_CONCAT(DISTINCT feed) FROM quotes WHERE et_date=?", (d,)).fetchone()
+        runs, errs = c.execute("SELECT COUNT(*), SUM(error IS NOT NULL) FROM sampler_runs "
+                               "WHERE substr(sample_ts,1,10) BETWEEN ? AND ?", (d, (LAST_CLOSED + timedelta(days=1)).isoformat())).fetchone()
+    errs = errs or 0
+    detail = f"{nq} quotes on {d} (feed {feeds}); {runs} sampler runs, {errs} with errors"
+    if nq == 0:
+        add("data", "execution_cost_sampler", "FAIL", detail)
+    elif runs and errs / runs > 0.10 or runs < 200:
+        add("data", "execution_cost_sampler", "WARN", detail + " (expected ~390 runs/session, <10% errors)")
+    else:
+        add("data", "execution_cost_sampler", "OK", detail)
+
+
 # ----------------------------------------------------------------- alerting
 def send_alert(subject, body):
     host, to = os.environ.get("HEALTH_SMTP_HOST"), os.environ.get("HEALTH_ALERT_TO")
@@ -386,6 +413,7 @@ def main():
     check_data(state)
     check_tasks(state)
     check_bots()
+    check_execution_cost()
     fails = [r for r in results if r["status"] == "FAIL"]
     warns = [r for r in results if r["status"] == "WARN"]
     lines = [f"HEALTH CHECK {NOW_ET:%Y-%m-%d %H:%M %Z} | last closed session {LAST_CLOSED} | "

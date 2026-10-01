@@ -456,6 +456,18 @@ Don't use "realistic" and "real" interchangeably.
   - The options bot has had no fills since 2026-09-17.
 - **Proposal:** (A) a fill log capturing bid/ask/mid at submit, as validation; (B) a per-minute **quote sampler** over a fixed contract panel (6 tickers + SPY, 0.30-delta and ATM, 7–16 and 30–45 DTE), as the primary measurement. Both are compared with V1's tiered model and with EODHD end-of-day spreads.
 - **Timeline:** ~20 trading days for a usable cost table. The economic sanity check on IV Stage 1 can be run now with historical EODHD bid/ask.
+- **§6 decisions (user, 2026-10-01):** (1) Stream B is the primary measurement, Stream A a secondary cross-check only; (2) **options only**, the stock bot is out of scope; (3) run the IV Stage 1 economic sanity check now (done; Section 33).
+- **Stream B built 2026-10-01: `execution_cost_logger.py` → `execution_cost_log.db`** (tables `panel`, `quotes`, `sampler_runs`).
+  - Panel fixed once per ET day: 6 research tickers + SPY; near (soonest 7–16 DTE) and far (latest 30–45 DTE) expirations; call and put at |delta| closest to 0.30 (Alpaca snapshot Greeks) and at the strike closest to spot. 56 contracts.
+  - Each sample is one batched latest-quote call plus an IEX spot call, ~2.5s. Each row stores bid/ask/sizes, mid, quoted half-spread, V1's model half-spread (`_estimated_spread_cost_pct/2`), spot, DTE, moneyness, and **the feed**.
+  - Called once per 60s cycle from `options_shadow_loop.py`, after the exit check, in try/except (no orders, cannot block trading). **Goes live when OptionsShadowLoop restarts at midnight ET 2026-10-02**; first session 10/02. No service restart was done.
+  - Tested against a scratch DB at 17:25 ET 10/01: 56/56 contracts, no errors. The production `execution_cost_log.db` didn't exist yet.
+  - `health_check.py` gained `data/execution_cost_sampler`: FAIL with 0 quotes for the last closed session; WARN under 200 runs or more than 10% errors; "not active" before 10/02.
+  - **Stream A (fill-log hooks in the order code): not built.** It's secondary, and it would touch order-submission files. Deferred.
+- **⚠ BLOCKER: the account has only Alpaca's INDICATIVE options feed.** OPRA requests return `"OPRA agreement is not signed"`. Per Alpaca, indicative quotes are adjusted derivatives of OPRA, "not actual OPRA quotes", meant for debugging, not strategy testing. So:
+  - Stream B currently measures Alpaca's modified spreads, **not real market cost**. It still runs (the feed is recorded per row) and can be compared against EODHD's real EOD quotes, but its cost table can't be trusted until OPRA is active.
+  - Paper fills are presumably simulated against the same feed, which weakens Stream A too.
+  - To fix: an Alpaca market-data subscription that includes OPRA, then set `EXECUTION_COST_OPTIONS_FEED=opra` in `.env`. **User decision.**
 
 ### Restart churn + bot startup/idle fixes, 2026-10-01
 
@@ -703,6 +715,12 @@ The Stage 2 script is `generate_iv_termstructure_stage2_dataset.py` (task `IVTer
   - **Framework α, read-only check on a scratch copy of `research_database.db`** (production SHA-256 unchanged): `compute_per_test_alpha` → `bonferroni_within_experiment`, **0.016667**, k = 3.
 - **FIXED 2026-10-01 (commit `11a2c8b`):** `compute_per_test_alpha()` now reads the registered `parameters.bonferroni_family_size` and returns **0.0167** (`bonferroni_within_experiment`) for this experiment. Original note, now historical:
 - **Known framework limitation:** `multiple_testing.compute_per_test_alpha()` returns **0.05** for this experiment (`none_single_test`). The framework can only apply Bonferroni across separately registered experiments in a family, not across one experiment's 3 horizons. The binding threshold is **0.0167** from the experiment's own parameters and DECISION_RULES. Don't take the framework's `multiple_testing_survived` result at face value for this experiment.
+- **ECONOMIC SANITY CHECK, 2026-10-01 (exploratory, NOT a test or verdict; no pre-registration or registry change, no Stage 2 dates, no EODHD calls).** Report `iv_stage1_economic_sanity_check_report.md`; script `iv_stage1_economic_sanity_check.py`; output `…_results.json`.
+  - Method: a straddle pays (RV − IV), so the tradeable question is whether the slope predicts (RV20 − IV)/IV. Data: `xgboost_volatility_dataset.db` (same slope construction; reproduces Stage 1 at Pearson −0.25 / Spearman −0.30). IV = `far_iv` (corr 0.99 with real ATM IV, median ratio 1.008). Costs: real EODHD EOD ATM-straddle bid/ask from `gex_data_cache.db`, 2026-06-10→09-09. **Stage 1's own window has no stored bid/ask.**
+  - Round-trip straddle cost, ~30 DTE: **4.8% pooled median** (TSLA 1.6%, NVDA 2.6%, AAPL 5.0%, AMD 6.4%, MSTR 7.8%, SMCI 10.1%).
+  - Stage 1 window: slope vs straddle payoff is only −0.07 / −0.10 (Spearman). Slope vs far IV −0.38; partial correlation with RV20, controlling for far IV and trailing RV: **+0.09**. The slope-quintile trade: gross +4.4%/trade, **net −1.1%** round trip (95% CI −11% … +7%), +1.6% if held to expiry. Break-even needs |corr with payoff| ≈ 0.09 (round trip) / 0.05 (hold to expiry).
+  - Before Stage 1 (2023-10-30→2026-01-14, 551 days, never used by it): **slope→RV20 Spearman −0.002**; the trade nets −8.8% (CI −13% … −4%).
+  - **Read: roughly no.** Stage 1's r ≈ −0.28 mostly reflects the IV level, which options already price. The residual is about one spread, and absent in the earlier history. A VALIDATED Stage 2 (which tests RV, not RV − IV) would not by itself make this tradeable. Stage 2's design, rules and lock date are unchanged.
 - **Collection script unchanged:** `generate_iv_termstructure_stage2_dataset.py` needed no changes, verified by reading it. It collects every eligible `(ticker, obs_date)` with no N-based stop (the lock is applied at analysis time), and its summary line already reports `COUNT(DISTINCT obs_date)`, the N defined above.
 
 ---

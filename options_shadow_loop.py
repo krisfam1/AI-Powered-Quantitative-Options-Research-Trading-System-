@@ -149,6 +149,13 @@ def run_options_shadow_loop() -> None:
         except Exception as exc:
             print("  Exit monitor check failed: " + str(exc))
 
+        # Execution-cost Stream B quote sampler (2026-10-01): pure logging, no orders, never blocks trading.
+        try:
+            import execution_cost_logger
+            execution_cost_logger.sample_once()
+        except Exception as _ec_exc:
+            print("  Execution-cost quote sample failed: " + str(_ec_exc)[:200])
+
         print("  Sleeping " + str(EXIT_CHECK_INTERVAL_SEC) + "s before next exit check...")
         time.sleep(EXIT_CHECK_INTERVAL_SEC)
 
