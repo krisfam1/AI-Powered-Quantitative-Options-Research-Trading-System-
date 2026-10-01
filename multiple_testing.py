@@ -47,6 +47,7 @@ class ThresholdResult:
     member_count_used: int          # current count AT THIS CALCULATION -- may differ on later recalculation
     per_test_alpha: float
     is_temporally_stable: bool      # False whenever member_count_used could change for an OPEN family
+    within_experiment_tests: int = 1  # ADDED 2026-10-01: the experiment's own locked parameters.bonferroni_family_size (e.g. 3 horizons)
 
 
 def _parse_declaration(declaration: str):
@@ -57,6 +58,19 @@ def _parse_declaration(declaration: str):
     if declaration.startswith("EXISTING_FAMILY:"):
         return ("FAMILY", declaration.split(":", 1)[1])
     raise ValueError("Malformed testing_family_declaration (should have been caught at preregistration): " + repr(declaration))
+
+
+def _within_experiment_tests(experiment_record) -> int:
+    """The experiment's own locked parameters.bonferroni_family_size (number of tests it runs
+    internally, e.g. 3 horizons), or 1 if it declares none. Read from the registered record,
+    never from the caller, so it can't be changed after registration."""
+    import json
+    try:
+        params = {k: v for k, v in json.loads(experiment_record["parameters"] or "[]")}
+    except (TypeError, ValueError):
+        return 1
+    k = params.get("bonferroni_family_size")
+    return k if isinstance(k, int) and k > 1 else 1
 
 
 def compute_per_test_alpha(experiment_id: str) -> ThresholdResult:
@@ -74,8 +88,17 @@ def compute_per_test_alpha(experiment_id: str) -> ThresholdResult:
         raise ValueError("No preregistered experiment found with id: " + experiment_id)
 
     decl_kind, family_id = _parse_declaration(experiment_record["testing_family_declaration"])
+    k = _within_experiment_tests(experiment_record)
 
     if decl_kind == "INDEPENDENT_SINGLE":
+        if k > 1:
+            # ADDED 2026-10-01: Bonferroni across the experiment's OWN locked set of tests (e.g. 3
+            # horizons) -- previously ignored, so IV term structure / SPY GEX v2 got 0.05, not 0.0167.
+            return ThresholdResult(
+                correction_method="bonferroni_within_experiment", family_id=None, family_alpha=STANDARD_ALPHA,
+                member_count_used=1, per_test_alpha=STANDARD_ALPHA / k, is_temporally_stable=True,
+                within_experiment_tests=k,
+            )
         return ThresholdResult(
             correction_method="none_single_test", family_id=None, family_alpha=STANDARD_ALPHA,
             member_count_used=1, per_test_alpha=STANDARD_ALPHA, is_temporally_stable=True,
@@ -95,11 +118,14 @@ def compute_per_test_alpha(experiment_id: str) -> ThresholdResult:
             member_count = conn.execute(
                 "SELECT COUNT(*) FROM testing_family_members WHERE family_id=?", (family_id,)
             ).fetchone()[0]
-            per_test_alpha = family_alpha / member_count
+            # Within-experiment tests (k) are corrected on top of the cross-experiment family.
+            per_test_alpha = family_alpha / (member_count * k)
             return ThresholdResult(
-                correction_method="bonferroni", family_id=family_id, family_alpha=family_alpha,
+                correction_method="bonferroni" if k == 1 else "bonferroni+within_experiment",
+                family_id=family_id, family_alpha=family_alpha,
                 member_count_used=member_count, per_test_alpha=per_test_alpha,
                 is_temporally_stable=False,  # OPEN family -- this count may grow, changing future recalculations
+                within_experiment_tests=k,
             )
 
         if correction_method == "benjamini_hochberg":
