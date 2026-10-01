@@ -163,6 +163,10 @@ def evaluate(c, ticker, cyc, prices, earnings, spread_hist):
         tag = f"f{int(f * 100):03d}"
         cost = fill(cl["bid"], cl["ask"], "buy", f) + fill(pu["bid"], pu["ask"], "buy", f)
         res[f"long_exp_{tag}"] = (straddle_payoff(ST, K) - cost) / cost
+        # short straddle (Goyal-Saretto straddle basis, NOT implementable here): return on premium received
+        credit_s = fill(cl["bid"], cl["ask"], "sell", f) + fill(pu["bid"], pu["ask"], "sell", f)
+        if credit_s > 0:
+            res[f"shortstrad_exp_{tag}"] = (credit_s - straddle_payoff(ST, K)) / credit_s
         ecl, epu = ex.get(("call", K)), ex.get(("put", K))
         # exit: a $0.00 bid is a valid quote (the leg is worth ~nothing), so only require ask >= bid >= 0
         if all(q is not None and q["ask"] > 0 and q["ask"] >= q["bid"] >= 0 for q in (ecl, epu)):

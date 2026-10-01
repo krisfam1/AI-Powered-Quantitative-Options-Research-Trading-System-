@@ -110,6 +110,9 @@ class EndToEnd(unittest.TestCase):
         self.assertAlmostEqual(r["long_exp_f100"], (8 - 5.2) / 5.2)
         # at mid: cost 5.0 -> 0.6
         self.assertAlmostEqual(r["long_exp_f000"], 0.6)
+        # short straddle at bid: credit 2.9 + 1.9 = 4.8, owes 8 -> (4.8 - 8)/4.8 ; at mid exactly -0.6
+        self.assertAlmostEqual(r["shortstrad_exp_f100"], (4.8 - 8) / 4.8)
+        self.assertAlmostEqual(r["shortstrad_exp_f000"], -0.6)
         # day-before exit at bid: 7.8 + 0.0 = 7.8 -> (7.8 - 5.2)/5.2
         self.assertAlmostEqual(r["long_db_f100"], (7.8 - 5.2) / 5.2)
         # iron fly at quoted: credit = 2.9 + 1.9 - 0.55 (110C ask) - 0.45 (90P ask) = 3.8 ; wings 110/90 ;
