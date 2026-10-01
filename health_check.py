@@ -353,23 +353,38 @@ EXEC_COST_FIRST_SESSION = date(2026, 10, 2)   # sampler loads with the OptionsSh
 
 
 def check_execution_cost():
-    """Stream B quote sampler (execution_cost_logger.py) logged the last closed session."""
+    """PRIMARY: EODHD end-of-day spreads keep up with the GEX chains. SECONDARY: the intraday sampler ran."""
+    path = os.path.join(ROOT, "execution_cost_log.db")
+    with sqlite3.connect(os.path.join(ROOT, "gex_data_cache.db")) as g:
+        gex_max = g.execute("SELECT MAX(requested_date) FROM raw_records").fetchone()[0]
+    eod_max = None
+    if os.path.exists(path):
+        with sqlite3.connect(path) as c:
+            try:
+                eod_max = c.execute("SELECT MAX(et_date) FROM eod_spreads WHERE panel='eodhd'").fetchone()[0]
+            except sqlite3.OperationalError:
+                pass
+    ok = bool(eod_max) and eod_max >= gex_max
+    add("data", "execution_cost_eod_spreads", "OK" if ok else "FAIL",
+        f"eod_spreads through {eod_max}; GEX chains through {gex_max}"
+        + ("" if ok else " (ExecutionCost_EOD_Spreads behind)"))
+
     if LAST_CLOSED < EXEC_COST_FIRST_SESSION:
         add("data", "execution_cost_sampler", "OK", f"not active yet (first session {EXEC_COST_FIRST_SESSION})")
         return
-    path = os.path.join(ROOT, "execution_cost_log.db")
-    if not os.path.exists(path):
-        add("data", "execution_cost_sampler", "FAIL", "execution_cost_log.db does not exist")
-        return
     d = LAST_CLOSED.isoformat()
-    with sqlite3.connect(path) as c:
-        nq, feeds = c.execute("SELECT COUNT(*), GROUP_CONCAT(DISTINCT feed) FROM quotes WHERE et_date=?", (d,)).fetchone()
-        runs, errs = c.execute("SELECT COUNT(*), SUM(error IS NOT NULL) FROM sampler_runs "
-                               "WHERE substr(sample_ts,1,10) BETWEEN ? AND ?", (d, (LAST_CLOSED + timedelta(days=1)).isoformat())).fetchone()
+    try:
+        with sqlite3.connect(path) as c:
+            nq, feeds = c.execute("SELECT COUNT(*), GROUP_CONCAT(DISTINCT feed) FROM quotes WHERE et_date=?", (d,)).fetchone()
+            runs, errs = c.execute("SELECT COUNT(*), SUM(error IS NOT NULL) FROM sampler_runs WHERE substr(sample_ts,1,10) "
+                                   "BETWEEN ? AND ?", (d, (LAST_CLOSED + timedelta(days=1)).isoformat())).fetchone()
+    except sqlite3.OperationalError as exc:
+        add("data", "execution_cost_sampler", "WARN", f"no sampler tables yet: {exc}")
+        return
     errs = errs or 0
     detail = f"{nq} quotes on {d} (feed {feeds}); {runs} sampler runs, {errs} with errors"
-    if nq == 0:
-        add("data", "execution_cost_sampler", "FAIL", detail)
+    if nq == 0:   # secondary source since 2026-10-01 -> WARN, not FAIL
+        add("data", "execution_cost_sampler", "WARN", detail)
     elif runs and errs / runs > 0.10 or runs < 200:
         add("data", "execution_cost_sampler", "WARN", detail + " (expected ~390 runs/session, <10% errors)")
     else:

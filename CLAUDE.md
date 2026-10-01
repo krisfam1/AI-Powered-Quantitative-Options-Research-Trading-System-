@@ -468,6 +468,26 @@ Don't use "realistic" and "real" interchangeably.
   - Stream B currently measures Alpaca's modified spreads, **not real market cost**. It still runs (the feed is recorded per row) and can be compared against EODHD's real EOD quotes, but its cost table can't be trusted until OPRA is active.
   - Paper fills are presumably simulated against the same feed, which weakens Stream A too.
   - To fix: an Alpaca market-data subscription that includes OPRA, then set `EXECUTION_COST_OPTIONS_FEED=opra` in `.env`. **User decision.**
+- **SUPERSEDED SAME DAY (user decision 2026-10-01): EODHD end-of-day spreads are now the PRIMARY cost source; the Alpaca indicative sampler is SECONDARY. OPRA is not needed for now and its pricing was not checked against the account.**
+  - **Coverage:** EODHD's chain records carry bid, ask, bid/ask sizes, delta and IV for every panel cell (6 tickers + SPY; near/far; ATM and ~0.30-delta; calls and puts). Every sampled quote's `ask_date` matched its observation date (no stale-day quotes).
+  - **Zero extra EODHD calls:** `GEX_Historical_Incremental_Update` already stores the full chains for all 7 tickers nightly in `gex_data_cache.db:raw_records`. The catch: cost data lags whenever that task is quota-blocked (currently through 2026-09-29), and backfills automatically when it catches up.
+  - **`execution_cost_eod.py`** (read-only on `gex_data_cache.db`) → `execution_cost_log.db:eod_spreads`.
+    - `panel='eodhd'`: the cost panel, chosen with the sampler's rules but EODHD's own delta.
+    - `panel='alpaca'`: EODHD's close quote for the exact contracts the intraday sampler watched, for the indicative-vs-real cross-check, which the script prints each run.
+    - Idempotent and self-healing.
+    - Built 2026-10-01: 2026-06-10..09-29, 77 dates, 4,276 rows, 0 without a valid bid/ask.
+  - **Task `ExecutionCost_EOD_Spreads`**, 21:05 ET daily: `pythonw run_logged.py execution_cost_eod.py execution_cost_eod_log.txt`, settings copied from the GEX task. `schtasks /run` test: result 0.
+  - **Health check:** new `data/execution_cost_eod_spreads` (FAIL if `eod_spreads` trails the GEX chains). `data/execution_cost_sampler` downgraded to WARN-only.
+  - **Median full spread** (% of mid, 2026-06-10..09-29), ATM / 0.30-delta:
+    - far: SPY 0.6/0.7, TSLA 2.2/2.7, NVDA 2.8/3.9, AAPL 5.8/9.3, AMD 7.1/12.3, MSTR 10.2/16.2, SMCI 11.9/20.4.
+    - near: SPY 0.8/1.2, TSLA 2.2/2.8, NVDA 3.4/3.4, MSTR 5.5/8.4, SMCI 6.0/8.5, AMD 6.8/10.4, AAPL 8.3/12.1.
+    - Day-to-day noise is large (CV 0.4–1.1; p90 up to 54%), so use medians/percentiles, never a single day.
+  - **Is end-of-day good enough?** Yes for strategies that hold for days or weeks and can choose when to trade, as a somewhat conservative, noisy estimate.
+    - Option spreads are widest at the open and narrow through the day. Some studies also find a widening just before the close, and EODHD's quote is stamped 15:59:59.
+    - Patient limit-order traders pay ~30–60% of the quoted spread (Muravyev & Pearson).
+    - It can NOT measure costs at the open or for intraday strategies (SpyGammaLoop, V1-style 5-min entries); there it likely understates.
+    - Backtest convention: base = EODHD median quoted spread by ticker/bucket/role; sensitivity 0.5× (patient limits) and 1.5× (open / market orders).
+    - The indicative sampler now serves to estimate the time-of-day **shape** (its own spread relative to its own close quote) and to measure its level distortion against EODHD at the close. The shape use rests on the unverified assumption that Alpaca's adjustment roughly preserves it.
 
 ### Restart churn + bot startup/idle fixes, 2026-10-01
 
@@ -1138,6 +1158,7 @@ The Stage 2 script is `generate_iv_termstructure_stage2_dataset.py` (task `IVTer
 | ET | Task | Notes |
 |---|---|---|
 | every 2h at :23 (from 2026-10-01 12:23) | `EODHD_Quota_Probe_And_Resume` | Added 2026-10-01; replaced the session-only probe jobs. Action: `pythonw.exe run_logged.py quota_probe_and_resume.py quota_probe_and_resume_log.txt` (windowless). `WakeToRun` deliberately **off** (would otherwise wake the laptop 12×/day); `StartWhenAvailable=true`, 30-min limit, `InteractiveToken`. See the probe-log paragraph below. **Bug fixed 2026-10-01:** its 12:23 and 14:23 ET runs crashed (`StopIteration`, exit 1) because a CLAUDE.md heading it parsed was renamed. **Decoupled the same day:** the script now logs to its own `quota_probe_log.db` (table `probe_log`: utc_ts, result, category BACKFILL/GEX/PROBE, action, dry_run) and never reads or writes CLAUDE.md, so this document can be edited freely. |
+| 21:05 | `ExecutionCost_EOD_Spreads` | **Added 2026-10-01.** `pythonw.exe run_logged.py execution_cost_eod.py execution_cost_eod_log.txt`. Builds real EODHD end-of-day spreads from the GEX task's stored chains; zero EODHD calls. Section 26. |
 | 21:15 | `EODHD_Daily_Health_Check` | **Added 2026-10-01.** `pythonw.exe run_logged.py health_check.py health_check_log.txt`, `WakeToRun=true`, 15-min limit. See "Daily health check" below. |
 | 19:44 | `PreventSleep_DuringCollectionWindow` | `prevent_sleep_during_collection_window.py`, `SetThreadExecutionState(ES_SYSTEM_REQUIRED\|ES_AWAYMODE_REQUIRED)` for 65 min, self-expiring. First real run 2026-10-01. |
 | 19:45 | `GEX_Historical_Incremental_Update` | Section 40. `gex_metrics` MAX = 2026-09-29, 1,074 rows after the 2026-10-01 manual catch-up. **Since 2026-10-01 the action is `pythonw.exe run_logged.py gex_historical_incremental_update.py gex_historical_update_log.txt`**: windowless, no cmd/conhost; the wrapper appends stdout and stderr to the same log, line-buffered. Verified via `schtasks /run`: result 0, only `pythonw.exe` spawned, full output logged. `run_gex_historical_update.bat` is kept but no longer called; original action XML is in `task_backup_GEX_Historical_Incremental_Update.before_pythonw_20261001.xml`. |

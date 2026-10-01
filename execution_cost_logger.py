@@ -4,6 +4,11 @@ load_dotenv()
 """
 Execution-cost measurement, Stream B: per-minute option quote sampler (execution_cost_measurement_design_v1.md).
 
+ROLE CHANGED 2026-10-01 (user decision): the PRIMARY cost source is now EODHD's real end-of-day bid/ask,
+built by execution_cost_eod.py into the eod_spreads table of the same database (zero extra EODHD calls).
+This intraday sampler on Alpaca's indicative feed is SECONDARY: it measures the time-of-day SHAPE of
+spreads and is cross-checked against EODHD at the close. Its absolute spread levels are not real costs.
+
 Pure logging. It places no orders and changes no signal, sizing or exit logic. The options loop calls
 sample_once() once per 60s cycle during market hours, inside try/except, so a failure here can never
 affect trading. Options only (user decision 2026-10-01: the stock bot is out of scope).
@@ -32,7 +37,8 @@ from alpaca.data.requests import OptionChainRequest, OptionLatestQuoteRequest, S
 from options_backtest_engine import _estimated_spread_cost_pct
 
 ET = ZoneInfo("America/New_York")
-DB_PATH = os.environ.get("EXECUTION_COST_DB", "execution_cost_log.db")
+DB_PATH = os.environ.get("EXECUTION_COST_DB",
+                         os.path.join(os.path.dirname(os.path.abspath(__file__)), "execution_cost_log.db"))
 PANEL_TICKERS = ["AAPL", "TSLA", "NVDA", "AMD", "SMCI", "MSTR", "SPY"]
 BUCKETS = {"near": (7, 16), "far": (30, 45)}
 TARGET_DELTA = 0.30

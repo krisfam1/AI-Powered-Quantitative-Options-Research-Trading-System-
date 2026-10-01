@@ -1,5 +1,13 @@
 # Execution-cost measurement — design v1 (2026-10-01, for review; NOT implemented)
 
+> **Update 2026-10-01 (implemented, revised):**
+> - **Primary source:** real EODHD end-of-day spreads, `execution_cost_eod.py` → `execution_cost_log.db:eod_spreads`. They're built from chains the GEX task already downloads, so no extra EODHD calls.
+> - **Secondary:** Stream B, the intraday sampler (`execution_cost_logger.py`). The account only has Alpaca's indicative feed, so it measures time-of-day shape and is cross-checked against EODHD at the close.
+> - **Not built:** Stream A.
+> - **Out of scope:** the stock bot.
+>
+> See CLAUDE.md Section 26.
+
 **Purpose (decided 2026-10-01):** StockTradingBot and OptionsShadowLoop become an instrument for measuring real execution cost — what we pay to cross the bid/ask — compared against the project's pricing/spread models. They are no longer a test of the V1 signal (rejected, Section 13/18).
 
 ## 0. Two facts that shape the design
