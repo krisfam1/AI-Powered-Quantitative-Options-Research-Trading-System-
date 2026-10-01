@@ -26,13 +26,12 @@ A parallel copy of this content lives in the claude.ai project "AI Option Tradin
 - **North star:** long-term real profitability trading options.
 - **The SQLite databases are ground truth for results** (`v1_v2_research_results.db`, `v2_pricing_log.db`, the research-framework DB from `create_research_db_schema.py`). Query them directly — don't trust a remembered number from a prior session or conversation.
 - **Every ML-track experiment comparing a richer/nonlinear model against a simpler baseline must include a `shuffled_target_placebo` robustness check (target randomly permuted before training; the check PASSES if it shows NO significant effect).** Added 2026-09-25, prompted by the XGBoost feature-interaction experiment (Section 44) where this was the single most decisive check in the whole run — it confirmed the pipeline had no leakage, and directly demonstrated the tiny real-data effect size sat inside the noise band the placebo itself established. Non-negotiable for this class of experiment going forward, same severity as the id-date rule is for EODHD queries.
-- **No new hypothesis until one of the current three resolves** (user decision, 2026-10-01): IV term-structure Stage 2 (v2 since 2026-10-01; locks ~2027-06-10), SPY GEX v3 (since 2026-10-01; locks ~2027-01-27), and the 59-ticker Target C redesign (not yet registered). Design fixes to these three are fine; opening a fourth is not.
-  - **PROPOSED 2026-10-01, NOT YET DECIDED — cross-sectional volatility-premium pivot.**
-    - **The pivot:** rank the 59-ticker universe monthly on an IV signal (realized-minus-implied gap, or term-structure slope); long straddles on one end, short on the other; costs inside the test.
-    - **Reasoning:** the same evening's IV Stage 1 economic check found that time-series RV prediction mostly reflects the already-priced IV level (Section 33). The user proposes treating the pivot as a logged exception to this rule.
-    - **Claude's assessment:** it is a genuinely new hypothesis, so call it that. Cleaner alternative: put it **in the third slot instead of** the 59-ticker Target C design. Target C is unregistered and predicts relative RV, so it inherits the same "RV, not RV − IV" problem. That keeps the count at three, with no exception needed.
-    - **Either way:** it counts toward the project's trial count for multiple-testing purposes, and one primary signal is fixed before any data is examined.
-    - IV Stage 2 and SPY GEX v3 continue untouched to their locks. Awaiting the user's choice.
+- **No new hypothesis until one of the current three resolves** (user decision, 2026-10-01): IV term-structure Stage 2 (v2 since 2026-10-01; locks ~2027-06-10), SPY GEX v3 (since 2026-10-01; locks ~2027-01-27), and **the cross-sectional straddle hypothesis (Section 62), which took the 59-ticker Target C slot on 2026-10-01** (Target C retired, Section 60). Design fixes to these three are fine; opening a fourth is not.
+  - **DECIDED 2026-10-01 (user): slot swap, not an exception.** Target C was retired because it predicted (relative) realized vol, the same structural flaw the IV Stage 1 economic check exposed that evening (Section 33): forecasting RV mostly recovers the already-priced IV level, while a tradeable position pays RV − IV. The cross-sectional straddle hypothesis, whose payoff *is* the RV − IV gap, took its slot. The count stays at three; no exception was used.
+- **Program-level hypothesis-trial tally** (added 2026-10-01). Every hypothesis whose outcome has been examined against data, or that is pre-registered and pending, counts once; any future Deflated Sharpe Ratio or multiple-testing assessment uses this count as the number of trials. Versions of one hypothesis (v1→v2→v3) count once.
+  1. V1 entry signal / Phase 6 · 2. ML Experiment 1 · 3. GEX call-wall-distance · 4. GEX net gamma regime · 5. Strike-positioning OI skew · 6. XGBoost feature interactions · 7. XGBoost vol vs Ridge · 8. RF vol vs Ridge (v1+v2) · 9. Regularized XGBoost vol · 10. IV term-structure slope (pending Stage 2) · 11. SPY GEX call-wall vs vol (pending) · **12. Cross-sectional straddle, Goyal–Saretto RV−IV gap (Section 62, in development)**.
+  - Not counted: Target C (designed, never run, no outcome examined) and the 5-bar horizon exploration (exploratory, already invalidated).
+  - The exploratory economic sanity check (Section 33) is analysis of trial 10, not a new trial.
 - **Every pre-registration carries a `POWER_ANALYSIS` block** (added 2026-10-01): built with `power_analysis.power_table()` at the locked N and α, placed **outside** the `ExperimentConfig` so it never changes the hash. Report power at the floor effect and at r = 0.20 / 0.25, plus the smallest effect detectable with 80% power. With a low-power design, a REJECTED means "no effect ≥ that detectable size", not "no effect".
 - **Before assuming a roadmap area is "untouched" or building a new script from scratch, check the actual codebase first** (grep filenames, read existing scripts). This has burned us twice: two "newly discovered" bugs already had fixes elsewhere, and the Gamma/GEX area was wrongly marked "Untouched" when a real pipeline already existed.
 - **A pre-registration's `config_hash` freezes the analysis plan (hypothesis, test statistic, decision rules, thresholds) — it does NOT freeze, version, or fingerprint the contents of whatever external dataset `dataset_version` points to.** Confirmed directly from `canonical_hash.py:compute_config_hash()`: it hashes only `ExperimentConfig`'s own declared fields; it has no path that reads the referenced SQLite database, and `dataset_version` (`experiment_config.py:46`) is a plain string label, not a content hash. **Rule, made explicit 2026-09-28 after the Section 56 data-contamination fix, but consistent with every prior hash-change event in this project** (GEX call-wall-distance's `date_range` fix, IV term structure's `test_period` fix, SPY GEX's N-off-by-one/OPEX fixes, the regularized-XGBoost-v2 placebo-leak fix — every one of these changed the hash because a literal `ExperimentConfig` field was edited, never because underlying data was merely regenerated): **a disclosed, root-caused fix to an upstream data-generation bug does NOT require a new hash, provided no `ExperimentConfig` field is edited** — it restores fidelity to the original frozen plan rather than creating a new one, and forcing a rehash for every such fix would make hash changes noisy and erase the one distinction they exist to preserve (methodology-frozen vs. not). **Real, disclosed gap this exposes**: since `dataset_version` is just a static label, the same hash can silently span two empirically different dataset realizations over time (e.g., `472bf091...` refers to both the pre- and post-2026-09-27 `xgboost_volatility_dataset.db`) with nothing in the config distinguishing which one a given reported result used — worth closing going forward (a generation-date-qualified label or literal content hash for `dataset_version`), not by retroactively rehashing already-reported results.
@@ -1107,7 +1106,19 @@ The Stage 2 script is `generate_iv_termstructure_stage2_dataset.py` (task `IVTer
 
 **Condensed 2026-10-01 to current state.** The full design history and the complete operational log of 2026-09-29 → 2026-10-01 (quota exhaustion, call-volume investigation, the provided-script review, network crashes, Modern Standby kills, the manual catch-ups, the `schtasks /run` test, the full probe table) are in the archive.
 
-**Experiment (locked design, NOT submitted, NOT run).**
+**⛔ RETIRED 2026-10-01 (user decision): Target C will not be registered or run.**
+- **Why, specifically:** Target C predicts forward realized vol (relative to each ticker's own history), not what a volatility position pays. The IV Stage 1 economic check that evening (Section 33) showed this class of target mostly recovers the already-priced implied-vol level. The slope's correlation with RV was −0.25 to −0.30, but with the straddle payoff (RV − IV)/IV only −0.07 to −0.10, about one spread. Target C's ticker-demeaning removes Section 58's ticker-mean confound but not this one, so even a clean pass would not have been tradeable.
+- **Replaced by:** the cross-sectional straddle hypothesis (Section 62), which takes its slot under Section 1's three-hypothesis rule.
+- **What happened to the pieces:**
+  - The pre-registration file stays as written and was never registered (hash `10f10a13…`).
+  - `broader_universe_volatility_dataset.db` stays as is (34/59 tickers complete, 23,552 candidates).
+  - Task `BroaderUniverse_Volatility_Nightly_Update` was **disabled**.
+  - `quota_probe_and_resume.py` no longer relaunches the backfill (`TARGET_C_RETIRED`).
+  - The health check reports the backfill as retired.
+  - The freed daily EODHD quota goes to Section 62's option snapshot collection.
+- **Reusable for Section 62:** the ticker universe and IPO/depth checks, the RAW/ADJUSTED price rule, the quota-safe fetch pattern, and the walk-forward purge logic.
+
+**Experiment (locked design, NOT submitted, NOT run) — retired, see above.**
 - **Files:** `preregister_broader_universe_volatility_c_experiment.py`, `config_hash` `10f10a1364cd6034bc578c6807b9582a5fbe5f5912648cc71d2525f624e699cc` (was `bf9fef62…` until the 2026-10-01 purge fix below).
 - **Universe:** 59 tickers (the original 6 + 53).
 - **Target C:** forward realized vol relative to the ticker's own trailing history. This structurally removes Section 58's ticker-mean confound.
@@ -1227,6 +1238,45 @@ On success, backfill and GEX results are logged as separate rows prefixed `[BACK
 | 2026-10-01T20:23:01 | 429 (blocked) | none (durable probe task; backfill and GEX untouched) |
 
 ---
+
+## 62. Twelfth hypothesis: cross-sectional straddle (volatility-premium) strategy — Phase 0 decisions (2026-10-01; in development, NOT pre-registered)
+
+Takes Target C's slot (Sections 1, 60). Trial #12 in the program tally (Section 1).
+
+**Phase 0 decisions (user, 2026-10-01), all fixed BEFORE any snapshot data existed:**
+- **Hypothesis family:** each month, rank the eligible universe on a volatility signal; long ATM straddles on the top end, short (as iron butterflies) on the bottom end; hold to the next monthly expiration; all execution costs inside the test.
+- **Primary signal, FIXED:** Goyal–Saretto (2009) realized-minus-implied gap, `HV − IV`.
+  - HV = annualized stdev of daily log returns over the 252 trading days ending at the entry close (split-adjusted closes).
+  - IV = mean of EODHD implied vol for the ATM call and put of the target expiration on the entry date (strike nearest the raw entry close).
+  - Direction: **long straddles where HV − IV is highest, short where it is lowest.**
+- **Secondary / robustness only:** cross-sectional IV term-structure slope (Vasquez 2017). Never promoted to primary after seeing data.
+- **Calendar** (`straddle_schedule.py`): entry = first trading day after a monthly expiration (3rd Friday, or the prior trading day on a holiday); target = the next monthly expiration; exit variant = the last trading day before it.
+- **Data windows (fixed):**
+  - **DEV** = cycles with target expiry ≤ 2025-09-30: 23 cycles, 2023-10-23 → 2025-09-19. Exploration allowed.
+  - **BLIND** = later cycles: 13 so far. A pipeline go/no-go gate only, not confirmatory. **Not to be examined until the gate runs.**
+  - **Confirmation:** later, on untouched pre-2023 history (ORATS or a one-time purchase), only once the confirmatory test is ready.
+- **Liquidity rule (approved), applied at each entry using only data known at entry:**
+  - The ticker's ATM ~30-day straddle quoted full spread must be ≤ 5% of mid, as the median over its current and previous up-to-5 entry snapshots.
+  - **Open-interest floor:** each ATM leg ≥ 100 contracts AND total open interest across the target expiration ≥ 1,000.
+  - Reasoning for the OI numbers: a planned position of ~1–5 contracts per leg stays ≤ ~5% of the strike's open interest, and the expiration-level floor drops thinly traded chains whose quotes may be stale. The spread rule does most of the filtering; the OI floor is a backstop.
+  - Expected to exclude SMCI/MSTR-type names.
+- **Structures and risk:**
+  - Long leg = ATM straddle (bought at the ask).
+  - Short leg = **iron butterfly**: short ATM straddle at the bid, long wings at the call/put with |delta| nearest 0.10 at the ask. Capped loss is a hard requirement; no naked short straddles.
+  - No stop-losses on the options; risk is capped by the wings and by position sizing.
+  - Returns on the short leg are measured on max-loss capital (wing width − net credit).
+- **Delta hedge:** optional variant, once daily at the close, stock-only, Black-Scholes delta at the entry IV. Hedge cost: 1 bp of hedge notional traded. Literature convention (e.g. Cao & Han).
+- **Costs:**
+  - Entry at ask (long) / bid (short), with variants at mid + 0.5× and 1× the half-spread.
+  - Exit at expiry intrinsic using the RAW close against strikes (Section 56 rule), or at the close of the day before expiry, paying the exit spread.
+- **Splits:** any ticker-cycle whose holding window contains a split (detected from the raw vs split-adjusted close ratio) is excluded, since option contracts get adjusted.
+- **Earnings source — SEC EDGAR, decided 2026-10-01:**
+  - EODHD's plan has no earnings data (`/api/calendar/earnings` → HTTP 403 "Only EOD data allowed for free users").
+  - `earnings_dates_edgar.py` → `earnings_dates.db` uses the official, free, keyless EDGAR submissions API: US issuers' 8-K Item 2.02 filings, with exact acceptance time mapped to the affected session (after 16:00 ET → next session; before 09:30 → same day). Paged older filings are included.
+  - Coverage: **54/58 single stocks `ok`.** ASML, ARM and NIO are foreign filers with untagged 6-Ks, and XOM files results under other items. Those 4 are `unknown`, and SPY has no earnings.
+  - Caveat: some issuers also tag pre-announcements or delivery reports as 2.02 (TSLA, LCID), so the flag is conservative ("a results disclosure fell in the window").
+  - Use: an earnings-in-window flag for stratification and robustness, not a filter on the primary.
+- **Phase 3 quotes:** Interactive Brokers (OPRA top-of-book $1.50/month, waived at $20/month in commissions; IBKR Pro, ~$500 balance). No Alpaca $99 tier.
 
 ## 61. How to use this file
 

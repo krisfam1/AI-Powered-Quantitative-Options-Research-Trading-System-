@@ -182,7 +182,9 @@ def check_data(state):
     except Exception as exc:
         add("data", "IV Stage 2 rows", "FAIL", f"query failed: {exc}")
 
-    try:
+    # 2026-10-01: the 59-ticker Target C backfill is RETIRED (task disabled, probe no longer relaunches it).
+    add("data", "59-ticker backfill", "OK", "retired 2026-10-01 with Target C; dataset kept as is")
+    if False:
         with sqlite3.connect("broader_universe_volatility_dataset.db") as c:
             s = dict(c.execute("SELECT ticker, COUNT(*) FROM volatility_training_examples GROUP BY ticker"))
             e = dict(c.execute("SELECT ticker, COUNT(*) FROM volatility_excluded GROUP BY ticker"))
@@ -203,8 +205,6 @@ def check_data(state):
         else:
             add("data", "59-ticker backfill", "WARN", detail + " -- no progress, quota blocked all period")
         state["backfill_total"] = total
-    except Exception as exc:
-        add("data", "59-ticker backfill", "FAIL", f"query failed: {exc}")
 
 
 # ----------------------------------------------------------------- (b) tasks
@@ -254,8 +254,6 @@ DAILY_TASKS = {
         r"^DAILY PROSPECTIVE COLLECTION RUN -- (\d{4}-\d\d-\d\d)", r"INTEGRITY CHECK: PASSED"),
     "IVTermStructure_Stage2_Nightly_Update": ("iv_termstructure_stage2_generation_log.txt",
         r"^=== RUN START (\S+) \|", r"=== RUN (COMPLETE|STOPPED EARLY \(QUOTA\))"),
-    "BroaderUniverse_Volatility_Nightly_Update": ("broader_universe_volatility_generation_log.txt",
-        r"^=== RUN START (\S+) \|", r"=== RUN (COMPLETE|STOPPED EARLY \(QUOTA\))|DONE:"),
     "PreventSleep_DuringCollectionWindow": (None, None, None),
 }
 

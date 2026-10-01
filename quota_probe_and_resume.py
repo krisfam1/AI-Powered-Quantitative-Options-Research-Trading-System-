@@ -106,7 +106,12 @@ def backfill_procs(marker):
     return out
 
 
+TARGET_C_RETIRED = True   # 2026-10-01: Target C retired; its quota goes to the option snapshot collector
+
+
 def do_backfill():
+    if TARGET_C_RETIRED and not DRY:
+        return "[BACKFILL] retired 2026-10-01 (Target C design retired; not relaunched)"
     complete, n_done, n_all, partial = backfill_status()
     if complete:
         return f"[BACKFILL] complete ({n_done}/{n_all}), nothing to do"
