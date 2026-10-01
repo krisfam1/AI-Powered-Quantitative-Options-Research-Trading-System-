@@ -1,0 +1,132 @@
+{
+  "density_results": {
+    "2023-12-15": {
+      "n_available": 59,
+      "n_total": 59,
+      "missing": []
+    },
+    "2024-02-15": {
+      "n_available": 59,
+      "n_total": 59,
+      "missing": []
+    },
+    "2024-04-15": {
+      "n_available": 59,
+      "n_total": 59,
+      "missing": []
+    },
+    "2024-08-15": {
+      "n_available": 59,
+      "n_total": 59,
+      "missing": []
+    },
+    "2024-10-15": {
+      "n_available": 57,
+      "n_total": 59,
+      "missing": [
+        "MARA",
+        "PFE"
+      ]
+    },
+    "2024-12-16": {
+      "n_available": 57,
+      "n_total": 59,
+      "missing": [
+        "COIN",
+        "DKNG"
+      ]
+    },
+    "2025-02-18": {
+      "n_available": 59,
+      "n_total": 59,
+      "missing": []
+    },
+    "2025-04-15": {
+      "n_available": 59,
+      "n_total": 59,
+      "missing": []
+    },
+    "2025-08-15": {
+      "n_available": 59,
+      "n_total": 59,
+      "missing": []
+    },
+    "2025-10-15": {
+      "n_available": 59,
+      "n_total": 59,
+      "missing": []
+    },
+    "2025-12-15": {
+      "n_available": 59,
+      "n_total": 59,
+      "missing": []
+    },
+    "2026-06-15": {
+      "n_available": 59,
+      "n_total": 59,
+      "missing": []
+    }
+  },
+  "incomplete_pagination_events": [],
+  "universe": [
+    "AAPL",
+    "AMD",
+    "MSTR",
+    "NVDA",
+    "SMCI",
+    "TSLA",
+    "MSFT",
+    "GOOGL",
+    "AMZN",
+    "META",
+    "AVGO",
+    "INTC",
+    "MU",
+    "QCOM",
+    "TXN",
+    "LRCX",
+    "AMAT",
+    "ASML",
+    "ARM",
+    "F",
+    "GM",
+    "RIVN",
+    "LCID",
+    "NIO",
+    "WMT",
+    "COST",
+    "TGT",
+    "NKE",
+    "SBUX",
+    "MCD",
+    "HD",
+    "DIS",
+    "JPM",
+    "BAC",
+    "GS",
+    "MS",
+    "V",
+    "MA",
+    "PYPL",
+    "SOFI",
+    "UNH",
+    "JNJ",
+    "PFE",
+    "LLY",
+    "MRNA",
+    "XOM",
+    "CVX",
+    "OXY",
+    "BA",
+    "CAT",
+    "GE",
+    "COIN",
+    "RIOT",
+    "MARA",
+    "PLTR",
+    "SNAP",
+    "ROKU",
+    "DKNG",
+    "AFRM"
+  ]
+}

@@ -1,0 +1,41 @@
+﻿[2026-09-25T12:30:56.533976] Loading data...
+[2026-09-25T12:30:56.583492] Loaded 4027 rows
+[2026-09-25T12:30:56.586394] Split: train=2417 (2023-10-30..2025-06-16), val=809 (..2025-12-30), test=801 (..2026-07-15)
+[2026-09-25T12:30:56.592662] Primary (thinned) test set: 174 observations
+[2026-09-25T12:30:56.671122] Tuning + fitting Model A (Ridge)...
+[2026-09-25T12:30:56.716172] Model A (Ridge) best params: {'alpha': 100.0} (mean CV MAE 0.466766)
+[2026-09-25T12:30:56.716212] Tuning + fitting Model B (XGBoost)...
+[2026-09-25T12:31:20.211553] Model B (XGBoost) best params: {'max_depth': 3, 'min_child_weight': 5, 'reg_alpha': 1.0, 'reg_lambda': 1.0, 'subsample': 0.8, 'colsample_bytree': 0.8} (mean CV MAE 0.428114)
+[2026-09-25T12:31:20.308264] PRIMARY seed=42: R2_A=-0.3273 R2_B=-0.7441 delta=-0.4168 MAE_A=0.279890 MAE_B=0.255080 p=2.1503649662212894e-06
+[2026-09-25T12:31:20.311969] PRIMARY seed=43: R2_A=-0.3273 R2_B=-0.3554 delta=-0.0281 MAE_A=0.279890 MAE_B=0.249053 p=0.00010563827182899113
+[2026-09-25T12:31:20.314776] Full test set (descriptive): n=801 R2_A=-0.3633 R2_B=-0.9115
+[2026-09-25T12:31:20.314813] Robustness 1/5: alternate_model:random_forest...
+[2026-09-25T12:32:07.882700]   RF: R2=0.0708 (vs Ridge -0.3273, delta=+0.3982) p=2.0242003589225964e-07
+[2026-09-25T12:32:07.882744] Robustness 2/5: leave_one_ticker_out...
+[2026-09-25T12:32:07.988681]   excl AAPL: n=145 R2_A=-0.4067 R2_B=-0.9543 delta=-0.5476 p=0.008486625548918953
+[2026-09-25T12:32:08.077306]   excl AMD: n=145 R2_A=-0.2894 R2_B=0.1913 delta=+0.4806 p=5.175099780390995e-10
+[2026-09-25T12:32:08.162128]   excl MSTR: n=145 R2_A=-0.1627 R2_B=-0.7535 delta=-0.5909 p=3.443923878617602e-05
+[2026-09-25T12:32:08.255451]   excl NVDA: n=145 R2_A=-0.2397 R2_B=-1.0838 delta=-0.8441 p=0.021176617317963817
+[2026-09-25T12:32:08.348604]   excl SMCI: n=145 R2_A=0.0045 R2_B=0.3813 delta=+0.3768 p=1.5727646894053446e-06
+[2026-09-25T12:32:08.446707]   excl TSLA: n=145 R2_A=-0.3248 R2_B=-1.7482 delta=-1.4234 p=0.001425474210598923
+[2026-09-25T12:32:08.446752] Robustness 3-4/5: alternate_horizon 10day, 50day...
+[2026-09-25T12:32:27.982983]   10-day: R2_A=-0.1954 R2_B=-0.1946 delta=+0.0008 p=0.00026394228133867445
+[2026-09-25T12:32:47.054989]   50-day: R2_A=-1.3042 R2_B=-0.6621 delta=+0.6420 p=2.2196319493558132e-08
+[2026-09-25T12:32:47.055035] Robustness 5/5: shuffled_target_placebo...
+[2026-09-25T12:32:47.176376]   SHUFFLED: R2_A=-0.0570 R2_B=-0.3221 delta=-0.2651 p=0.9829839012384437 (expect: NOT significant)
+[2026-09-25T12:32:47.176418] Concentration check...
+[2026-09-25T12:32:47.182689]   AAPL: {'n': 29, 'mean_abs_err_diff_a_minus_b': 0.22724587212323102}
+[2026-09-25T12:32:47.182726]   AMD: {'n': 29, 'mean_abs_err_diff_a_minus_b': -0.33806684392680597}
+[2026-09-25T12:32:47.182739]   MSTR: {'n': 29, 'mean_abs_err_diff_a_minus_b': -0.0953982829474724}
+[2026-09-25T12:32:47.182752]   NVDA: {'n': 29, 'mean_abs_err_diff_a_minus_b': 0.052724728767610494}
+[2026-09-25T12:32:47.182762]   SMCI: {'n': 29, 'mean_abs_err_diff_a_minus_b': 0.16424917604841183}
+[2026-09-25T12:32:47.182775]   TSLA: {'n': 29, 'mean_abs_err_diff_a_minus_b': 0.13810846454250247}
+[2026-09-25T12:32:47.182783] 
+Applying decision rules...
+[2026-09-25T12:32:47.182816] 
+====================================================================================================
+[2026-09-25T12:32:47.182833] VERDICT: REJECTED
+[2026-09-25T12:32:47.182841] REASON: effect size (R2 delta) below 0.05 threshold (both seeds); leave_one_ticker_out: at least one exclusion reverses direction
+[2026-09-25T12:32:47.182849] ====================================================================================================
+[2026-09-25T12:32:47.184273] 
+Full results written to xgboost_volatility_stage1_results.json

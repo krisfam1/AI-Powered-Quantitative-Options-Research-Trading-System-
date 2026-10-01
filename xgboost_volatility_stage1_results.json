@@ -1,0 +1,166 @@
+{
+  "total_rows": 4033,
+  "split": {
+    "train_n": 2423,
+    "val_n": 809,
+    "test_n": 801,
+    "train_start": "2023-10-30",
+    "train_end": "2025-06-18",
+    "val_end": "2025-12-31",
+    "test_end": "2026-07-16"
+  },
+  "primary_test_n": 173,
+  "model_a_params": {
+    "alpha": 50.0
+  },
+  "model_b_params": {
+    "max_depth": 2,
+    "min_child_weight": 10,
+    "reg_alpha": 1.0,
+    "reg_lambda": 5.0,
+    "subsample": 0.7,
+    "colsample_bytree": 0.7
+  },
+  "primary_result": {
+    "seed42": {
+      "r2_a": 0.2955218857486477,
+      "r2_b": 0.39094411880575175,
+      "r2_delta": 0.09542223305710407,
+      "mae_a": 0.19027009346641838,
+      "mae_b": 0.17571158511975313,
+      "wilcoxon_stat": 8907.0,
+      "wilcoxon_p_one_sided": 0.018126249383610647
+    },
+    "seed43": {
+      "r2_a": 0.2955218857486477,
+      "r2_b": 0.3825747858489895,
+      "r2_delta": 0.08705290010034183,
+      "mae_a": 0.19027009346641838,
+      "mae_b": 0.1766863638881162,
+      "wilcoxon_stat": 8886.0,
+      "wilcoxon_p_one_sided": 0.019591870548894958
+    }
+  },
+  "full_test_set_descriptive": {
+    "n": 801,
+    "r2_a": 0.30582293660238247,
+    "r2_b": 0.3961445551969629
+  },
+  "robustness_random_forest": {
+    "params": {
+      "max_depth": 4,
+      "min_samples_leaf": 10,
+      "max_features": "sqrt"
+    },
+    "r2": 0.36672383015174004,
+    "r2_delta_vs_a": 0.07120194440309235,
+    "wilcoxon_p": 0.6912714754470274,
+    "direction_positive": true
+  },
+  "robustness_leave_one_ticker_out": {
+    "AAPL": {
+      "n": 145,
+      "r2_a": 0.16377886069352943,
+      "r2_b": 0.2292742878971441,
+      "r2_delta": 0.06549542720361468,
+      "wilcoxon_p": 0.000719610704721524
+    },
+    "AMD": {
+      "n": 144,
+      "r2_a": 0.33020066754166444,
+      "r2_b": 0.4480059408708523,
+      "r2_delta": 0.11780527332918789,
+      "wilcoxon_p": 5.834061431958545e-05
+    },
+    "MSTR": {
+      "n": 144,
+      "r2_a": 0.36009114357668304,
+      "r2_b": 0.40959927290136144,
+      "r2_delta": 0.04950812932467841,
+      "wilcoxon_p": 0.12086839905983732
+    },
+    "NVDA": {
+      "n": 144,
+      "r2_a": 0.2460508993662086,
+      "r2_b": 0.3131580208368808,
+      "r2_delta": 0.06710712147067222,
+      "wilcoxon_p": 0.059669771559868974
+    },
+    "SMCI": {
+      "n": 144,
+      "r2_a": 0.426929913108794,
+      "r2_b": 0.369919161417529,
+      "r2_delta": -0.057010751691265016,
+      "wilcoxon_p": 0.9947466695204902
+    },
+    "TSLA": {
+      "n": 144,
+      "r2_a": 0.25811901884975275,
+      "r2_b": 0.35673012370804846,
+      "r2_delta": 0.09861110485829572,
+      "wilcoxon_p": 0.00038080045890861807
+    }
+  },
+  "robustness_alternate_horizon": {
+    "10day": {
+      "r2_a": 0.17502786331415476,
+      "r2_b": 0.2626594227827609,
+      "r2_delta": 0.08763155946860612,
+      "wilcoxon_p": 0.04085042013369726
+    },
+    "50day": {
+      "r2_a": 0.41779476004711746,
+      "r2_b": 0.43646992493210224,
+      "r2_delta": 0.018675164884984774,
+      "wilcoxon_p": 0.20031023254374242
+    }
+  },
+  "robustness_shuffled_target_placebo": {
+    "r2_a_shuffled": 0.03068559380660829,
+    "r2_b_shuffled": -0.04111200079285071,
+    "r2_delta_shuffled": -0.071797594599459,
+    "wilcoxon_p_shuffled": 0.9999981718921802,
+    "significant_at_0.05": false
+  },
+  "concentration_check": {
+    "per_ticker": {
+      "AAPL": {
+        "n": 28,
+        "mean_abs_err_diff_a_minus_b": 0.034385459762396126
+      },
+      "AMD": {
+        "n": 29,
+        "mean_abs_err_diff_a_minus_b": -0.014452719824216406
+      },
+      "MSTR": {
+        "n": 29,
+        "mean_abs_err_diff_a_minus_b": 0.028047533874981195
+      },
+      "NVDA": {
+        "n": 29,
+        "mean_abs_err_diff_a_minus_b": -0.0071468235240905445
+      },
+      "SMCI": {
+        "n": 29,
+        "mean_abs_err_diff_a_minus_b": 0.06432434354850357
+      },
+      "TSLA": {
+        "n": 29,
+        "mean_abs_err_diff_a_minus_b": -0.01712305577772954
+      }
+    }
+  },
+  "decision_inputs": {
+    "primary_n": 173,
+    "n_meets_floor": true,
+    "primary_significant_both_seeds": false,
+    "effect_met_both_seeds": true,
+    "rf_ok": true,
+    "loto_ok": false,
+    "horizon_ok": true,
+    "placebo_leaked": false,
+    "all_five_ok": false
+  },
+  "verdict": "REJECTED",
+  "verdict_reason": "primary test not significant at corrected alpha=0.0167 (both seeds); leave_one_ticker_out: at least one exclusion reverses direction"
+}

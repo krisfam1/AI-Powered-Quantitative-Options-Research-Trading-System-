@@ -79,7 +79,7 @@ _HTML = """\
 <body>
 <div class="card">
   <h1>&#9889; Trading Kill Switch</h1>
-  <p class="sub">Paper account — AAPL / TSLA / NVDA</p>
+  <p class="sub">Paper account — AAPL / TSLA / NVDA / AMD / SMCI / MSTR</p>
 
   {status_badge}
 
@@ -106,7 +106,7 @@ _HTML = """\
 def _render_status(token: str) -> str:
     paused = STOP_FILE.exists()
     now_et = datetime.now(ET)
-    time_str = now_et.strftime("%A %b %-d, %H:%M ET")
+    time_str = now_et.strftime("%A %b %#d, %H:%M ET")
 
     # Market status string
     wd = now_et.weekday()

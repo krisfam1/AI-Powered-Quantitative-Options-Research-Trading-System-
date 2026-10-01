@@ -1,0 +1,129 @@
+{
+  "validation": {
+    "bs_call": 0.7175086429497561,
+    "lsm_call_q0": 0.7115342099384413,
+    "call_relative_diff_pct": 0.8326635602260197,
+    "bs_put": 5.556536269771172,
+    "lsm_put_q0": 5.579887092469368,
+    "put_premium_pct": 0.4202406240958105
+  },
+  "n_processed": 2599,
+  "n_errors": 0,
+  "overall": {
+    "q0_pct_mean": -0.2788759351474869,
+    "q0_pct_median": -0.29734685433639074,
+    "q0_pct_std": 0.5419138940841366,
+    "q0_pct_min": -2.2990246442002555,
+    "q0_pct_max": 1.9375667645274854,
+    "q0_dollar_mean": -0.018009468301516184,
+    "qreal_pct_mean": -0.3691774961302266,
+    "qreal_pct_median": -0.37429346930580787,
+    "qreal_pct_std": 0.6011543494940121,
+    "qreal_pct_min": -2.530377384178384,
+    "qreal_pct_max": 1.903852295382692,
+    "qreal_dollar_mean": -0.019993250079244834
+  },
+  "by_ticker": {
+    "AAPL": {
+      "n": 398,
+      "dividend_yield_used": 0.0045,
+      "q0_mean_pct": -0.4067115299952111,
+      "qreal_mean_pct": -0.9734430806363643,
+      "qreal_max_pct": 0.5645747519540336
+    },
+    "AMD": {
+      "n": 452,
+      "dividend_yield_used": 0.0,
+      "q0_mean_pct": -0.24119276316094113,
+      "qreal_mean_pct": -0.24119276316094113,
+      "qreal_max_pct": 1.6115964383922103
+    },
+    "MSTR": {
+      "n": 434,
+      "dividend_yield_used": 0.0,
+      "q0_mean_pct": -0.24950090380446566,
+      "qreal_mean_pct": -0.24950090380446566,
+      "qreal_max_pct": 1.4733814397938956
+    },
+    "NVDA": {
+      "n": 439,
+      "dividend_yield_used": 0.0003,
+      "q0_mean_pct": -0.2789235143917602,
+      "qreal_mean_pct": -0.29973125889964536,
+      "qreal_max_pct": 1.903852295382692
+    },
+    "SMCI": {
+      "n": 421,
+      "dividend_yield_used": 0.0,
+      "q0_mean_pct": -0.21147878845732598,
+      "qreal_mean_pct": -0.21147878845732598,
+      "qreal_max_pct": 1.8846676864578107
+    },
+    "TSLA": {
+      "n": 455,
+      "dividend_yield_used": 0.0,
+      "q0_mean_pct": -0.29482385176225046,
+      "qreal_mean_pct": -0.29482385176225046,
+      "qreal_max_pct": 1.32222936173571
+    }
+  },
+  "by_moneyness": {
+    "low (deepest OTM)": {
+      "n": 949,
+      "mean_pct": -0.19938093705040227,
+      "max_pct": 1.903852295382692
+    },
+    "mid": {
+      "n": 786,
+      "mean_pct": -0.2827465535075458,
+      "max_pct": 1.2152199846087806
+    },
+    "high (closest ATM)": {
+      "n": 864,
+      "mean_pct": -0.6343067269961762,
+      "max_pct": 1.050276263011398
+    }
+  },
+  "top5_gaps": [
+    {
+      "ticker": "NVDA",
+      "entry_date": "2024-09-26",
+      "bs_price": 1.037468623147852,
+      "lsm_qreal": 1.0572204933435276,
+      "gap_qreal_pct": 1.903852295382692,
+      "moneyness": 0.9217
+    },
+    {
+      "ticker": "SMCI",
+      "entry_date": "2024-09-26",
+      "bs_price": 5.6082844443223365,
+      "lsm_qreal": 5.71398196900912,
+      "gap_qreal_pct": 1.8846676864578107,
+      "moneyness": 0.8889
+    },
+    {
+      "ticker": "AMD",
+      "entry_date": "2026-07-02",
+      "bs_price": 10.431253853252954,
+      "lsm_qreal": 10.59936356883163,
+      "gap_qreal_pct": 1.6115964383922103,
+      "moneyness": 0.905
+    },
+    {
+      "ticker": "SMCI",
+      "entry_date": "2026-09-16",
+      "bs_price": 0.8309202785059018,
+      "lsm_qreal": 0.8437716366557598,
+      "gap_qreal_pct": 1.5466415349696836,
+      "moneyness": 0.9132
+    },
+    {
+      "ticker": "NVDA",
+      "entry_date": "2025-04-16",
+      "bs_price": 1.2659053482241625,
+      "lsm_qreal": 1.2850540973500904,
+      "gap_qreal_pct": 1.512652518040954,
+      "moneyness": 0.9217
+    }
+  ]
+}

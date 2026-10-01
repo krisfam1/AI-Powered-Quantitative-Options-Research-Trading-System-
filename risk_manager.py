@@ -49,7 +49,7 @@ def calculate_position_size(
         zero or negative (stop above entry), or when the equity budget is too
         small to afford even one share.
     """
-    risk_per_share = entry_price - stop_loss_price
+    risk_per_share = abs(entry_price - stop_loss_price)
     if risk_per_share <= 0:
         return 0
     max_risk_dollars = account_equity * risk_pct

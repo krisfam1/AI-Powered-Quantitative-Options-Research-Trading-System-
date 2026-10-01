@@ -61,3 +61,46 @@ ENV/
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
+
+# --- Python-Backend research project (added 2026-10-01, CLAUDE.md Section 61) ---
+# Secrets: NEVER commit
+.env
+*.env
+.env.*
+
+# Databases and runtime state are DATA, not code (gex_data_cache.db alone is >1 GB).
+# The DBs are the ground truth for results (CLAUDE.md Section 1); back them up separately.
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+*.lock
+.peak_equity
+.options_peak_equity
+STOP_TRADING
+HEALTH_ALERT.txt
+health_check_state.json
+health_check_status.json
+
+# Ongoing logs (one-off experiment *_stdout*.txt outputs ARE kept as result evidence)
+*.log
+*_log.txt
+*.jsonl
+service_logs/
+all_code_dump.txt
+
+# Backups and binaries
+*.bak
+*.bak2
+*.bak3
+*.exe
+
+# Stray files created by accidental shell redirects (left on disk, never committed)
+/20
+/50)
+/None
+/dir
+/list\[dict\]
+/notepad
+/python
+/real

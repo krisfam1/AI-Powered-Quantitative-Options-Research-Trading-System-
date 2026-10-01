@@ -1,0 +1,58 @@
+﻿[2026-09-26T23:15:29.264458] Loading data (Stage 1 window only, locked at obs_date<=2026-07-15)...
+[2026-09-26T23:15:29.290982] Loaded 4027 rows
+[2026-09-26T23:15:29.292536] Split: train=2417 (2023-10-30..2025-06-16), val=809 (..2025-12-30), test=801 (..2026-07-15)
+[2026-09-26T23:15:29.292546] Sanity check vs. pre-registration's cited boundaries (2023-10-02/2025-06-16/2025-12-30/2026-07-15): MATCH
+[2026-09-26T23:15:29.295827] Primary (thinned) test set: 174 observations (expected 174, matching v1/RF-v2's identical window)
+[2026-09-26T23:15:29.316374] Tuning + fitting Model A (Ridge)...
+[2026-09-26T23:15:29.345682] Model A (Ridge) best params: {'alpha': 100.0} (mean CV MAE 0.466766)
+[2026-09-26T23:15:29.345723] Tuning + fitting Model B (regularized XGBoost, 32-combo grid x early stopping)...
+[2026-09-26T23:15:33.648521]     grid search: 8/64 combos evaluated
+[2026-09-26T23:15:37.062851]     grid search: 16/64 combos evaluated
+[2026-09-26T23:15:41.253765]     grid search: 24/64 combos evaluated
+[2026-09-26T23:15:45.404908]     grid search: 32/64 combos evaluated
+[2026-09-26T23:15:49.082031]     grid search: 40/64 combos evaluated
+[2026-09-26T23:15:53.065071]     grid search: 48/64 combos evaluated
+[2026-09-26T23:15:57.890505]     grid search: 56/64 combos evaluated
+[2026-09-26T23:16:02.658468]     grid search: 64/64 combos evaluated
+[2026-09-26T23:16:02.857090] Model B best params: {'max_depth': 3, 'min_child_weight': 15, 'reg_alpha': 5.0, 'reg_lambda': 10.0, 'learning_rate': 0.01, 'subsample': 0.6, 'colsample_bytree': 0.6} (mean CV MAE 0.420436, final best_iteration=485)
+[2026-09-26T23:16:03.108662] PRIMARY seed=42: R2_A=-0.3273 R2_B=-0.2358 delta=+0.0915 (gap-closure threshold=0.1991, met=False) MAE_A=0.279890 MAE_B=0.239759 p=2.1863814674073506e-05
+[2026-09-26T23:16:03.111132] PRIMARY seed=43: R2_A=-0.3273 R2_B=-0.3102 delta=+0.0171 (gap-closure threshold=0.1793, met=False) MAE_A=0.279890 MAE_B=0.242296 p=2.8641897833356712e-05
+[2026-09-26T23:16:03.112827] Full test set (descriptive): n=801 R2_A=-0.3633 R2_B=-0.2412
+[2026-09-26T23:16:03.112844] Robustness 1/5: leave_one_ticker_out (AMD tracked explicitly)...
+[2026-09-26T23:16:03.329478]   excl AAPL: n=145 R2_A=-0.4067 R2_B=-0.6010 delta=-0.1943 p=0.02873211125579991
+[2026-09-26T23:16:03.553878]   excl AMD: n=145 R2_A=-0.2894 R2_B=0.3069 delta=+0.5963 p=8.897258484204257e-09
+[2026-09-26T23:16:03.776937]   excl MSTR: n=145 R2_A=-0.1627 R2_B=-0.3897 delta=-0.2270 p=0.0006102656841926168
+[2026-09-26T23:16:03.968263]   excl NVDA: n=145 R2_A=-0.2397 R2_B=-0.5726 delta=-0.3329 p=0.011108892958138725
+[2026-09-26T23:16:04.184552]   excl SMCI: n=145 R2_A=0.0045 R2_B=0.4016 delta=+0.3971 p=6.360462630416903e-08
+[2026-09-26T23:16:04.374442]   excl TSLA: n=145 R2_A=-0.3248 R2_B=-0.4615 delta=-0.1367 p=0.0007547498349927045
+[2026-09-26T23:16:04.374493]   >>> AMD-SPECIFIC RESULT: {'n': 145, 'r2_a': -0.2893556310897878, 'r2_b': 0.30691919433291825, 'r2_delta': 0.596274825422706, 'wilcoxon_p': 8.897258484204257e-09}
+[2026-09-26T23:16:04.374502] Robustness 2/5: stability_across_seeds (7 seeds, sign-consistency)...
+[2026-09-26T23:16:04.566889]   seed=42: R2_A=-0.3273 R2_B=-0.2358 delta=+0.0915
+[2026-09-26T23:16:04.809129]   seed=43: R2_A=-0.3273 R2_B=-0.3102 delta=+0.0171
+[2026-09-26T23:16:05.033350]   seed=44: R2_A=-0.3273 R2_B=-0.2460 delta=+0.0813
+[2026-09-26T23:16:05.215102]   seed=45: R2_A=-0.3273 R2_B=-0.1256 delta=+0.2017
+[2026-09-26T23:16:05.452304]   seed=46: R2_A=-0.3273 R2_B=-0.3423 delta=-0.0150
+[2026-09-26T23:16:05.645383]   seed=47: R2_A=-0.3273 R2_B=-0.2437 delta=+0.0836
+[2026-09-26T23:16:05.863333]   seed=48: R2_A=-0.3273 R2_B=-0.2593 delta=+0.0681
+[2026-09-26T23:16:05.863406]   >>> STABILITY: sign_consistent=False (deltas: [0.0915, 0.0171, 0.0813, 0.2017, -0.015, 0.0836, 0.0681])
+[2026-09-26T23:16:05.863415] Robustness 3-4/5: alternate_horizon 10day, 50day...
+[2026-09-26T23:16:06.023303]   10-day: R2_A=-0.1954 R2_B=0.0488 delta=+0.2442 p=5.50117435047763e-07
+[2026-09-26T23:16:06.276429]   50-day: R2_A=-1.3042 R2_B=-0.8510 delta=+0.4531 p=1.1776459631701304e-07
+[2026-09-26T23:16:06.276468] Robustness 5/5: shuffled_target_placebo...
+[2026-09-26T23:16:06.435104]   SHUFFLED: R2_A=-0.0570 R2_B=-0.0130 delta=+0.0440 p=0.008663997962054954 (expect: NOT significant)
+[2026-09-26T23:16:06.435143] Concentration check...
+[2026-09-26T23:16:06.436635]   AAPL: {'n': 29, 'mean_abs_err_diff_a_minus_b': 0.20943159903599148}
+[2026-09-26T23:16:06.436663]   AMD: {'n': 29, 'mean_abs_err_diff_a_minus_b': -0.2845884857003795}
+[2026-09-26T23:16:06.436673]   MSTR: {'n': 29, 'mean_abs_err_diff_a_minus_b': -0.048710677973730375}
+[2026-09-26T23:16:06.436681]   NVDA: {'n': 29, 'mean_abs_err_diff_a_minus_b': 0.03512133360230143}
+[2026-09-26T23:16:06.436691]   SMCI: {'n': 29, 'mean_abs_err_diff_a_minus_b': 0.23930199379069206}
+[2026-09-26T23:16:06.436699]   TSLA: {'n': 29, 'mean_abs_err_diff_a_minus_b': 0.09022996713878431}
+[2026-09-26T23:16:06.436705] 
+Applying Stage 1 decision rules (including the gap-closure criterion, pinned 2026-09-26)...
+[2026-09-26T23:16:06.436731] 
+====================================================================================================
+[2026-09-26T23:16:06.436742] STAGE 1 VERDICT: REJECTED (pipeline/leakage flag)
+[2026-09-26T23:16:06.436749] REASON: PIPELINE/LEAKAGE FLAG: shuffled_target_placebo showed a significant effect; basic beats-Ridge effect size (R2 delta) below 0.05 threshold (both seeds); stability_across_seeds: sign flips across the 7 tested seeds; leave_one_ticker_out: at least one exclusion reverses direction
+[2026-09-26T23:16:06.436762] ====================================================================================================
+[2026-09-26T23:16:06.438095] 
+Full results written to xgboost_volatility_v2_stage1_results.json

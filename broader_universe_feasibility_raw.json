@@ -1,0 +1,3754 @@
+{
+  "generated_at": "2026-09-28T23:46:51.011076+00:00",
+  "candidates": {
+    "MSFT": {
+      "alpaca": {
+        "ok": true,
+        "n_bars": 1551,
+        "n_distinct_days": 1551,
+        "earliest": "2020-07-27",
+        "latest": "2026-09-28",
+        "n_gaps_gt4d": 0,
+        "gap_detail": []
+      },
+      "eodhd_probes": {
+        "2023-10-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 862,
+          "n_id_matched": 862,
+          "n_usable": 694,
+          "n_usable_calls": 324,
+          "n_usable_puts": 370,
+          "has_both_sides": true
+        },
+        "2024-06-03": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 818,
+          "n_id_matched": 818,
+          "n_usable": 662,
+          "n_usable_calls": 359,
+          "n_usable_puts": 303,
+          "has_both_sides": true
+        },
+        "2025-06-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 617,
+          "n_id_matched": 428,
+          "n_usable": 428,
+          "n_usable_calls": 211,
+          "n_usable_puts": 217,
+          "has_both_sides": true
+        },
+        "2026-09-01": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 2,
+          "n_raw_records": 1045,
+          "n_id_matched": 923,
+          "n_usable": 923,
+          "n_usable_calls": 465,
+          "n_usable_puts": 458,
+          "has_both_sides": true
+        }
+      }
+    },
+    "GOOGL": {
+      "alpaca": {
+        "ok": true,
+        "n_bars": 1551,
+        "n_distinct_days": 1551,
+        "earliest": "2020-07-27",
+        "latest": "2026-09-28",
+        "n_gaps_gt4d": 0,
+        "gap_detail": []
+      },
+      "eodhd_probes": {
+        "2023-10-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 796,
+          "n_id_matched": 796,
+          "n_usable": 666,
+          "n_usable_calls": 328,
+          "n_usable_puts": 338,
+          "has_both_sides": true
+        },
+        "2024-06-03": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 654,
+          "n_id_matched": 654,
+          "n_usable": 482,
+          "n_usable_calls": 280,
+          "n_usable_puts": 202,
+          "has_both_sides": true
+        },
+        "2025-06-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 419,
+          "n_id_matched": 274,
+          "n_usable": 274,
+          "n_usable_calls": 143,
+          "n_usable_puts": 131,
+          "has_both_sides": true
+        },
+        "2026-09-01": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 935,
+          "n_id_matched": 805,
+          "n_usable": 805,
+          "n_usable_calls": 464,
+          "n_usable_puts": 341,
+          "has_both_sides": true
+        }
+      }
+    },
+    "AMZN": {
+      "alpaca": {
+        "ok": true,
+        "n_bars": 1551,
+        "n_distinct_days": 1551,
+        "earliest": "2020-07-27",
+        "latest": "2026-09-28",
+        "n_gaps_gt4d": 0,
+        "gap_detail": []
+      },
+      "eodhd_probes": {
+        "2023-10-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 714,
+          "n_id_matched": 714,
+          "n_usable": 669,
+          "n_usable_calls": 331,
+          "n_usable_puts": 338,
+          "has_both_sides": true
+        },
+        "2024-06-03": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 608,
+          "n_id_matched": 608,
+          "n_usable": 493,
+          "n_usable_calls": 271,
+          "n_usable_puts": 222,
+          "has_both_sides": true
+        },
+        "2025-06-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 461,
+          "n_id_matched": 328,
+          "n_usable": 328,
+          "n_usable_calls": 178,
+          "n_usable_puts": 150,
+          "has_both_sides": true
+        },
+        "2026-09-01": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 711,
+          "n_id_matched": 624,
+          "n_usable": 624,
+          "n_usable_calls": 341,
+          "n_usable_puts": 283,
+          "has_both_sides": true
+        }
+      }
+    },
+    "META": {
+      "alpaca": {
+        "ok": true,
+        "n_bars": 1551,
+        "n_distinct_days": 1551,
+        "earliest": "2020-07-27",
+        "latest": "2026-09-28",
+        "n_gaps_gt4d": 0,
+        "gap_detail": []
+      },
+      "eodhd_probes": {
+        "2023-10-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 2,
+          "n_raw_records": 1270,
+          "n_id_matched": 1270,
+          "n_usable": 1023,
+          "n_usable_calls": 498,
+          "n_usable_puts": 525,
+          "has_both_sides": true
+        },
+        "2024-06-03": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 2,
+          "n_raw_records": 1274,
+          "n_id_matched": 1274,
+          "n_usable": 1037,
+          "n_usable_calls": 525,
+          "n_usable_puts": 512,
+          "has_both_sides": true
+        },
+        "2025-06-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 2,
+          "n_raw_records": 1036,
+          "n_id_matched": 772,
+          "n_usable": 772,
+          "n_usable_calls": 415,
+          "n_usable_puts": 357,
+          "has_both_sides": true
+        },
+        "2026-09-01": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 2,
+          "n_raw_records": 1693,
+          "n_id_matched": 1510,
+          "n_usable": 1510,
+          "n_usable_calls": 920,
+          "n_usable_puts": 590,
+          "has_both_sides": true
+        }
+      }
+    },
+    "AVGO": {
+      "alpaca": {
+        "ok": true,
+        "n_bars": 1551,
+        "n_distinct_days": 1551,
+        "earliest": "2020-07-27",
+        "latest": "2026-09-28",
+        "n_gaps_gt4d": 0,
+        "gap_detail": []
+      },
+      "eodhd_probes": {
+        "2023-10-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 2,
+          "n_raw_records": 1278,
+          "n_id_matched": 1278,
+          "n_usable": 1035,
+          "n_usable_calls": 531,
+          "n_usable_puts": 504,
+          "has_both_sides": true
+        },
+        "2024-06-03": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 2,
+          "n_raw_records": 1634,
+          "n_id_matched": 1634,
+          "n_usable": 1441,
+          "n_usable_calls": 777,
+          "n_usable_puts": 664,
+          "has_both_sides": true
+        },
+        "2025-06-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 646,
+          "n_id_matched": 509,
+          "n_usable": 509,
+          "n_usable_calls": 260,
+          "n_usable_puts": 249,
+          "has_both_sides": true
+        },
+        "2026-09-01": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 959,
+          "n_id_matched": 905,
+          "n_usable": 905,
+          "n_usable_calls": 487,
+          "n_usable_puts": 418,
+          "has_both_sides": true
+        }
+      }
+    },
+    "INTC": {
+      "alpaca": {
+        "ok": true,
+        "n_bars": 1551,
+        "n_distinct_days": 1551,
+        "earliest": "2020-07-27",
+        "latest": "2026-09-28",
+        "n_gaps_gt4d": 0,
+        "gap_detail": []
+      },
+      "eodhd_probes": {
+        "2023-10-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 440,
+          "n_id_matched": 440,
+          "n_usable": 386,
+          "n_usable_calls": 202,
+          "n_usable_puts": 184,
+          "has_both_sides": true
+        },
+        "2024-06-03": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 390,
+          "n_id_matched": 390,
+          "n_usable": 344,
+          "n_usable_calls": 174,
+          "n_usable_puts": 170,
+          "has_both_sides": true
+        },
+        "2025-06-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 415,
+          "n_id_matched": 258,
+          "n_usable": 258,
+          "n_usable_calls": 145,
+          "n_usable_puts": 113,
+          "has_both_sides": true
+        },
+        "2026-09-01": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 918,
+          "n_id_matched": 824,
+          "n_usable": 824,
+          "n_usable_calls": 456,
+          "n_usable_puts": 368,
+          "has_both_sides": true
+        }
+      }
+    },
+    "MU": {
+      "alpaca": {
+        "ok": true,
+        "n_bars": 1551,
+        "n_distinct_days": 1551,
+        "earliest": "2020-07-27",
+        "latest": "2026-09-28",
+        "n_gaps_gt4d": 0,
+        "gap_detail": []
+      },
+      "eodhd_probes": {
+        "2023-10-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 494,
+          "n_id_matched": 494,
+          "n_usable": 439,
+          "n_usable_calls": 224,
+          "n_usable_puts": 215,
+          "has_both_sides": true
+        },
+        "2024-06-03": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 760,
+          "n_id_matched": 760,
+          "n_usable": 696,
+          "n_usable_calls": 374,
+          "n_usable_puts": 322,
+          "has_both_sides": true
+        },
+        "2025-06-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 543,
+          "n_id_matched": 391,
+          "n_usable": 391,
+          "n_usable_calls": 206,
+          "n_usable_puts": 185,
+          "has_both_sides": true
+        },
+        "2026-09-01": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 3,
+          "n_raw_records": 2545,
+          "n_id_matched": 2201,
+          "n_usable": 2201,
+          "n_usable_calls": 1124,
+          "n_usable_puts": 1077,
+          "has_both_sides": true
+        }
+      }
+    },
+    "QCOM": {
+      "alpaca": {
+        "ok": true,
+        "n_bars": 1551,
+        "n_distinct_days": 1551,
+        "earliest": "2020-07-27",
+        "latest": "2026-09-28",
+        "n_gaps_gt4d": 0,
+        "gap_detail": []
+      },
+      "eodhd_probes": {
+        "2023-10-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 576,
+          "n_id_matched": 576,
+          "n_usable": 512,
+          "n_usable_calls": 245,
+          "n_usable_puts": 267,
+          "has_both_sides": true
+        },
+        "2024-06-03": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 528,
+          "n_id_matched": 528,
+          "n_usable": 435,
+          "n_usable_calls": 250,
+          "n_usable_puts": 185,
+          "has_both_sides": true
+        },
+        "2025-06-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 281,
+          "n_id_matched": 179,
+          "n_usable": 179,
+          "n_usable_calls": 89,
+          "n_usable_puts": 90,
+          "has_both_sides": true
+        },
+        "2026-09-01": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 394,
+          "n_id_matched": 303,
+          "n_usable": 303,
+          "n_usable_calls": 149,
+          "n_usable_puts": 154,
+          "has_both_sides": true
+        }
+      }
+    },
+    "TXN": {
+      "alpaca": {
+        "ok": true,
+        "n_bars": 1551,
+        "n_distinct_days": 1551,
+        "earliest": "2020-07-27",
+        "latest": "2026-09-28",
+        "n_gaps_gt4d": 0,
+        "gap_detail": []
+      },
+      "eodhd_probes": {
+        "2023-10-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 502,
+          "n_id_matched": 502,
+          "n_usable": 356,
+          "n_usable_calls": 170,
+          "n_usable_puts": 186,
+          "has_both_sides": true
+        },
+        "2024-06-03": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 494,
+          "n_id_matched": 494,
+          "n_usable": 358,
+          "n_usable_calls": 188,
+          "n_usable_puts": 170,
+          "has_both_sides": true
+        },
+        "2025-06-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 251,
+          "n_id_matched": 107,
+          "n_usable": 107,
+          "n_usable_calls": 50,
+          "n_usable_puts": 57,
+          "has_both_sides": true
+        },
+        "2026-09-01": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 330,
+          "n_id_matched": 272,
+          "n_usable": 272,
+          "n_usable_calls": 122,
+          "n_usable_puts": 150,
+          "has_both_sides": true
+        }
+      }
+    },
+    "LRCX": {
+      "alpaca": {
+        "ok": true,
+        "n_bars": 1551,
+        "n_distinct_days": 1551,
+        "earliest": "2020-07-27",
+        "latest": "2026-09-28",
+        "n_gaps_gt4d": 0,
+        "gap_detail": []
+      },
+      "eodhd_probes": {
+        "2023-10-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 2,
+          "n_raw_records": 1168,
+          "n_id_matched": 1168,
+          "n_usable": 983,
+          "n_usable_calls": 470,
+          "n_usable_puts": 513,
+          "has_both_sides": true
+        },
+        "2024-06-03": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 2,
+          "n_raw_records": 1344,
+          "n_id_matched": 1344,
+          "n_usable": 1088,
+          "n_usable_calls": 606,
+          "n_usable_puts": 482,
+          "has_both_sides": true
+        },
+        "2025-06-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 337,
+          "n_id_matched": 194,
+          "n_usable": 194,
+          "n_usable_calls": 100,
+          "n_usable_puts": 94,
+          "has_both_sides": true
+        },
+        "2026-09-01": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 520,
+          "n_id_matched": 446,
+          "n_usable": 446,
+          "n_usable_calls": 231,
+          "n_usable_puts": 215,
+          "has_both_sides": true
+        }
+      }
+    },
+    "AMAT": {
+      "alpaca": {
+        "ok": true,
+        "n_bars": 1551,
+        "n_distinct_days": 1551,
+        "earliest": "2020-07-27",
+        "latest": "2026-09-28",
+        "n_gaps_gt4d": 0,
+        "gap_detail": []
+      },
+      "eodhd_probes": {
+        "2023-10-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 678,
+          "n_id_matched": 678,
+          "n_usable": 599,
+          "n_usable_calls": 300,
+          "n_usable_puts": 299,
+          "has_both_sides": true
+        },
+        "2024-06-03": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 554,
+          "n_id_matched": 554,
+          "n_usable": 452,
+          "n_usable_calls": 253,
+          "n_usable_puts": 199,
+          "has_both_sides": true
+        },
+        "2025-06-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 351,
+          "n_id_matched": 216,
+          "n_usable": 216,
+          "n_usable_calls": 105,
+          "n_usable_puts": 111,
+          "has_both_sides": true
+        },
+        "2026-09-01": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 877,
+          "n_id_matched": 717,
+          "n_usable": 717,
+          "n_usable_calls": 366,
+          "n_usable_puts": 351,
+          "has_both_sides": true
+        }
+      }
+    },
+    "ASML": {
+      "alpaca": {
+        "ok": true,
+        "n_bars": 1551,
+        "n_distinct_days": 1551,
+        "earliest": "2020-07-27",
+        "latest": "2026-09-28",
+        "n_gaps_gt4d": 0,
+        "gap_detail": []
+      },
+      "eodhd_probes": {
+        "2023-10-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 2,
+          "n_raw_records": 1110,
+          "n_id_matched": 1110,
+          "n_usable": 908,
+          "n_usable_calls": 405,
+          "n_usable_puts": 503,
+          "has_both_sides": true
+        },
+        "2024-06-03": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 2,
+          "n_raw_records": 1306,
+          "n_id_matched": 1306,
+          "n_usable": 1122,
+          "n_usable_calls": 607,
+          "n_usable_puts": 515,
+          "has_both_sides": true
+        },
+        "2025-06-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 630,
+          "n_id_matched": 314,
+          "n_usable": 314,
+          "n_usable_calls": 142,
+          "n_usable_puts": 172,
+          "has_both_sides": true
+        },
+        "2026-09-01": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 837,
+          "n_id_matched": 675,
+          "n_usable": 675,
+          "n_usable_calls": 317,
+          "n_usable_puts": 358,
+          "has_both_sides": true
+        }
+      }
+    },
+    "ARM": {
+      "alpaca": {
+        "ok": true,
+        "n_bars": 762,
+        "n_distinct_days": 762,
+        "earliest": "2023-09-14",
+        "latest": "2026-09-28",
+        "n_gaps_gt4d": 0,
+        "gap_detail": []
+      },
+      "eodhd_probes": {
+        "2023-10-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 490,
+          "n_id_matched": 490,
+          "n_usable": 457,
+          "n_usable_calls": 228,
+          "n_usable_puts": 229,
+          "has_both_sides": true
+        },
+        "2024-06-03": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 696,
+          "n_id_matched": 696,
+          "n_usable": 660,
+          "n_usable_calls": 348,
+          "n_usable_puts": 312,
+          "has_both_sides": true
+        },
+        "2025-06-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 519,
+          "n_id_matched": 356,
+          "n_usable": 356,
+          "n_usable_calls": 205,
+          "n_usable_puts": 151,
+          "has_both_sides": true
+        },
+        "2026-09-01": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 560,
+          "n_id_matched": 466,
+          "n_usable": 466,
+          "n_usable_calls": 224,
+          "n_usable_puts": 242,
+          "has_both_sides": true
+        }
+      }
+    },
+    "F": {
+      "alpaca": {
+        "ok": true,
+        "n_bars": 1548,
+        "n_distinct_days": 1548,
+        "earliest": "2020-07-27",
+        "latest": "2026-09-28",
+        "n_gaps_gt4d": 0,
+        "gap_detail": []
+      },
+      "eodhd_probes": {
+        "2023-10-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 336,
+          "n_id_matched": 336,
+          "n_usable": 251,
+          "n_usable_calls": 120,
+          "n_usable_puts": 131,
+          "has_both_sides": true
+        },
+        "2024-06-03": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 346,
+          "n_id_matched": 346,
+          "n_usable": 249,
+          "n_usable_calls": 128,
+          "n_usable_puts": 121,
+          "has_both_sides": true
+        },
+        "2025-06-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 297,
+          "n_id_matched": 142,
+          "n_usable": 140,
+          "n_usable_calls": 79,
+          "n_usable_puts": 61,
+          "has_both_sides": true
+        },
+        "2026-09-01": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 233,
+          "n_id_matched": 194,
+          "n_usable": 193,
+          "n_usable_calls": 114,
+          "n_usable_puts": 79,
+          "has_both_sides": true
+        }
+      }
+    },
+    "GM": {
+      "alpaca": {
+        "ok": true,
+        "n_bars": 1548,
+        "n_distinct_days": 1548,
+        "earliest": "2020-07-27",
+        "latest": "2026-09-28",
+        "n_gaps_gt4d": 0,
+        "gap_detail": []
+      },
+      "eodhd_probes": {
+        "2023-10-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 390,
+          "n_id_matched": 390,
+          "n_usable": 346,
+          "n_usable_calls": 168,
+          "n_usable_puts": 178,
+          "has_both_sides": true
+        },
+        "2024-06-03": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 410,
+          "n_id_matched": 410,
+          "n_usable": 358,
+          "n_usable_calls": 201,
+          "n_usable_puts": 157,
+          "has_both_sides": true
+        },
+        "2025-06-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 294,
+          "n_id_matched": 179,
+          "n_usable": 179,
+          "n_usable_calls": 90,
+          "n_usable_puts": 89,
+          "has_both_sides": true
+        },
+        "2026-09-01": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 233,
+          "n_id_matched": 176,
+          "n_usable": 176,
+          "n_usable_calls": 99,
+          "n_usable_puts": 77,
+          "has_both_sides": true
+        }
+      }
+    },
+    "RIVN": {
+      "alpaca": {
+        "ok": true,
+        "n_bars": 1224,
+        "n_distinct_days": 1224,
+        "earliest": "2021-11-10",
+        "latest": "2026-09-28",
+        "n_gaps_gt4d": 0,
+        "gap_detail": []
+      },
+      "eodhd_probes": {
+        "2023-10-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 424,
+          "n_id_matched": 424,
+          "n_usable": 412,
+          "n_usable_calls": 211,
+          "n_usable_puts": 201,
+          "has_both_sides": true
+        },
+        "2024-06-03": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 380,
+          "n_id_matched": 380,
+          "n_usable": 340,
+          "n_usable_calls": 184,
+          "n_usable_puts": 156,
+          "has_both_sides": true
+        },
+        "2025-06-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 314,
+          "n_id_matched": 208,
+          "n_usable": 203,
+          "n_usable_calls": 119,
+          "n_usable_puts": 84,
+          "has_both_sides": true
+        },
+        "2026-09-01": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 265,
+          "n_id_matched": 220,
+          "n_usable": 220,
+          "n_usable_calls": 122,
+          "n_usable_puts": 98,
+          "has_both_sides": true
+        }
+      }
+    },
+    "LCID": {
+      "alpaca": {
+        "ok": true,
+        "n_bars": 1511,
+        "n_distinct_days": 1511,
+        "earliest": "2020-09-18",
+        "latest": "2026-09-28",
+        "n_gaps_gt4d": 0,
+        "gap_detail": []
+      },
+      "eodhd_probes": {
+        "2023-10-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 266,
+          "n_id_matched": 266,
+          "n_usable": 203,
+          "n_usable_calls": 104,
+          "n_usable_puts": 99,
+          "has_both_sides": true
+        },
+        "2024-06-03": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 152,
+          "n_id_matched": 152,
+          "n_usable": 121,
+          "n_usable_calls": 66,
+          "n_usable_puts": 55,
+          "has_both_sides": true
+        },
+        "2025-06-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 125,
+          "n_id_matched": 75,
+          "n_usable": 73,
+          "n_usable_calls": 44,
+          "n_usable_puts": 29,
+          "has_both_sides": true
+        },
+        "2026-09-01": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 166,
+          "n_id_matched": 124,
+          "n_usable": 124,
+          "n_usable_calls": 63,
+          "n_usable_puts": 61,
+          "has_both_sides": true
+        }
+      }
+    },
+    "NIO": {
+      "alpaca": {
+        "ok": true,
+        "n_bars": 1548,
+        "n_distinct_days": 1548,
+        "earliest": "2020-07-27",
+        "latest": "2026-09-28",
+        "n_gaps_gt4d": 0,
+        "gap_detail": []
+      },
+      "eodhd_probes": {
+        "2023-10-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 352,
+          "n_id_matched": 352,
+          "n_usable": 301,
+          "n_usable_calls": 151,
+          "n_usable_puts": 150,
+          "has_both_sides": true
+        },
+        "2024-06-03": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 254,
+          "n_id_matched": 254,
+          "n_usable": 219,
+          "n_usable_calls": 120,
+          "n_usable_puts": 99,
+          "has_both_sides": true
+        },
+        "2025-06-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 180,
+          "n_id_matched": 94,
+          "n_usable": 90,
+          "n_usable_calls": 52,
+          "n_usable_puts": 38,
+          "has_both_sides": true
+        },
+        "2026-09-01": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 179,
+          "n_id_matched": 142,
+          "n_usable": 142,
+          "n_usable_calls": 78,
+          "n_usable_puts": 64,
+          "has_both_sides": true
+        }
+      }
+    },
+    "WMT": {
+      "alpaca": {
+        "ok": true,
+        "n_bars": 1548,
+        "n_distinct_days": 1548,
+        "earliest": "2020-07-27",
+        "latest": "2026-09-28",
+        "n_gaps_gt4d": 0,
+        "gap_detail": []
+      },
+      "eodhd_probes": {
+        "2023-10-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 466,
+          "n_id_matched": 466,
+          "n_usable": 310,
+          "n_usable_calls": 149,
+          "n_usable_puts": 161,
+          "has_both_sides": true
+        },
+        "2024-06-03": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 446,
+          "n_id_matched": 446,
+          "n_usable": 376,
+          "n_usable_calls": 199,
+          "n_usable_puts": 177,
+          "has_both_sides": true
+        },
+        "2025-06-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 385,
+          "n_id_matched": 267,
+          "n_usable": 267,
+          "n_usable_calls": 126,
+          "n_usable_puts": 141,
+          "has_both_sides": true
+        },
+        "2026-09-01": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 350,
+          "n_id_matched": 315,
+          "n_usable": 315,
+          "n_usable_calls": 170,
+          "n_usable_puts": 145,
+          "has_both_sides": true
+        }
+      }
+    },
+    "COST": {
+      "alpaca": {
+        "ok": true,
+        "n_bars": 1551,
+        "n_distinct_days": 1551,
+        "earliest": "2020-07-27",
+        "latest": "2026-09-28",
+        "n_gaps_gt4d": 0,
+        "gap_detail": []
+      },
+      "eodhd_probes": {
+        "2023-10-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 854,
+          "n_id_matched": 854,
+          "n_usable": 692,
+          "n_usable_calls": 383,
+          "n_usable_puts": 309,
+          "has_both_sides": true
+        },
+        "2024-06-03": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 2,
+          "n_raw_records": 1192,
+          "n_id_matched": 1192,
+          "n_usable": 988,
+          "n_usable_calls": 590,
+          "n_usable_puts": 398,
+          "has_both_sides": true
+        },
+        "2025-06-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 2,
+          "n_raw_records": 1043,
+          "n_id_matched": 525,
+          "n_usable": 525,
+          "n_usable_calls": 243,
+          "n_usable_puts": 282,
+          "has_both_sides": true
+        },
+        "2026-09-01": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 664,
+          "n_id_matched": 547,
+          "n_usable": 547,
+          "n_usable_calls": 274,
+          "n_usable_puts": 273,
+          "has_both_sides": true
+        }
+      }
+    },
+    "TGT": {
+      "alpaca": {
+        "ok": true,
+        "n_bars": 1548,
+        "n_distinct_days": 1548,
+        "earliest": "2020-07-27",
+        "latest": "2026-09-28",
+        "n_gaps_gt4d": 0,
+        "gap_detail": []
+      },
+      "eodhd_probes": {
+        "2023-10-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 686,
+          "n_id_matched": 686,
+          "n_usable": 597,
+          "n_usable_calls": 271,
+          "n_usable_puts": 326,
+          "has_both_sides": true
+        },
+        "2024-06-03": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 532,
+          "n_id_matched": 532,
+          "n_usable": 420,
+          "n_usable_calls": 218,
+          "n_usable_puts": 202,
+          "has_both_sides": true
+        },
+        "2025-06-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 484,
+          "n_id_matched": 286,
+          "n_usable": 286,
+          "n_usable_calls": 149,
+          "n_usable_puts": 137,
+          "has_both_sides": true
+        },
+        "2026-09-01": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 267,
+          "n_id_matched": 201,
+          "n_usable": 201,
+          "n_usable_calls": 108,
+          "n_usable_puts": 93,
+          "has_both_sides": true
+        }
+      }
+    },
+    "NKE": {
+      "alpaca": {
+        "ok": true,
+        "n_bars": 1548,
+        "n_distinct_days": 1548,
+        "earliest": "2020-07-27",
+        "latest": "2026-09-28",
+        "n_gaps_gt4d": 0,
+        "gap_detail": []
+      },
+      "eodhd_probes": {
+        "2023-10-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 562,
+          "n_id_matched": 562,
+          "n_usable": 489,
+          "n_usable_calls": 228,
+          "n_usable_puts": 261,
+          "has_both_sides": true
+        },
+        "2024-06-03": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 482,
+          "n_id_matched": 482,
+          "n_usable": 440,
+          "n_usable_calls": 220,
+          "n_usable_puts": 220,
+          "has_both_sides": true
+        },
+        "2025-06-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 397,
+          "n_id_matched": 266,
+          "n_usable": 266,
+          "n_usable_calls": 134,
+          "n_usable_puts": 132,
+          "has_both_sides": true
+        },
+        "2026-09-01": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 371,
+          "n_id_matched": 310,
+          "n_usable": 310,
+          "n_usable_calls": 147,
+          "n_usable_puts": 163,
+          "has_both_sides": true
+        }
+      }
+    },
+    "SBUX": {
+      "alpaca": {
+        "ok": true,
+        "n_bars": 1551,
+        "n_distinct_days": 1551,
+        "earliest": "2020-07-27",
+        "latest": "2026-09-28",
+        "n_gaps_gt4d": 0,
+        "gap_detail": []
+      },
+      "eodhd_probes": {
+        "2023-10-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 514,
+          "n_id_matched": 514,
+          "n_usable": 430,
+          "n_usable_calls": 198,
+          "n_usable_puts": 232,
+          "has_both_sides": true
+        },
+        "2024-06-03": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 504,
+          "n_id_matched": 504,
+          "n_usable": 448,
+          "n_usable_calls": 235,
+          "n_usable_puts": 213,
+          "has_both_sides": true
+        },
+        "2025-06-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 367,
+          "n_id_matched": 224,
+          "n_usable": 224,
+          "n_usable_calls": 123,
+          "n_usable_puts": 101,
+          "has_both_sides": true
+        },
+        "2026-09-01": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 228,
+          "n_id_matched": 186,
+          "n_usable": 186,
+          "n_usable_calls": 101,
+          "n_usable_puts": 85,
+          "has_both_sides": true
+        }
+      }
+    },
+    "MCD": {
+      "alpaca": {
+        "ok": true,
+        "n_bars": 1548,
+        "n_distinct_days": 1548,
+        "earliest": "2020-07-27",
+        "latest": "2026-09-28",
+        "n_gaps_gt4d": 0,
+        "gap_detail": []
+      },
+      "eodhd_probes": {
+        "2023-10-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 602,
+          "n_id_matched": 602,
+          "n_usable": 432,
+          "n_usable_calls": 198,
+          "n_usable_puts": 234,
+          "has_both_sides": true
+        },
+        "2024-06-03": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 616,
+          "n_id_matched": 616,
+          "n_usable": 482,
+          "n_usable_calls": 231,
+          "n_usable_puts": 251,
+          "has_both_sides": true
+        },
+        "2025-06-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 272,
+          "n_id_matched": 174,
+          "n_usable": 174,
+          "n_usable_calls": 79,
+          "n_usable_puts": 95,
+          "has_both_sides": true
+        },
+        "2026-09-01": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 243,
+          "n_id_matched": 209,
+          "n_usable": 209,
+          "n_usable_calls": 103,
+          "n_usable_puts": 106,
+          "has_both_sides": true
+        }
+      }
+    },
+    "HD": {
+      "alpaca": {
+        "ok": true,
+        "n_bars": 1548,
+        "n_distinct_days": 1548,
+        "earliest": "2020-07-27",
+        "latest": "2026-09-28",
+        "n_gaps_gt4d": 0,
+        "gap_detail": []
+      },
+      "eodhd_probes": {
+        "2023-10-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 650,
+          "n_id_matched": 650,
+          "n_usable": 503,
+          "n_usable_calls": 238,
+          "n_usable_puts": 265,
+          "has_both_sides": true
+        },
+        "2024-06-03": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 702,
+          "n_id_matched": 702,
+          "n_usable": 561,
+          "n_usable_calls": 279,
+          "n_usable_puts": 282,
+          "has_both_sides": true
+        },
+        "2025-06-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 313,
+          "n_id_matched": 188,
+          "n_usable": 188,
+          "n_usable_calls": 91,
+          "n_usable_puts": 97,
+          "has_both_sides": true
+        },
+        "2026-09-01": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 421,
+          "n_id_matched": 344,
+          "n_usable": 344,
+          "n_usable_calls": 180,
+          "n_usable_puts": 164,
+          "has_both_sides": true
+        }
+      }
+    },
+    "DIS": {
+      "alpaca": {
+        "ok": true,
+        "n_bars": 1549,
+        "n_distinct_days": 1549,
+        "earliest": "2018-04-25",
+        "latest": "2026-09-28",
+        "n_gaps_gt4d": 1,
+        "gap_detail": [
+          [
+            "2018-04-25",
+            "2020-07-27",
+            824
+          ]
+        ]
+      },
+      "eodhd_probes": {
+        "2023-10-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 462,
+          "n_id_matched": 462,
+          "n_usable": 421,
+          "n_usable_calls": 204,
+          "n_usable_puts": 217,
+          "has_both_sides": true
+        },
+        "2024-06-03": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 550,
+          "n_id_matched": 550,
+          "n_usable": 489,
+          "n_usable_calls": 244,
+          "n_usable_puts": 245,
+          "has_both_sides": true
+        },
+        "2025-06-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 423,
+          "n_id_matched": 276,
+          "n_usable": 276,
+          "n_usable_calls": 159,
+          "n_usable_puts": 117,
+          "has_both_sides": true
+        },
+        "2026-09-01": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 289,
+          "n_id_matched": 233,
+          "n_usable": 233,
+          "n_usable_calls": 126,
+          "n_usable_puts": 107,
+          "has_both_sides": true
+        }
+      }
+    },
+    "JPM": {
+      "alpaca": {
+        "ok": true,
+        "n_bars": 1548,
+        "n_distinct_days": 1548,
+        "earliest": "2020-07-27",
+        "latest": "2026-09-28",
+        "n_gaps_gt4d": 0,
+        "gap_detail": []
+      },
+      "eodhd_probes": {
+        "2023-10-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 570,
+          "n_id_matched": 570,
+          "n_usable": 497,
+          "n_usable_calls": 247,
+          "n_usable_puts": 250,
+          "has_both_sides": true
+        },
+        "2024-06-03": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 486,
+          "n_id_matched": 486,
+          "n_usable": 393,
+          "n_usable_calls": 198,
+          "n_usable_puts": 195,
+          "has_both_sides": true
+        },
+        "2025-06-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 307,
+          "n_id_matched": 196,
+          "n_usable": 196,
+          "n_usable_calls": 91,
+          "n_usable_puts": 105,
+          "has_both_sides": true
+        },
+        "2026-09-01": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 327,
+          "n_id_matched": 269,
+          "n_usable": 269,
+          "n_usable_calls": 130,
+          "n_usable_puts": 139,
+          "has_both_sides": true
+        }
+      }
+    },
+    "BAC": {
+      "alpaca": {
+        "ok": true,
+        "n_bars": 1548,
+        "n_distinct_days": 1548,
+        "earliest": "2020-07-27",
+        "latest": "2026-09-28",
+        "n_gaps_gt4d": 0,
+        "gap_detail": []
+      },
+      "eodhd_probes": {
+        "2023-10-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 380,
+          "n_id_matched": 380,
+          "n_usable": 266,
+          "n_usable_calls": 134,
+          "n_usable_puts": 132,
+          "has_both_sides": true
+        },
+        "2024-06-03": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 384,
+          "n_id_matched": 384,
+          "n_usable": 342,
+          "n_usable_calls": 167,
+          "n_usable_puts": 175,
+          "has_both_sides": true
+        },
+        "2025-06-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 348,
+          "n_id_matched": 212,
+          "n_usable": 212,
+          "n_usable_calls": 116,
+          "n_usable_puts": 96,
+          "has_both_sides": true
+        },
+        "2026-09-01": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 258,
+          "n_id_matched": 227,
+          "n_usable": 227,
+          "n_usable_calls": 123,
+          "n_usable_puts": 104,
+          "has_both_sides": true
+        }
+      }
+    },
+    "GS": {
+      "alpaca": {
+        "ok": true,
+        "n_bars": 1548,
+        "n_distinct_days": 1548,
+        "earliest": "2020-07-27",
+        "latest": "2026-09-28",
+        "n_gaps_gt4d": 0,
+        "gap_detail": []
+      },
+      "eodhd_probes": {
+        "2023-10-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 712,
+          "n_id_matched": 712,
+          "n_usable": 568,
+          "n_usable_calls": 258,
+          "n_usable_puts": 310,
+          "has_both_sides": true
+        },
+        "2024-06-03": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 780,
+          "n_id_matched": 780,
+          "n_usable": 619,
+          "n_usable_calls": 366,
+          "n_usable_puts": 253,
+          "has_both_sides": true
+        },
+        "2025-06-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 448,
+          "n_id_matched": 288,
+          "n_usable": 288,
+          "n_usable_calls": 129,
+          "n_usable_puts": 159,
+          "has_both_sides": true
+        },
+        "2026-09-01": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 913,
+          "n_id_matched": 772,
+          "n_usable": 772,
+          "n_usable_calls": 318,
+          "n_usable_puts": 454,
+          "has_both_sides": true
+        }
+      }
+    },
+    "MS": {
+      "alpaca": {
+        "ok": true,
+        "n_bars": 1548,
+        "n_distinct_days": 1548,
+        "earliest": "2020-07-27",
+        "latest": "2026-09-28",
+        "n_gaps_gt4d": 0,
+        "gap_detail": []
+      },
+      "eodhd_probes": {
+        "2023-10-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 486,
+          "n_id_matched": 486,
+          "n_usable": 423,
+          "n_usable_calls": 198,
+          "n_usable_puts": 225,
+          "has_both_sides": true
+        },
+        "2024-06-03": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 500,
+          "n_id_matched": 500,
+          "n_usable": 440,
+          "n_usable_calls": 224,
+          "n_usable_puts": 216,
+          "has_both_sides": true
+        },
+        "2025-06-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 305,
+          "n_id_matched": 153,
+          "n_usable": 153,
+          "n_usable_calls": 78,
+          "n_usable_puts": 75,
+          "has_both_sides": true
+        },
+        "2026-09-01": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 174,
+          "n_id_matched": 146,
+          "n_usable": 146,
+          "n_usable_calls": 72,
+          "n_usable_puts": 74,
+          "has_both_sides": true
+        }
+      }
+    },
+    "V": {
+      "alpaca": {
+        "ok": true,
+        "n_bars": 1548,
+        "n_distinct_days": 1548,
+        "earliest": "2020-07-27",
+        "latest": "2026-09-28",
+        "n_gaps_gt4d": 0,
+        "gap_detail": []
+      },
+      "eodhd_probes": {
+        "2023-10-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 566,
+          "n_id_matched": 566,
+          "n_usable": 423,
+          "n_usable_calls": 208,
+          "n_usable_puts": 215,
+          "has_both_sides": true
+        },
+        "2024-06-03": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 618,
+          "n_id_matched": 618,
+          "n_usable": 457,
+          "n_usable_calls": 248,
+          "n_usable_puts": 209,
+          "has_both_sides": true
+        },
+        "2025-06-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 299,
+          "n_id_matched": 217,
+          "n_usable": 217,
+          "n_usable_calls": 93,
+          "n_usable_puts": 124,
+          "has_both_sides": true
+        },
+        "2026-09-01": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 353,
+          "n_id_matched": 299,
+          "n_usable": 299,
+          "n_usable_calls": 140,
+          "n_usable_puts": 159,
+          "has_both_sides": true
+        }
+      }
+    },
+    "MA": {
+      "alpaca": {
+        "ok": true,
+        "n_bars": 1548,
+        "n_distinct_days": 1548,
+        "earliest": "2020-07-27",
+        "latest": "2026-09-28",
+        "n_gaps_gt4d": 0,
+        "gap_detail": []
+      },
+      "eodhd_probes": {
+        "2023-10-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 716,
+          "n_id_matched": 716,
+          "n_usable": 579,
+          "n_usable_calls": 313,
+          "n_usable_puts": 266,
+          "has_both_sides": true
+        },
+        "2024-06-03": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 780,
+          "n_id_matched": 780,
+          "n_usable": 595,
+          "n_usable_calls": 323,
+          "n_usable_puts": 272,
+          "has_both_sides": true
+        },
+        "2025-06-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 465,
+          "n_id_matched": 234,
+          "n_usable": 234,
+          "n_usable_calls": 117,
+          "n_usable_puts": 117,
+          "has_both_sides": true
+        },
+        "2026-09-01": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 302,
+          "n_id_matched": 247,
+          "n_usable": 247,
+          "n_usable_calls": 122,
+          "n_usable_puts": 125,
+          "has_both_sides": true
+        }
+      }
+    },
+    "PYPL": {
+      "alpaca": {
+        "ok": true,
+        "n_bars": 1551,
+        "n_distinct_days": 1551,
+        "earliest": "2020-07-27",
+        "latest": "2026-09-28",
+        "n_gaps_gt4d": 0,
+        "gap_detail": []
+      },
+      "eodhd_probes": {
+        "2023-10-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 454,
+          "n_id_matched": 454,
+          "n_usable": 424,
+          "n_usable_calls": 213,
+          "n_usable_puts": 211,
+          "has_both_sides": true
+        },
+        "2024-06-03": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 448,
+          "n_id_matched": 448,
+          "n_usable": 407,
+          "n_usable_calls": 213,
+          "n_usable_puts": 194,
+          "has_both_sides": true
+        },
+        "2025-06-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 301,
+          "n_id_matched": 196,
+          "n_usable": 196,
+          "n_usable_calls": 100,
+          "n_usable_puts": 96,
+          "has_both_sides": true
+        },
+        "2026-09-01": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 259,
+          "n_id_matched": 232,
+          "n_usable": 232,
+          "n_usable_calls": 138,
+          "n_usable_puts": 94,
+          "has_both_sides": true
+        }
+      }
+    },
+    "SOFI": {
+      "alpaca": {
+        "ok": true,
+        "n_bars": 1462,
+        "n_distinct_days": 1462,
+        "earliest": "2020-11-30",
+        "latest": "2026-09-28",
+        "n_gaps_gt4d": 0,
+        "gap_detail": []
+      },
+      "eodhd_probes": {
+        "2023-10-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 358,
+          "n_id_matched": 358,
+          "n_usable": 279,
+          "n_usable_calls": 141,
+          "n_usable_puts": 138,
+          "has_both_sides": true
+        },
+        "2024-06-03": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 294,
+          "n_id_matched": 294,
+          "n_usable": 222,
+          "n_usable_calls": 107,
+          "n_usable_puts": 115,
+          "has_both_sides": true
+        },
+        "2025-06-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 445,
+          "n_id_matched": 230,
+          "n_usable": 229,
+          "n_usable_calls": 133,
+          "n_usable_puts": 96,
+          "has_both_sides": true
+        },
+        "2026-09-01": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 368,
+          "n_id_matched": 336,
+          "n_usable": 336,
+          "n_usable_calls": 186,
+          "n_usable_puts": 150,
+          "has_both_sides": true
+        }
+      }
+    },
+    "UNH": {
+      "alpaca": {
+        "ok": true,
+        "n_bars": 1548,
+        "n_distinct_days": 1548,
+        "earliest": "2020-07-27",
+        "latest": "2026-09-28",
+        "n_gaps_gt4d": 0,
+        "gap_detail": []
+      },
+      "eodhd_probes": {
+        "2023-10-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 746,
+          "n_id_matched": 746,
+          "n_usable": 645,
+          "n_usable_calls": 337,
+          "n_usable_puts": 308,
+          "has_both_sides": true
+        },
+        "2024-06-03": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 812,
+          "n_id_matched": 812,
+          "n_usable": 666,
+          "n_usable_calls": 340,
+          "n_usable_puts": 326,
+          "has_both_sides": true
+        },
+        "2025-06-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 917,
+          "n_id_matched": 627,
+          "n_usable": 627,
+          "n_usable_calls": 339,
+          "n_usable_puts": 288,
+          "has_both_sides": true
+        },
+        "2026-09-01": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 423,
+          "n_id_matched": 359,
+          "n_usable": 359,
+          "n_usable_calls": 186,
+          "n_usable_puts": 173,
+          "has_both_sides": true
+        }
+      }
+    },
+    "JNJ": {
+      "alpaca": {
+        "ok": true,
+        "n_bars": 1548,
+        "n_distinct_days": 1548,
+        "earliest": "2020-07-27",
+        "latest": "2026-09-28",
+        "n_gaps_gt4d": 0,
+        "gap_detail": []
+      },
+      "eodhd_probes": {
+        "2023-10-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 496,
+          "n_id_matched": 496,
+          "n_usable": 353,
+          "n_usable_calls": 167,
+          "n_usable_puts": 186,
+          "has_both_sides": true
+        },
+        "2024-06-03": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 492,
+          "n_id_matched": 492,
+          "n_usable": 367,
+          "n_usable_calls": 182,
+          "n_usable_puts": 185,
+          "has_both_sides": true
+        },
+        "2025-06-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 211,
+          "n_id_matched": 123,
+          "n_usable": 123,
+          "n_usable_calls": 52,
+          "n_usable_puts": 71,
+          "has_both_sides": true
+        },
+        "2026-09-01": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 211,
+          "n_id_matched": 168,
+          "n_usable": 168,
+          "n_usable_calls": 90,
+          "n_usable_puts": 78,
+          "has_both_sides": true
+        }
+      }
+    },
+    "PFE": {
+      "alpaca": {
+        "ok": true,
+        "n_bars": 1548,
+        "n_distinct_days": 1548,
+        "earliest": "2020-07-27",
+        "latest": "2026-09-28",
+        "n_gaps_gt4d": 0,
+        "gap_detail": []
+      },
+      "eodhd_probes": {
+        "2023-10-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 386,
+          "n_id_matched": 386,
+          "n_usable": 293,
+          "n_usable_calls": 142,
+          "n_usable_puts": 151,
+          "has_both_sides": true
+        },
+        "2024-06-03": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 378,
+          "n_id_matched": 378,
+          "n_usable": 301,
+          "n_usable_calls": 155,
+          "n_usable_puts": 146,
+          "has_both_sides": true
+        },
+        "2025-06-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 197,
+          "n_id_matched": 117,
+          "n_usable": 117,
+          "n_usable_calls": 62,
+          "n_usable_puts": 55,
+          "has_both_sides": true
+        },
+        "2026-09-01": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 274,
+          "n_id_matched": 246,
+          "n_usable": 244,
+          "n_usable_calls": 135,
+          "n_usable_puts": 109,
+          "has_both_sides": true
+        }
+      }
+    },
+    "LLY": {
+      "alpaca": {
+        "ok": true,
+        "n_bars": 1548,
+        "n_distinct_days": 1548,
+        "earliest": "2020-07-27",
+        "latest": "2026-09-28",
+        "n_gaps_gt4d": 0,
+        "gap_detail": []
+      },
+      "eodhd_probes": {
+        "2023-10-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 932,
+          "n_id_matched": 932,
+          "n_usable": 777,
+          "n_usable_calls": 405,
+          "n_usable_puts": 372,
+          "has_both_sides": true
+        },
+        "2024-06-03": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 2,
+          "n_raw_records": 1196,
+          "n_id_matched": 1196,
+          "n_usable": 995,
+          "n_usable_calls": 581,
+          "n_usable_puts": 414,
+          "has_both_sides": true
+        },
+        "2025-06-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 996,
+          "n_id_matched": 511,
+          "n_usable": 511,
+          "n_usable_calls": 247,
+          "n_usable_puts": 264,
+          "has_both_sides": true
+        },
+        "2026-09-01": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 2,
+          "n_raw_records": 1052,
+          "n_id_matched": 826,
+          "n_usable": 826,
+          "n_usable_calls": 389,
+          "n_usable_puts": 437,
+          "has_both_sides": true
+        }
+      }
+    },
+    "MRNA": {
+      "alpaca": {
+        "ok": true,
+        "n_bars": 1551,
+        "n_distinct_days": 1551,
+        "earliest": "2020-07-27",
+        "latest": "2026-09-28",
+        "n_gaps_gt4d": 0,
+        "gap_detail": []
+      },
+      "eodhd_probes": {
+        "2023-10-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 654,
+          "n_id_matched": 654,
+          "n_usable": 599,
+          "n_usable_calls": 297,
+          "n_usable_puts": 302,
+          "has_both_sides": true
+        },
+        "2024-06-03": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 806,
+          "n_id_matched": 806,
+          "n_usable": 788,
+          "n_usable_calls": 403,
+          "n_usable_puts": 385,
+          "has_both_sides": true
+        },
+        "2025-06-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 407,
+          "n_id_matched": 229,
+          "n_usable": 228,
+          "n_usable_calls": 121,
+          "n_usable_puts": 107,
+          "has_both_sides": true
+        },
+        "2026-09-01": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 876,
+          "n_id_matched": 732,
+          "n_usable": 732,
+          "n_usable_calls": 392,
+          "n_usable_puts": 340,
+          "has_both_sides": true
+        }
+      }
+    },
+    "XOM": {
+      "alpaca": {
+        "ok": true,
+        "n_bars": 1548,
+        "n_distinct_days": 1548,
+        "earliest": "2020-07-27",
+        "latest": "2026-09-28",
+        "n_gaps_gt4d": 0,
+        "gap_detail": []
+      },
+      "eodhd_probes": {
+        "2023-10-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 582,
+          "n_id_matched": 582,
+          "n_usable": 500,
+          "n_usable_calls": 256,
+          "n_usable_puts": 244,
+          "has_both_sides": true
+        },
+        "2024-06-03": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 838,
+          "n_id_matched": 838,
+          "n_usable": 536,
+          "n_usable_calls": 302,
+          "n_usable_puts": 234,
+          "has_both_sides": true
+        },
+        "2025-06-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 296,
+          "n_id_matched": 220,
+          "n_usable": 220,
+          "n_usable_calls": 119,
+          "n_usable_puts": 101,
+          "has_both_sides": true
+        },
+        "2026-09-01": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 284,
+          "n_id_matched": 220,
+          "n_usable": 220,
+          "n_usable_calls": 126,
+          "n_usable_puts": 94,
+          "has_both_sides": true
+        }
+      }
+    },
+    "CVX": {
+      "alpaca": {
+        "ok": true,
+        "n_bars": 1548,
+        "n_distinct_days": 1548,
+        "earliest": "2020-07-27",
+        "latest": "2026-09-28",
+        "n_gaps_gt4d": 0,
+        "gap_detail": []
+      },
+      "eodhd_probes": {
+        "2023-10-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 490,
+          "n_id_matched": 490,
+          "n_usable": 337,
+          "n_usable_calls": 161,
+          "n_usable_puts": 176,
+          "has_both_sides": true
+        },
+        "2024-06-03": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 464,
+          "n_id_matched": 464,
+          "n_usable": 337,
+          "n_usable_calls": 166,
+          "n_usable_puts": 171,
+          "has_both_sides": true
+        },
+        "2025-06-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 270,
+          "n_id_matched": 179,
+          "n_usable": 179,
+          "n_usable_calls": 96,
+          "n_usable_puts": 83,
+          "has_both_sides": true
+        },
+        "2026-09-01": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 232,
+          "n_id_matched": 190,
+          "n_usable": 190,
+          "n_usable_calls": 98,
+          "n_usable_puts": 92,
+          "has_both_sides": true
+        }
+      }
+    },
+    "OXY": {
+      "alpaca": {
+        "ok": true,
+        "n_bars": 1548,
+        "n_distinct_days": 1548,
+        "earliest": "2020-07-27",
+        "latest": "2026-09-28",
+        "n_gaps_gt4d": 0,
+        "gap_detail": []
+      },
+      "eodhd_probes": {
+        "2023-10-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 408,
+          "n_id_matched": 408,
+          "n_usable": 366,
+          "n_usable_calls": 188,
+          "n_usable_puts": 178,
+          "has_both_sides": true
+        },
+        "2024-06-03": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 430,
+          "n_id_matched": 430,
+          "n_usable": 357,
+          "n_usable_calls": 170,
+          "n_usable_puts": 187,
+          "has_both_sides": true
+        },
+        "2025-06-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 286,
+          "n_id_matched": 184,
+          "n_usable": 184,
+          "n_usable_calls": 98,
+          "n_usable_puts": 86,
+          "has_both_sides": true
+        },
+        "2026-09-01": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 220,
+          "n_id_matched": 191,
+          "n_usable": 191,
+          "n_usable_calls": 109,
+          "n_usable_puts": 82,
+          "has_both_sides": true
+        }
+      }
+    },
+    "BA": {
+      "alpaca": {
+        "ok": true,
+        "n_bars": 1548,
+        "n_distinct_days": 1548,
+        "earliest": "2020-07-27",
+        "latest": "2026-09-28",
+        "n_gaps_gt4d": 0,
+        "gap_detail": []
+      },
+      "eodhd_probes": {
+        "2023-10-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 556,
+          "n_id_matched": 556,
+          "n_usable": 462,
+          "n_usable_calls": 212,
+          "n_usable_puts": 250,
+          "has_both_sides": true
+        },
+        "2024-06-03": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 506,
+          "n_id_matched": 506,
+          "n_usable": 418,
+          "n_usable_calls": 213,
+          "n_usable_puts": 205,
+          "has_both_sides": true
+        },
+        "2025-06-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 397,
+          "n_id_matched": 269,
+          "n_usable": 269,
+          "n_usable_calls": 144,
+          "n_usable_puts": 125,
+          "has_both_sides": true
+        },
+        "2026-09-01": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 316,
+          "n_id_matched": 258,
+          "n_usable": 258,
+          "n_usable_calls": 145,
+          "n_usable_puts": 113,
+          "has_both_sides": true
+        }
+      }
+    },
+    "CAT": {
+      "alpaca": {
+        "ok": true,
+        "n_bars": 1548,
+        "n_distinct_days": 1548,
+        "earliest": "2020-07-27",
+        "latest": "2026-09-28",
+        "n_gaps_gt4d": 0,
+        "gap_detail": []
+      },
+      "eodhd_probes": {
+        "2023-10-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 656,
+          "n_id_matched": 656,
+          "n_usable": 525,
+          "n_usable_calls": 274,
+          "n_usable_puts": 251,
+          "has_both_sides": true
+        },
+        "2024-06-03": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 722,
+          "n_id_matched": 722,
+          "n_usable": 579,
+          "n_usable_calls": 290,
+          "n_usable_puts": 289,
+          "has_both_sides": true
+        },
+        "2025-06-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 319,
+          "n_id_matched": 194,
+          "n_usable": 194,
+          "n_usable_calls": 100,
+          "n_usable_puts": 94,
+          "has_both_sides": true
+        },
+        "2026-09-01": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 793,
+          "n_id_matched": 617,
+          "n_usable": 617,
+          "n_usable_calls": 266,
+          "n_usable_puts": 351,
+          "has_both_sides": true
+        }
+      }
+    },
+    "GE": {
+      "alpaca": {
+        "ok": true,
+        "n_bars": 1549,
+        "n_distinct_days": 1549,
+        "earliest": "2020-07-27",
+        "latest": "2026-09-28",
+        "n_gaps_gt4d": 0,
+        "gap_detail": []
+      },
+      "eodhd_probes": {
+        "2023-10-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 564,
+          "n_id_matched": 564,
+          "n_usable": 488,
+          "n_usable_calls": 245,
+          "n_usable_puts": 243,
+          "has_both_sides": true
+        },
+        "2024-06-03": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 516,
+          "n_id_matched": 516,
+          "n_usable": 396,
+          "n_usable_calls": 210,
+          "n_usable_puts": 186,
+          "has_both_sides": true
+        },
+        "2025-06-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 316,
+          "n_id_matched": 219,
+          "n_usable": 219,
+          "n_usable_calls": 102,
+          "n_usable_puts": 117,
+          "has_both_sides": true
+        },
+        "2026-09-01": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 307,
+          "n_id_matched": 247,
+          "n_usable": 247,
+          "n_usable_calls": 125,
+          "n_usable_puts": 122,
+          "has_both_sides": true
+        }
+      }
+    },
+    "COIN": {
+      "alpaca": {
+        "ok": true,
+        "n_bars": 1371,
+        "n_distinct_days": 1371,
+        "earliest": "2021-04-14",
+        "latest": "2026-09-28",
+        "n_gaps_gt4d": 0,
+        "gap_detail": []
+      },
+      "eodhd_probes": {
+        "2023-10-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 732,
+          "n_id_matched": 732,
+          "n_usable": 669,
+          "n_usable_calls": 343,
+          "n_usable_puts": 326,
+          "has_both_sides": true
+        },
+        "2024-06-03": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 908,
+          "n_id_matched": 908,
+          "n_usable": 835,
+          "n_usable_calls": 446,
+          "n_usable_puts": 389,
+          "has_both_sides": true
+        },
+        "2025-06-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 704,
+          "n_id_matched": 428,
+          "n_usable": 427,
+          "n_usable_calls": 257,
+          "n_usable_puts": 170,
+          "has_both_sides": true
+        },
+        "2026-09-01": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 658,
+          "n_id_matched": 598,
+          "n_usable": 598,
+          "n_usable_calls": 314,
+          "n_usable_puts": 284,
+          "has_both_sides": true
+        }
+      }
+    },
+    "RIOT": {
+      "alpaca": {
+        "ok": true,
+        "n_bars": 1551,
+        "n_distinct_days": 1551,
+        "earliest": "2020-07-27",
+        "latest": "2026-09-28",
+        "n_gaps_gt4d": 0,
+        "gap_detail": []
+      },
+      "eodhd_probes": {
+        "2023-10-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 392,
+          "n_id_matched": 392,
+          "n_usable": 358,
+          "n_usable_calls": 177,
+          "n_usable_puts": 181,
+          "has_both_sides": true
+        },
+        "2024-06-03": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 394,
+          "n_id_matched": 394,
+          "n_usable": 356,
+          "n_usable_calls": 191,
+          "n_usable_puts": 165,
+          "has_both_sides": true
+        },
+        "2025-06-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 285,
+          "n_id_matched": 171,
+          "n_usable": 171,
+          "n_usable_calls": 103,
+          "n_usable_puts": 68,
+          "has_both_sides": true
+        },
+        "2026-09-01": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 302,
+          "n_id_matched": 274,
+          "n_usable": 274,
+          "n_usable_calls": 146,
+          "n_usable_puts": 128,
+          "has_both_sides": true
+        }
+      }
+    },
+    "MARA": {
+      "alpaca": {
+        "ok": true,
+        "n_bars": 1551,
+        "n_distinct_days": 1551,
+        "earliest": "2020-07-27",
+        "latest": "2026-09-28",
+        "n_gaps_gt4d": 0,
+        "gap_detail": []
+      },
+      "eodhd_probes": {
+        "2023-10-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 416,
+          "n_id_matched": 416,
+          "n_usable": 363,
+          "n_usable_calls": 176,
+          "n_usable_puts": 187,
+          "has_both_sides": true
+        },
+        "2024-06-03": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 510,
+          "n_id_matched": 510,
+          "n_usable": 490,
+          "n_usable_calls": 252,
+          "n_usable_puts": 238,
+          "has_both_sides": true
+        },
+        "2025-06-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 474,
+          "n_id_matched": 309,
+          "n_usable": 309,
+          "n_usable_calls": 178,
+          "n_usable_puts": 131,
+          "has_both_sides": true
+        },
+        "2026-09-01": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 334,
+          "n_id_matched": 288,
+          "n_usable": 288,
+          "n_usable_calls": 154,
+          "n_usable_puts": 134,
+          "has_both_sides": true
+        }
+      }
+    },
+    "PLTR": {
+      "alpaca": {
+        "ok": true,
+        "n_bars": 1502,
+        "n_distinct_days": 1502,
+        "earliest": "2020-09-30",
+        "latest": "2026-09-28",
+        "n_gaps_gt4d": 0,
+        "gap_detail": []
+      },
+      "eodhd_probes": {
+        "2023-10-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 464,
+          "n_id_matched": 464,
+          "n_usable": 399,
+          "n_usable_calls": 202,
+          "n_usable_puts": 197,
+          "has_both_sides": true
+        },
+        "2024-06-03": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 370,
+          "n_id_matched": 370,
+          "n_usable": 361,
+          "n_usable_calls": 185,
+          "n_usable_puts": 176,
+          "has_both_sides": true
+        },
+        "2025-06-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 900,
+          "n_id_matched": 749,
+          "n_usable": 749,
+          "n_usable_calls": 409,
+          "n_usable_puts": 340,
+          "has_both_sides": true
+        },
+        "2026-09-01": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 670,
+          "n_id_matched": 583,
+          "n_usable": 583,
+          "n_usable_calls": 328,
+          "n_usable_puts": 255,
+          "has_both_sides": true
+        }
+      }
+    },
+    "SNAP": {
+      "alpaca": {
+        "ok": true,
+        "n_bars": 1548,
+        "n_distinct_days": 1548,
+        "earliest": "2020-07-27",
+        "latest": "2026-09-28",
+        "n_gaps_gt4d": 0,
+        "gap_detail": []
+      },
+      "eodhd_probes": {
+        "2023-10-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 326,
+          "n_id_matched": 326,
+          "n_usable": 272,
+          "n_usable_calls": 132,
+          "n_usable_puts": 140,
+          "has_both_sides": true
+        },
+        "2024-06-03": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 434,
+          "n_id_matched": 434,
+          "n_usable": 349,
+          "n_usable_calls": 180,
+          "n_usable_puts": 169,
+          "has_both_sides": true
+        },
+        "2025-06-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 123,
+          "n_id_matched": 101,
+          "n_usable": 101,
+          "n_usable_calls": 53,
+          "n_usable_puts": 48,
+          "has_both_sides": true
+        },
+        "2026-09-01": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 147,
+          "n_id_matched": 128,
+          "n_usable": 127,
+          "n_usable_calls": 82,
+          "n_usable_puts": 45,
+          "has_both_sides": true
+        }
+      }
+    },
+    "ROKU": {
+      "alpaca": {
+        "ok": true,
+        "n_bars": 1551,
+        "n_distinct_days": 1551,
+        "earliest": "2020-07-27",
+        "latest": "2026-09-28",
+        "n_gaps_gt4d": 0,
+        "gap_detail": []
+      },
+      "eodhd_probes": {
+        "2023-10-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 588,
+          "n_id_matched": 588,
+          "n_usable": 514,
+          "n_usable_calls": 249,
+          "n_usable_puts": 265,
+          "has_both_sides": true
+        },
+        "2024-06-03": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 436,
+          "n_id_matched": 436,
+          "n_usable": 421,
+          "n_usable_calls": 210,
+          "n_usable_puts": 211,
+          "has_both_sides": true
+        },
+        "2025-06-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 269,
+          "n_id_matched": 200,
+          "n_usable": 200,
+          "n_usable_calls": 118,
+          "n_usable_puts": 82,
+          "has_both_sides": true
+        },
+        "2026-09-01": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 118,
+          "n_id_matched": 78,
+          "n_usable": 78,
+          "n_usable_calls": 48,
+          "n_usable_puts": 30,
+          "has_both_sides": true
+        }
+      }
+    },
+    "DKNG": {
+      "alpaca": {
+        "ok": true,
+        "n_bars": 1551,
+        "n_distinct_days": 1551,
+        "earliest": "2020-07-27",
+        "latest": "2026-09-28",
+        "n_gaps_gt4d": 0,
+        "gap_detail": []
+      },
+      "eodhd_probes": {
+        "2023-10-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 398,
+          "n_id_matched": 398,
+          "n_usable": 353,
+          "n_usable_calls": 181,
+          "n_usable_puts": 172,
+          "has_both_sides": true
+        },
+        "2024-06-03": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 464,
+          "n_id_matched": 464,
+          "n_usable": 422,
+          "n_usable_calls": 202,
+          "n_usable_puts": 220,
+          "has_both_sides": true
+        },
+        "2025-06-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 357,
+          "n_id_matched": 217,
+          "n_usable": 217,
+          "n_usable_calls": 122,
+          "n_usable_puts": 95,
+          "has_both_sides": true
+        },
+        "2026-09-01": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 211,
+          "n_id_matched": 185,
+          "n_usable": 185,
+          "n_usable_calls": 102,
+          "n_usable_puts": 83,
+          "has_both_sides": true
+        }
+      }
+    },
+    "AFRM": {
+      "alpaca": {
+        "ok": true,
+        "n_bars": 1433,
+        "n_distinct_days": 1433,
+        "earliest": "2021-01-13",
+        "latest": "2026-09-28",
+        "n_gaps_gt4d": 0,
+        "gap_detail": []
+      },
+      "eodhd_probes": {
+        "2023-10-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 444,
+          "n_id_matched": 444,
+          "n_usable": 393,
+          "n_usable_calls": 215,
+          "n_usable_puts": 178,
+          "has_both_sides": true
+        },
+        "2024-06-03": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 456,
+          "n_id_matched": 456,
+          "n_usable": 432,
+          "n_usable_calls": 211,
+          "n_usable_puts": 221,
+          "has_both_sides": true
+        },
+        "2025-06-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 350,
+          "n_id_matched": 207,
+          "n_usable": 207,
+          "n_usable_calls": 103,
+          "n_usable_puts": 104,
+          "has_both_sides": true
+        },
+        "2026-09-01": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 373,
+          "n_id_matched": 296,
+          "n_usable": 296,
+          "n_usable_calls": 161,
+          "n_usable_puts": 135,
+          "has_both_sides": true
+        }
+      }
+    },
+    "AAPL": {
+      "eodhd_probes": {
+        "2023-10-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 612,
+          "n_id_matched": 612,
+          "n_usable": 483,
+          "n_usable_calls": 245,
+          "n_usable_puts": 238,
+          "has_both_sides": true
+        },
+        "2024-06-03": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 526,
+          "n_id_matched": 526,
+          "n_usable": 446,
+          "n_usable_calls": 246,
+          "n_usable_puts": 200,
+          "has_both_sides": true
+        },
+        "2025-06-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 475,
+          "n_id_matched": 361,
+          "n_usable": 361,
+          "n_usable_calls": 196,
+          "n_usable_puts": 165,
+          "has_both_sides": true
+        },
+        "2026-09-01": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 859,
+          "n_id_matched": 792,
+          "n_usable": 792,
+          "n_usable_calls": 420,
+          "n_usable_puts": 372,
+          "has_both_sides": true
+        }
+      }
+    },
+    "AMD": {
+      "eodhd_probes": {
+        "2023-10-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 828,
+          "n_id_matched": 828,
+          "n_usable": 731,
+          "n_usable_calls": 373,
+          "n_usable_puts": 358,
+          "has_both_sides": true
+        },
+        "2024-06-03": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 654,
+          "n_id_matched": 654,
+          "n_usable": 562,
+          "n_usable_calls": 278,
+          "n_usable_puts": 284,
+          "has_both_sides": true
+        },
+        "2025-06-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 653,
+          "n_id_matched": 517,
+          "n_usable": 517,
+          "n_usable_calls": 283,
+          "n_usable_puts": 234,
+          "has_both_sides": true
+        },
+        "2026-09-01": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 2,
+          "n_raw_records": 1668,
+          "n_id_matched": 1439,
+          "n_usable": 1439,
+          "n_usable_calls": 802,
+          "n_usable_puts": 637,
+          "has_both_sides": true
+        }
+      }
+    },
+    "MSTR": {
+      "eodhd_probes": {
+        "2023-10-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 2,
+          "n_raw_records": 1390,
+          "n_id_matched": 1390,
+          "n_usable": 1196,
+          "n_usable_calls": 579,
+          "n_usable_puts": 617,
+          "has_both_sides": true
+        },
+        "2024-06-03": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 3,
+          "n_raw_records": 2956,
+          "n_id_matched": 2956,
+          "n_usable": 2771,
+          "n_usable_calls": 1450,
+          "n_usable_puts": 1321,
+          "has_both_sides": true
+        },
+        "2025-06-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 2,
+          "n_raw_records": 1225,
+          "n_id_matched": 835,
+          "n_usable": 835,
+          "n_usable_calls": 459,
+          "n_usable_puts": 376,
+          "has_both_sides": true
+        },
+        "2026-09-01": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 954,
+          "n_id_matched": 874,
+          "n_usable": 874,
+          "n_usable_calls": 491,
+          "n_usable_puts": 383,
+          "has_both_sides": true
+        }
+      }
+    },
+    "NVDA": {
+      "eodhd_probes": {
+        "2023-10-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 2,
+          "n_raw_records": 1490,
+          "n_id_matched": 1490,
+          "n_usable": 1277,
+          "n_usable_calls": 646,
+          "n_usable_puts": 631,
+          "has_both_sides": true
+        },
+        "2024-06-03": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 3,
+          "n_raw_records": 2352,
+          "n_id_matched": 2352,
+          "n_usable": 2149,
+          "n_usable_calls": 1027,
+          "n_usable_puts": 1122,
+          "has_both_sides": true
+        },
+        "2025-06-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 2,
+          "n_raw_records": 1092,
+          "n_id_matched": 902,
+          "n_usable": 901,
+          "n_usable_calls": 486,
+          "n_usable_puts": 415,
+          "has_both_sides": true
+        },
+        "2026-09-01": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 820,
+          "n_id_matched": 758,
+          "n_usable": 758,
+          "n_usable_calls": 422,
+          "n_usable_puts": 336,
+          "has_both_sides": true
+        }
+      }
+    },
+    "SMCI": {
+      "eodhd_probes": {
+        "2023-10-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 776,
+          "n_id_matched": 776,
+          "n_usable": 711,
+          "n_usable_calls": 376,
+          "n_usable_puts": 335,
+          "has_both_sides": true
+        },
+        "2024-06-03": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 2,
+          "n_raw_records": 1480,
+          "n_id_matched": 1480,
+          "n_usable": 1428,
+          "n_usable_calls": 720,
+          "n_usable_puts": 708,
+          "has_both_sides": true
+        },
+        "2025-06-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 633,
+          "n_id_matched": 422,
+          "n_usable": 419,
+          "n_usable_calls": 255,
+          "n_usable_puts": 164,
+          "has_both_sides": true
+        },
+        "2026-09-01": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 489,
+          "n_id_matched": 411,
+          "n_usable": 411,
+          "n_usable_calls": 235,
+          "n_usable_puts": 176,
+          "has_both_sides": true
+        }
+      }
+    },
+    "TSLA": {
+      "eodhd_probes": {
+        "2023-10-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 2,
+          "n_raw_records": 1240,
+          "n_id_matched": 1240,
+          "n_usable": 1127,
+          "n_usable_calls": 571,
+          "n_usable_puts": 556,
+          "has_both_sides": true
+        },
+        "2024-06-03": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 1,
+          "n_raw_records": 988,
+          "n_id_matched": 988,
+          "n_usable": 904,
+          "n_usable_calls": 437,
+          "n_usable_puts": 467,
+          "has_both_sides": true
+        },
+        "2025-06-02": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 2,
+          "n_raw_records": 1178,
+          "n_id_matched": 959,
+          "n_usable": 959,
+          "n_usable_calls": 516,
+          "n_usable_puts": 443,
+          "has_both_sides": true
+        },
+        "2026-09-01": {
+          "ok": true,
+          "pagination_complete": true,
+          "pages_requested": 2,
+          "n_raw_records": 1380,
+          "n_id_matched": 1307,
+          "n_usable": 1307,
+          "n_usable_calls": 743,
+          "n_usable_puts": 564,
+          "has_both_sides": true
+        }
+      }
+    }
+  },
+  "cross_sectional_coverage": {
+    "2023-10-02": {
+      "n_available": 59,
+      "n_total_universe": 59,
+      "available_tickers": [
+        "AAPL",
+        "AMD",
+        "MSTR",
+        "NVDA",
+        "SMCI",
+        "TSLA",
+        "MSFT",
+        "GOOGL",
+        "AMZN",
+        "META",
+        "AVGO",
+        "INTC",
+        "MU",
+        "QCOM",
+        "TXN",
+        "LRCX",
+        "AMAT",
+        "ASML",
+        "ARM",
+        "F",
+        "GM",
+        "RIVN",
+        "LCID",
+        "NIO",
+        "WMT",
+        "COST",
+        "TGT",
+        "NKE",
+        "SBUX",
+        "MCD",
+        "HD",
+        "DIS",
+        "JPM",
+        "BAC",
+        "GS",
+        "MS",
+        "V",
+        "MA",
+        "PYPL",
+        "SOFI",
+        "UNH",
+        "JNJ",
+        "PFE",
+        "LLY",
+        "MRNA",
+        "XOM",
+        "CVX",
+        "OXY",
+        "BA",
+        "CAT",
+        "GE",
+        "COIN",
+        "RIOT",
+        "MARA",
+        "PLTR",
+        "SNAP",
+        "ROKU",
+        "DKNG",
+        "AFRM"
+      ]
+    },
+    "2024-06-03": {
+      "n_available": 59,
+      "n_total_universe": 59,
+      "available_tickers": [
+        "AAPL",
+        "AMD",
+        "MSTR",
+        "NVDA",
+        "SMCI",
+        "TSLA",
+        "MSFT",
+        "GOOGL",
+        "AMZN",
+        "META",
+        "AVGO",
+        "INTC",
+        "MU",
+        "QCOM",
+        "TXN",
+        "LRCX",
+        "AMAT",
+        "ASML",
+        "ARM",
+        "F",
+        "GM",
+        "RIVN",
+        "LCID",
+        "NIO",
+        "WMT",
+        "COST",
+        "TGT",
+        "NKE",
+        "SBUX",
+        "MCD",
+        "HD",
+        "DIS",
+        "JPM",
+        "BAC",
+        "GS",
+        "MS",
+        "V",
+        "MA",
+        "PYPL",
+        "SOFI",
+        "UNH",
+        "JNJ",
+        "PFE",
+        "LLY",
+        "MRNA",
+        "XOM",
+        "CVX",
+        "OXY",
+        "BA",
+        "CAT",
+        "GE",
+        "COIN",
+        "RIOT",
+        "MARA",
+        "PLTR",
+        "SNAP",
+        "ROKU",
+        "DKNG",
+        "AFRM"
+      ]
+    },
+    "2025-06-02": {
+      "n_available": 59,
+      "n_total_universe": 59,
+      "available_tickers": [
+        "AAPL",
+        "AMD",
+        "MSTR",
+        "NVDA",
+        "SMCI",
+        "TSLA",
+        "MSFT",
+        "GOOGL",
+        "AMZN",
+        "META",
+        "AVGO",
+        "INTC",
+        "MU",
+        "QCOM",
+        "TXN",
+        "LRCX",
+        "AMAT",
+        "ASML",
+        "ARM",
+        "F",
+        "GM",
+        "RIVN",
+        "LCID",
+        "NIO",
+        "WMT",
+        "COST",
+        "TGT",
+        "NKE",
+        "SBUX",
+        "MCD",
+        "HD",
+        "DIS",
+        "JPM",
+        "BAC",
+        "GS",
+        "MS",
+        "V",
+        "MA",
+        "PYPL",
+        "SOFI",
+        "UNH",
+        "JNJ",
+        "PFE",
+        "LLY",
+        "MRNA",
+        "XOM",
+        "CVX",
+        "OXY",
+        "BA",
+        "CAT",
+        "GE",
+        "COIN",
+        "RIOT",
+        "MARA",
+        "PLTR",
+        "SNAP",
+        "ROKU",
+        "DKNG",
+        "AFRM"
+      ]
+    },
+    "2026-09-01": {
+      "n_available": 59,
+      "n_total_universe": 59,
+      "available_tickers": [
+        "AAPL",
+        "AMD",
+        "MSTR",
+        "NVDA",
+        "SMCI",
+        "TSLA",
+        "MSFT",
+        "GOOGL",
+        "AMZN",
+        "META",
+        "AVGO",
+        "INTC",
+        "MU",
+        "QCOM",
+        "TXN",
+        "LRCX",
+        "AMAT",
+        "ASML",
+        "ARM",
+        "F",
+        "GM",
+        "RIVN",
+        "LCID",
+        "NIO",
+        "WMT",
+        "COST",
+        "TGT",
+        "NKE",
+        "SBUX",
+        "MCD",
+        "HD",
+        "DIS",
+        "JPM",
+        "BAC",
+        "GS",
+        "MS",
+        "V",
+        "MA",
+        "PYPL",
+        "SOFI",
+        "UNH",
+        "JNJ",
+        "PFE",
+        "LLY",
+        "MRNA",
+        "XOM",
+        "CVX",
+        "OXY",
+        "BA",
+        "CAT",
+        "GE",
+        "COIN",
+        "RIOT",
+        "MARA",
+        "PLTR",
+        "SNAP",
+        "ROKU",
+        "DKNG",
+        "AFRM"
+      ]
+    }
+  },
+  "alpaca_survivors": [
+    "MSFT",
+    "GOOGL",
+    "AMZN",
+    "META",
+    "AVGO",
+    "INTC",
+    "MU",
+    "QCOM",
+    "TXN",
+    "LRCX",
+    "AMAT",
+    "ASML",
+    "ARM",
+    "F",
+    "GM",
+    "RIVN",
+    "LCID",
+    "NIO",
+    "WMT",
+    "COST",
+    "TGT",
+    "NKE",
+    "SBUX",
+    "MCD",
+    "HD",
+    "DIS",
+    "JPM",
+    "BAC",
+    "GS",
+    "MS",
+    "V",
+    "MA",
+    "PYPL",
+    "SOFI",
+    "UNH",
+    "JNJ",
+    "PFE",
+    "LLY",
+    "MRNA",
+    "XOM",
+    "CVX",
+    "OXY",
+    "BA",
+    "CAT",
+    "GE",
+    "COIN",
+    "RIOT",
+    "MARA",
+    "PLTR",
+    "SNAP",
+    "ROKU",
+    "DKNG",
+    "AFRM"
+  ],
+  "cliff_confirmed_all_4_dates": [
+    "MSFT",
+    "GOOGL",
+    "AMZN",
+    "META",
+    "AVGO",
+    "INTC",
+    "MU",
+    "QCOM",
+    "TXN",
+    "LRCX",
+    "AMAT",
+    "ASML",
+    "ARM",
+    "F",
+    "GM",
+    "RIVN",
+    "LCID",
+    "NIO",
+    "WMT",
+    "COST",
+    "TGT",
+    "NKE",
+    "SBUX",
+    "MCD",
+    "HD",
+    "DIS",
+    "JPM",
+    "BAC",
+    "GS",
+    "MS",
+    "V",
+    "MA",
+    "PYPL",
+    "SOFI",
+    "UNH",
+    "JNJ",
+    "PFE",
+    "LLY",
+    "MRNA",
+    "XOM",
+    "CVX",
+    "OXY",
+    "BA",
+    "CAT",
+    "GE",
+    "COIN",
+    "RIOT",
+    "MARA",
+    "PLTR",
+    "SNAP",
+    "ROKU",
+    "DKNG",
+    "AFRM"
+  ],
+  "late_starters": [],
+  "full_universe_considered": [
+    "AAPL",
+    "AMD",
+    "MSTR",
+    "NVDA",
+    "SMCI",
+    "TSLA",
+    "MSFT",
+    "GOOGL",
+    "AMZN",
+    "META",
+    "AVGO",
+    "INTC",
+    "MU",
+    "QCOM",
+    "TXN",
+    "LRCX",
+    "AMAT",
+    "ASML",
+    "ARM",
+    "F",
+    "GM",
+    "RIVN",
+    "LCID",
+    "NIO",
+    "WMT",
+    "COST",
+    "TGT",
+    "NKE",
+    "SBUX",
+    "MCD",
+    "HD",
+    "DIS",
+    "JPM",
+    "BAC",
+    "GS",
+    "MS",
+    "V",
+    "MA",
+    "PYPL",
+    "SOFI",
+    "UNH",
+    "JNJ",
+    "PFE",
+    "LLY",
+    "MRNA",
+    "XOM",
+    "CVX",
+    "OXY",
+    "BA",
+    "CAT",
+    "GE",
+    "COIN",
+    "RIOT",
+    "MARA",
+    "PLTR",
+    "SNAP",
+    "ROKU",
+    "DKNG",
+    "AFRM"
+  ]
+}

@@ -1,0 +1,168 @@
+{
+  "total_rows": 4033,
+  "split": {
+    "train_n": 2423,
+    "val_n": 809,
+    "test_n": 801,
+    "train_start": "2023-10-30",
+    "train_end": "2025-06-18",
+    "val_end": "2025-12-31",
+    "test_end": "2026-07-16"
+  },
+  "primary_test_n": 173,
+  "model_a_params": {
+    "alpha": 50.0
+  },
+  "model_b_params": {
+    "max_depth": 4,
+    "min_samples_leaf": 10,
+    "max_features": "sqrt"
+  },
+  "primary_result": {
+    "seed42": {
+      "r2_a": 0.2955218857486477,
+      "r2_b": 0.36672383015174004,
+      "r2_delta": 0.07120194440309235,
+      "mae_a": 0.19027009346641838,
+      "mae_b": 0.18077706161945722,
+      "wilcoxon_stat": 7196.0,
+      "wilcoxon_p_one_sided": 0.6912714754470274
+    },
+    "seed43": {
+      "r2_a": 0.2955218857486477,
+      "r2_b": 0.36635867870713135,
+      "r2_delta": 0.07083679295848366,
+      "mae_a": 0.19027009346641838,
+      "mae_b": 0.1814340462757467,
+      "wilcoxon_stat": 7040.0,
+      "wilcoxon_p_one_sided": 0.7691112543010716
+    }
+  },
+  "full_test_set_descriptive": {
+    "n": 801,
+    "r2_a": 0.30582293660238247,
+    "r2_b": 0.36448550666835
+  },
+  "robustness_alternate_model_xgboost": {
+    "params": {
+      "max_depth": 2,
+      "min_child_weight": 10,
+      "reg_alpha": 1.0,
+      "reg_lambda": 5.0,
+      "subsample": 0.7,
+      "colsample_bytree": 0.7
+    },
+    "r2": 0.39094411880575175,
+    "r2_delta_vs_a": 0.09542223305710407,
+    "wilcoxon_p": 0.018126249383610647,
+    "direction_positive": true
+  },
+  "robustness_leave_one_ticker_out": {
+    "AAPL": {
+      "n": 145,
+      "r2_a": 0.16377886069352943,
+      "r2_b": 0.23479164094199256,
+      "r2_delta": 0.07101278024846314,
+      "wilcoxon_p": 0.44310598367795345
+    },
+    "AMD": {
+      "n": 144,
+      "r2_a": 0.33020066754166444,
+      "r2_b": 0.4455032679046419,
+      "r2_delta": 0.11530260036297746,
+      "wilcoxon_p": 0.01192469285893609
+    },
+    "MSTR": {
+      "n": 144,
+      "r2_a": 0.36009114357668304,
+      "r2_b": 0.4227119394166988,
+      "r2_delta": 0.06262079584001579,
+      "wilcoxon_p": 0.8454459414264348
+    },
+    "NVDA": {
+      "n": 144,
+      "r2_a": 0.2460508993662086,
+      "r2_b": 0.34906918924113184,
+      "r2_delta": 0.10301828987492323,
+      "wilcoxon_p": 0.24258654958661618
+    },
+    "SMCI": {
+      "n": 144,
+      "r2_a": 0.426929913108794,
+      "r2_b": 0.3593472680368279,
+      "r2_delta": -0.0675826450719661,
+      "wilcoxon_p": 0.9999181257872367
+    },
+    "TSLA": {
+      "n": 144,
+      "r2_a": 0.25811901884975275,
+      "r2_b": 0.3838506799411532,
+      "r2_delta": 0.12573166109140044,
+      "wilcoxon_p": 0.0009132048193710129
+    }
+  },
+  "robustness_alternate_horizon": {
+    "10day": {
+      "r2_a": 0.17502786331415476,
+      "r2_b": 0.2955163165007124,
+      "r2_delta": 0.12048845318655765,
+      "wilcoxon_p": 0.03182762205661756
+    },
+    "50day": {
+      "r2_a": 0.41779476004711746,
+      "r2_b": 0.4307492046986031,
+      "r2_delta": 0.012954444651485653,
+      "wilcoxon_p": 0.9448560110821462
+    }
+  },
+  "robustness_shuffled_target_placebo": {
+    "r2_a_shuffled": 0.03068559380660829,
+    "r2_b_shuffled": -0.009526779533613583,
+    "r2_delta_shuffled": -0.040212373340221874,
+    "wilcoxon_p_shuffled": 0.9999999999999787,
+    "significant_at_0.05": false
+  },
+  "concentration_check": {
+    "per_ticker": {
+      "AAPL": {
+        "n": 28,
+        "mean_abs_err_diff_a_minus_b": -0.02078408870833775
+      },
+      "AMD": {
+        "n": 29,
+        "mean_abs_err_diff_a_minus_b": 0.01665857155009739
+      },
+      "MSTR": {
+        "n": 29,
+        "mean_abs_err_diff_a_minus_b": 0.043987647057443624
+      },
+      "NVDA": {
+        "n": 29,
+        "mean_abs_err_diff_a_minus_b": -0.021564223889534453
+      },
+      "SMCI": {
+        "n": 29,
+        "mean_abs_err_diff_a_minus_b": 0.07350569165613091
+      },
+      "TSLA": {
+        "n": 29,
+        "mean_abs_err_diff_a_minus_b": -0.03588944522387063
+      }
+    }
+  },
+  "decision_inputs": {
+    "primary_n": 173,
+    "n_meets_floor": true,
+    "primary_significant_both_seeds": false,
+    "effect_met_both_seeds": true,
+    "xgb_ok": true,
+    "loto_ok": false,
+    "amd_smci_repeat_detected": true,
+    "horizon_ok": true,
+    "placebo_leaked": false,
+    "all_five_ok": false
+  },
+  "stage1_verdict": "REJECTED",
+  "stage1_verdict_reason": "primary test not significant at corrected alpha=0.0167 (both seeds); leave_one_ticker_out: at least one exclusion reverses direction -- AMD/SMCI REPEAT DETECTED, matching the closed XGBoost experiment's own finding",
+  "overall_status": "Stage 2 not yet run (currently 0 rows) -- overall VALIDATED/REJECTED/INCONCLUSIVE per the pre-registration's own rules requires Stage 2 regardless of this Stage 1 outcome"
+}

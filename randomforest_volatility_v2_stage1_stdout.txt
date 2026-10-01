@@ -1,0 +1,66 @@
+﻿[2026-09-25T19:14:23.448420] Loading data...
+[2026-09-25T19:14:23.472909] Loaded 4027 rows
+[2026-09-25T19:14:23.474378] Split: train=2417 (2023-10-30..2025-06-16), val=809 (..2025-12-30), test=801 (..2026-07-15)
+[2026-09-25T19:14:23.474389] Sanity check vs. pre-registration's cited boundaries (2023-10-02/2025-06-16/2025-12-30/2026-07-15): MATCH
+[2026-09-25T19:14:23.477634] Primary (thinned) test set: 174 observations
+[2026-09-25T19:14:23.495742] Tuning + fitting Model A (Ridge)...
+[2026-09-25T19:14:23.517705] Model A (Ridge) best params: {'alpha': 100.0} (mean CV MAE 0.466766)
+[2026-09-25T19:14:23.517744] Tuning + fitting Model B (Random Forest)...
+[2026-09-25T19:15:09.646153] Model B (Random Forest) best params: {'max_depth': 4, 'min_samples_leaf': 10, 'max_features': 'sqrt'} (mean CV MAE 0.395030)
+[2026-09-25T19:15:10.529211] PRIMARY seed=42: R2_A=-0.3273 R2_B=0.0708 delta=+0.3982 MAE_A=0.279890 MAE_B=0.229564 p=2.0242003589225964e-07
+[2026-09-25T19:15:10.551817] PRIMARY seed=43: R2_A=-0.3273 R2_B=0.0312 delta=+0.3586 MAE_A=0.279890 MAE_B=0.230796 p=7.481504401913032e-08
+[2026-09-25T19:15:10.577868] Full test set (descriptive): n=801 R2_A=-0.3633 R2_B=0.0475
+[2026-09-25T19:15:10.577899] Check 1/6: leave_one_ticker_out (AMD tracked and reported explicitly)...
+[2026-09-25T19:15:11.349633]   excl AAPL: n=145 R2_A=-0.4067 R2_B=-0.0951 delta=+0.3116 p=0.0008022512859084172
+[2026-09-25T19:15:12.115702]   excl AMD: n=145 R2_A=-0.2894 R2_B=0.3817 delta=+0.6710 p=1.2877458836230715e-15
+[2026-09-25T19:15:12.892171]   excl MSTR: n=145 R2_A=-0.1627 R2_B=0.0372 delta=+0.1999 p=2.15394888434299e-06
+[2026-09-25T19:15:13.658147]   excl NVDA: n=145 R2_A=-0.2397 R2_B=-0.1294 delta=+0.1102 p=0.002098467503756346
+[2026-09-25T19:15:14.430307]   excl SMCI: n=145 R2_A=0.0045 R2_B=0.3768 delta=+0.3723 p=2.389819569528878e-06
+[2026-09-25T19:15:15.203979]   excl TSLA: n=145 R2_A=-0.3248 R2_B=-0.0872 delta=+0.2376 p=1.8600236932141016e-05
+[2026-09-25T19:15:15.204034]   >>> AMD-SPECIFIC RESULT (explicitly reported, not folded into the average): {'n': 145, 'r2_a': -0.2893556310897878, 'r2_b': 0.38166395356716665, 'r2_delta': 0.6710195846569544, 'wilcoxon_p': 1.2877458836230715e-15}
+[2026-09-25T19:15:15.204044] Check 2/6: stability_across_seeds_and_hyperparameters (7 seeds x tuned hparams, + 12 hparam combos x seed 42)...
+[2026-09-25T19:15:16.065171]   seed=42: R2_A=-0.3273 R2_B=+0.0708 delta=+0.3982
+[2026-09-25T19:15:16.944440]   seed=43: R2_A=-0.3273 R2_B=+0.0312 delta=+0.3586
+[2026-09-25T19:15:17.811489]   seed=44: R2_A=-0.3273 R2_B=+0.0136 delta=+0.3409
+[2026-09-25T19:15:18.685772]   seed=45: R2_A=-0.3273 R2_B=+0.0570 delta=+0.3843
+[2026-09-25T19:15:19.656893]   seed=46: R2_A=-0.3273 R2_B=+0.0483 delta=+0.3756
+[2026-09-25T19:15:20.622615]   seed=47: R2_A=-0.3273 R2_B=+0.0332 delta=+0.3606
+[2026-09-25T19:15:21.569155]   seed=48: R2_A=-0.3273 R2_B=+0.0937 delta=+0.4210
+[2026-09-25T19:15:22.625566]   hparams={'max_depth': 4, 'min_samples_leaf': 5, 'max_features': 'sqrt'}: R2_B=+0.0397 delta_vs_ridge=+0.3671
+[2026-09-25T19:15:23.797883]   hparams={'max_depth': 4, 'min_samples_leaf': 5, 'max_features': 'log2'}: R2_B=-0.0472 delta_vs_ridge=+0.2801
+[2026-09-25T19:15:24.661373]   hparams={'max_depth': 4, 'min_samples_leaf': 10, 'max_features': 'sqrt'}: R2_B=+0.0708 delta_vs_ridge=+0.3982
+[2026-09-25T19:15:25.794456]   hparams={'max_depth': 4, 'min_samples_leaf': 10, 'max_features': 'log2'}: R2_B=-0.0411 delta_vs_ridge=+0.2862
+[2026-09-25T19:15:26.890725]   hparams={'max_depth': 6, 'min_samples_leaf': 5, 'max_features': 'sqrt'}: R2_B=+0.0619 delta_vs_ridge=+0.3893
+[2026-09-25T19:15:28.353676]   hparams={'max_depth': 6, 'min_samples_leaf': 5, 'max_features': 'log2'}: R2_B=+0.0188 delta_vs_ridge=+0.3461
+[2026-09-25T19:15:29.455752]   hparams={'max_depth': 6, 'min_samples_leaf': 10, 'max_features': 'sqrt'}: R2_B=+0.0384 delta_vs_ridge=+0.3657
+[2026-09-25T19:15:30.944782]   hparams={'max_depth': 6, 'min_samples_leaf': 10, 'max_features': 'log2'}: R2_B=-0.0222 delta_vs_ridge=+0.3052
+[2026-09-25T19:15:32.269174]   hparams={'max_depth': 8, 'min_samples_leaf': 5, 'max_features': 'sqrt'}: R2_B=-0.0187 delta_vs_ridge=+0.3086
+[2026-09-25T19:15:34.068437]   hparams={'max_depth': 8, 'min_samples_leaf': 5, 'max_features': 'log2'}: R2_B=-0.0376 delta_vs_ridge=+0.2898
+[2026-09-25T19:15:35.493148]   hparams={'max_depth': 8, 'min_samples_leaf': 10, 'max_features': 'sqrt'}: R2_B=-0.0047 delta_vs_ridge=+0.3227
+[2026-09-25T19:15:37.411531]   hparams={'max_depth': 8, 'min_samples_leaf': 10, 'max_features': 'log2'}: R2_B=-0.0778 delta_vs_ridge=+0.2496
+[2026-09-25T19:15:37.411594]   >>> STABILITY CHECK: all_seed_deltas_positive=True all_hparam_deltas_positive=True PASS=True
+[2026-09-25T19:15:37.411608] Check 3/6: overfitting_diagnostic_train_test_gap (RF gap vs Ridge gap, same split)...
+[2026-09-25T19:15:37.471584]   Ridge: R2_train=0.1126 R2_test=-0.3633 gap=0.4759
+[2026-09-25T19:15:37.471638]   RF:    R2_train=0.3730 R2_test=0.0475 gap=0.3255
+[2026-09-25T19:15:37.471651]   >>> OVERFITTING CHECK: RF_gap(0.3255) <= Ridge_gap(0.4759) = PASS=True
+[2026-09-25T19:15:37.471664] Check 4-5/6: alternate_horizon 10day, 50day...
+[2026-09-25T19:16:24.184476]   10-day: R2_A=-0.1954 R2_B=0.1590 delta=+0.3544 p=1.3175740193733039e-11
+[2026-09-25T19:17:10.691783]   50-day: R2_A=-1.3042 R2_B=-0.3626 delta=+0.9415 p=1.5107763142176107e-12
+[2026-09-25T19:17:10.691829] Check 6/6: shuffled_target_placebo...
+[2026-09-25T19:17:11.554391]   SHUFFLED: R2_A=-0.0570 R2_B=-0.1277 delta=-0.0707 p=0.9672385186055478 (expect: NOT significant)
+[2026-09-25T19:17:11.554434] Concentration check...
+[2026-09-25T19:17:11.575100]   AAPL: {'n': 29, 'mean_abs_err_diff_a_minus_b': 0.13133255838848962}
+[2026-09-25T19:17:11.575137]   AMD: {'n': 29, 'mean_abs_err_diff_a_minus_b': -0.13497177368306823}
+[2026-09-25T19:17:11.575150]   MSTR: {'n': 29, 'mean_abs_err_diff_a_minus_b': -0.039071977329332916}
+[2026-09-25T19:17:11.575159]   NVDA: {'n': 29, 'mean_abs_err_diff_a_minus_b': 0.026830084319421615}
+[2026-09-25T19:17:11.575168]   SMCI: {'n': 29, 'mean_abs_err_diff_a_minus_b': 0.20545443713943584}
+[2026-09-25T19:17:11.575180]   TSLA: {'n': 29, 'mean_abs_err_diff_a_minus_b': 0.11238360489454437}
+[2026-09-25T19:17:11.575188] 
+Applying Stage 1 decision rules (6 declared checks, no isolated-failure carve-out)...
+[2026-09-25T19:17:11.575220] 
+====================================================================================================
+[2026-09-25T19:17:11.575233] STAGE 1 VERDICT: VALIDATED (Stage 1 only -- overall status still requires Stage 2)
+[2026-09-25T19:17:11.575241] REASON: All Stage 1 criteria met at both seeds, all 6 robustness checks pass, placebo clean
+[2026-09-25T19:17:11.575249] ====================================================================================================
+[2026-09-25T19:17:11.576869] 
+Full results written to randomforest_volatility_v2_stage1_results.json

@@ -1,0 +1,118 @@
+﻿
+====================================================================================================
+=== RUN START 2026-09-25T05:29:40.949731+00:00 | window 2023-10-02 to today | resuming with 631 already-processed (ticker,date) pairs ===
+
+=== AAPL: fetching daily bars 2023-10-02 to today ===
+AAPL: 748 daily bars (2023-10-02..2026-09-24)
+AAPL: 678 candidate trading days (trailing/forward windows both computable)
+  [AAPL] 650/678 scanned -- saved=19 excl_ts=0 excl_oi=0 excl_error=0 (near_populated=19/19, far_populated=19/19, both=19/19)
+  [AAPL] 678/678 scanned -- saved=47 excl_ts=0 excl_oi=0 excl_error=0 (near_populated=47/47, far_populated=47/47, both=47/47)
+AAPL DONE: saved=47 excl_ts=0 excl_oi=0 excl_error=0 near_populated=47/47 far_populated=47/47 both=47/47
+
+=== TSLA: fetching daily bars 2023-10-02 to today ===
+TSLA: 748 daily bars (2023-10-02..2026-09-24)
+TSLA: 678 candidate trading days (trailing/forward windows both computable)
+  [TSLA] 50/678 scanned -- saved=50 excl_ts=0 excl_oi=0 excl_error=0 (near_populated=50/50, far_populated=50/50, both=50/50)
+  [TSLA] 100/678 scanned -- saved=100 excl_ts=0 excl_oi=0 excl_error=0 (near_populated=100/100, far_populated=100/100, both=100/100)
+  [TSLA] 150/678 scanned -- saved=150 excl_ts=0 excl_oi=0 excl_error=0 (near_populated=150/150, far_populated=150/150, both=150/150)
+  [TSLA] 200/678 scanned -- saved=199 excl_ts=1 excl_oi=0 excl_error=0 (near_populated=199/200, far_populated=199/200, both=199/200)
+  [TSLA] 250/678 scanned -- saved=249 excl_ts=1 excl_oi=0 excl_error=0 (near_populated=249/250, far_populated=249/250, both=249/250)
+  [TSLA] 300/678 scanned -- saved=296 excl_ts=2 excl_oi=2 excl_error=0 (near_populated=298/300, far_populated=298/300, both=298/300)
+  [TSLA] 350/678 scanned -- saved=345 excl_ts=3 excl_oi=2 excl_error=0 (near_populated=347/350, far_populated=347/350, both=347/350)
+  [TSLA] 400/678 scanned -- saved=395 excl_ts=3 excl_oi=2 excl_error=0 (near_populated=397/400, far_populated=397/400, both=397/400)
+  [TSLA] 450/678 scanned -- saved=444 excl_ts=4 excl_oi=2 excl_error=0 (near_populated=446/450, far_populated=446/450, both=446/450)
+  [TSLA] 500/678 scanned -- saved=494 excl_ts=4 excl_oi=2 excl_error=0 (near_populated=496/500, far_populated=496/500, both=496/500)
+  [TSLA] 550/678 scanned -- saved=544 excl_ts=4 excl_oi=2 excl_error=0 (near_populated=546/550, far_populated=546/550, both=546/550)
+  [TSLA] 600/678 scanned -- saved=594 excl_ts=4 excl_oi=2 excl_error=0 (near_populated=596/600, far_populated=596/600, both=596/600)
+  [TSLA] 650/678 scanned -- saved=644 excl_ts=4 excl_oi=2 excl_error=0 (near_populated=646/650, far_populated=646/650, both=646/650)
+  [TSLA] 678/678 scanned -- saved=672 excl_ts=4 excl_oi=2 excl_error=0 (near_populated=674/678, far_populated=674/678, both=674/678)
+TSLA DONE: saved=672 excl_ts=4 excl_oi=2 excl_error=0 near_populated=674/678 far_populated=674/678 both=674/678
+
+=== NVDA: fetching daily bars 2023-10-02 to today ===
+NVDA: 748 daily bars (2023-10-02..2026-09-24)
+NVDA: 678 candidate trading days (trailing/forward windows both computable)
+  [NVDA] 50/678 scanned -- saved=50 excl_ts=0 excl_oi=0 excl_error=0 (near_populated=50/50, far_populated=50/50, both=50/50)
+  [NVDA] 100/678 scanned -- saved=100 excl_ts=0 excl_oi=0 excl_error=0 (near_populated=100/100, far_populated=100/100, both=100/100)
+  [NVDA] 150/678 scanned -- saved=150 excl_ts=0 excl_oi=0 excl_error=0 (near_populated=150/150, far_populated=150/150, both=150/150)
+  [NVDA] 200/678 scanned -- saved=199 excl_ts=1 excl_oi=0 excl_error=0 (near_populated=199/200, far_populated=199/200, both=199/200)
+  [NVDA] 250/678 scanned -- saved=248 excl_ts=2 excl_oi=0 excl_error=0 (near_populated=248/250, far_populated=248/250, both=248/250)
+  [NVDA] 300/678 scanned -- saved=297 excl_ts=3 excl_oi=0 excl_error=0 (near_populated=297/300, far_populated=297/300, both=297/300)
+  [NVDA] 350/678 scanned -- saved=345 excl_ts=5 excl_oi=0 excl_error=0 (near_populated=345/350, far_populated=345/350, both=345/350)
+  [NVDA] 400/678 scanned -- saved=395 excl_ts=5 excl_oi=0 excl_error=0 (near_populated=395/400, far_populated=395/400, both=395/400)
+  [NVDA] 450/678 scanned -- saved=444 excl_ts=6 excl_oi=0 excl_error=0 (near_populated=444/450, far_populated=444/450, both=444/450)
+  [NVDA] 500/678 scanned -- saved=494 excl_ts=6 excl_oi=0 excl_error=0 (near_populated=494/500, far_populated=494/500, both=494/500)
+  [NVDA] 550/678 scanned -- saved=544 excl_ts=6 excl_oi=0 excl_error=0 (near_populated=544/550, far_populated=544/550, both=544/550)
+  [NVDA] 600/678 scanned -- saved=594 excl_ts=6 excl_oi=0 excl_error=0 (near_populated=594/600, far_populated=594/600, both=594/600)
+  [NVDA] 650/678 scanned -- saved=644 excl_ts=6 excl_oi=0 excl_error=0 (near_populated=644/650, far_populated=644/650, both=644/650)
+  [NVDA] 678/678 scanned -- saved=672 excl_ts=6 excl_oi=0 excl_error=0 (near_populated=672/678, far_populated=672/678, both=672/678)
+NVDA DONE: saved=672 excl_ts=6 excl_oi=0 excl_error=0 near_populated=672/678 far_populated=672/678 both=672/678
+
+=== AMD: fetching daily bars 2023-10-02 to today ===
+AMD: 748 daily bars (2023-10-02..2026-09-24)
+AMD: 678 candidate trading days (trailing/forward windows both computable)
+  [AMD] 50/678 scanned -- saved=49 excl_ts=1 excl_oi=0 excl_error=0 (near_populated=49/50, far_populated=50/50, both=49/50)
+  [AMD] 100/678 scanned -- saved=99 excl_ts=1 excl_oi=0 excl_error=0 (near_populated=99/100, far_populated=100/100, both=99/100)
+  [AMD] 150/678 scanned -- saved=149 excl_ts=1 excl_oi=0 excl_error=0 (near_populated=149/150, far_populated=150/150, both=149/150)
+  [AMD] 200/678 scanned -- saved=199 excl_ts=1 excl_oi=0 excl_error=0 (near_populated=199/200, far_populated=200/200, both=199/200)
+  [AMD] 250/678 scanned -- saved=249 excl_ts=1 excl_oi=0 excl_error=0 (near_populated=249/250, far_populated=250/250, both=249/250)
+  [AMD] 300/678 scanned -- saved=298 excl_ts=2 excl_oi=0 excl_error=0 (near_populated=298/300, far_populated=299/300, both=298/300)
+  [AMD] 350/678 scanned -- saved=347 excl_ts=3 excl_oi=0 excl_error=0 (near_populated=347/350, far_populated=348/350, both=347/350)
+  [AMD] 400/678 scanned -- saved=397 excl_ts=3 excl_oi=0 excl_error=0 (near_populated=397/400, far_populated=398/400, both=397/400)
+  [AMD] 450/678 scanned -- saved=446 excl_ts=4 excl_oi=0 excl_error=0 (near_populated=446/450, far_populated=447/450, both=446/450)
+  [AMD] 500/678 scanned -- saved=496 excl_ts=4 excl_oi=0 excl_error=0 (near_populated=496/500, far_populated=497/500, both=496/500)
+  [AMD] 550/678 scanned -- saved=546 excl_ts=4 excl_oi=0 excl_error=0 (near_populated=546/550, far_populated=547/550, both=546/550)
+  [AMD] 600/678 scanned -- saved=596 excl_ts=4 excl_oi=0 excl_error=0 (near_populated=596/600, far_populated=597/600, both=596/600)
+  [AMD] 650/678 scanned -- saved=645 excl_ts=5 excl_oi=0 excl_error=0 (near_populated=645/650, far_populated=647/650, both=645/650)
+  [AMD] 678/678 scanned -- saved=673 excl_ts=5 excl_oi=0 excl_error=0 (near_populated=673/678, far_populated=675/678, both=673/678)
+AMD DONE: saved=673 excl_ts=5 excl_oi=0 excl_error=0 near_populated=673/678 far_populated=675/678 both=673/678
+
+=== SMCI: fetching daily bars 2023-10-02 to today ===
+SMCI: 748 daily bars (2023-10-02..2026-09-24)
+SMCI: 678 candidate trading days (trailing/forward windows both computable)
+  [SMCI] 50/678 scanned -- saved=50 excl_ts=0 excl_oi=0 excl_error=0 (near_populated=50/50, far_populated=50/50, both=50/50)
+  [SMCI] 100/678 scanned -- saved=100 excl_ts=0 excl_oi=0 excl_error=0 (near_populated=100/100, far_populated=100/100, both=100/100)
+  [SMCI] 150/678 scanned -- saved=150 excl_ts=0 excl_oi=0 excl_error=0 (near_populated=150/150, far_populated=150/150, both=150/150)
+  [SMCI] 200/678 scanned -- saved=199 excl_ts=1 excl_oi=0 excl_error=0 (near_populated=199/200, far_populated=199/200, both=199/200)
+  [SMCI] 250/678 scanned -- saved=248 excl_ts=1 excl_oi=1 excl_error=0 (near_populated=249/250, far_populated=249/250, both=249/250)
+  [SMCI] 300/678 scanned -- saved=296 excl_ts=3 excl_oi=1 excl_error=0 (near_populated=297/300, far_populated=297/300, both=297/300)
+  [SMCI] 350/678 scanned -- saved=345 excl_ts=4 excl_oi=1 excl_error=0 (near_populated=346/350, far_populated=346/350, both=346/350)
+  [SMCI] 400/678 scanned -- saved=395 excl_ts=4 excl_oi=1 excl_error=0 (near_populated=396/400, far_populated=396/400, both=396/400)
+  [SMCI] 450/678 scanned -- saved=444 excl_ts=5 excl_oi=1 excl_error=0 (near_populated=445/450, far_populated=445/450, both=445/450)
+  [SMCI] 500/678 scanned -- saved=494 excl_ts=5 excl_oi=1 excl_error=0 (near_populated=495/500, far_populated=495/500, both=495/500)
+  [SMCI] 550/678 scanned -- saved=544 excl_ts=5 excl_oi=1 excl_error=0 (near_populated=545/550, far_populated=545/550, both=545/550)
+  [SMCI] 600/678 scanned -- saved=594 excl_ts=5 excl_oi=1 excl_error=0 (near_populated=595/600, far_populated=595/600, both=595/600)
+  [SMCI] 650/678 scanned -- saved=644 excl_ts=5 excl_oi=1 excl_error=0 (near_populated=645/650, far_populated=645/650, both=645/650)
+  [SMCI] 678/678 scanned -- saved=672 excl_ts=5 excl_oi=1 excl_error=0 (near_populated=673/678, far_populated=673/678, both=673/678)
+SMCI DONE: saved=672 excl_ts=5 excl_oi=1 excl_error=0 near_populated=673/678 far_populated=673/678 both=673/678
+
+=== MSTR: fetching daily bars 2023-10-02 to today ===
+MSTR: 748 daily bars (2023-10-02..2026-09-24)
+MSTR: 678 candidate trading days (trailing/forward windows both computable)
+  [MSTR] 50/678 scanned -- saved=50 excl_ts=0 excl_oi=0 excl_error=0 (near_populated=50/50, far_populated=50/50, both=50/50)
+  [MSTR] 100/678 scanned -- saved=100 excl_ts=0 excl_oi=0 excl_error=0 (near_populated=100/100, far_populated=100/100, both=100/100)
+  [MSTR] 150/678 scanned -- saved=150 excl_ts=0 excl_oi=0 excl_error=0 (near_populated=150/150, far_populated=150/150, both=150/150)
+  [MSTR] 200/678 scanned -- saved=198 excl_ts=1 excl_oi=1 excl_error=0 (near_populated=199/200, far_populated=199/200, both=199/200)
+  [MSTR] 250/678 scanned -- saved=247 excl_ts=2 excl_oi=1 excl_error=0 (near_populated=248/250, far_populated=248/250, both=248/250)
+  [MSTR] 300/678 scanned -- saved=295 excl_ts=4 excl_oi=1 excl_error=0 (near_populated=297/300, far_populated=296/300, both=296/300)
+  [MSTR] 350/678 scanned -- saved=344 excl_ts=5 excl_oi=1 excl_error=0 (near_populated=346/350, far_populated=345/350, both=345/350)
+  [MSTR] 400/678 scanned -- saved=394 excl_ts=5 excl_oi=1 excl_error=0 (near_populated=396/400, far_populated=395/400, both=395/400)
+  [MSTR] 450/678 scanned -- saved=443 excl_ts=6 excl_oi=1 excl_error=0 (near_populated=445/450, far_populated=444/450, both=444/450)
+  [MSTR] 500/678 scanned -- saved=493 excl_ts=6 excl_oi=1 excl_error=0 (near_populated=495/500, far_populated=494/500, both=494/500)
+  [MSTR] 550/678 scanned -- saved=543 excl_ts=6 excl_oi=1 excl_error=0 (near_populated=545/550, far_populated=544/550, both=544/550)
+  [MSTR] 600/678 scanned -- saved=593 excl_ts=6 excl_oi=1 excl_error=0 (near_populated=595/600, far_populated=594/600, both=594/600)
+  [MSTR] 650/678 scanned -- saved=643 excl_ts=6 excl_oi=1 excl_error=0 (near_populated=645/650, far_populated=644/650, both=644/650)
+  [MSTR] 678/678 scanned -- saved=671 excl_ts=6 excl_oi=1 excl_error=0 (near_populated=673/678, far_populated=672/678, both=672/678)
+MSTR DONE: saved=671 excl_ts=6 excl_oi=1 excl_error=0 near_populated=673/678 far_populated=672/678 both=672/678
+
+=== PER-TICKER NEAR/FAR BUCKET POPULATION SUMMARY (not just the aggregate) ===
+  AAPL: total=47 near_populated=47 (100.0%) far_populated=47 (100.0%) both=47 (100.0%) saved=47
+  TSLA: total=678 near_populated=674 (99.4%) far_populated=674 (99.4%) both=674 (99.4%) saved=672
+  NVDA: total=678 near_populated=672 (99.1%) far_populated=672 (99.1%) both=672 (99.1%) saved=672
+  AMD: total=678 near_populated=673 (99.3%) far_populated=675 (99.6%) both=673 (99.3%) saved=673
+  SMCI: total=678 near_populated=673 (99.3%) far_populated=673 (99.3%) both=673 (99.3%) saved=672
+  MSTR: total=678 near_populated=673 (99.3%) far_populated=672 (99.1%) both=672 (99.1%) saved=671
+  AGGREGATE: total=3437 near_populated=3412 (99.3%) far_populated=3413 (99.3%) both=3411 (99.2%)
+
+=== RUN COMPLETE 2026-09-25T07:07:42.695197+00:00 ===
+Final saved N (DB total): 4027
+Final excluded total (DB total): 41

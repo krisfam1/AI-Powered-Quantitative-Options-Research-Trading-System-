@@ -1,0 +1,207 @@
+{
+  "total_rows_in_db": 2599,
+  "incomplete_rows_dropped": 0,
+  "complete_rows_used": 2599,
+  "split": {
+    "train_n": 1563,
+    "val_n": 520,
+    "test_n": 516,
+    "train_pct": 60.1,
+    "val_pct": 20.0,
+    "test_pct": 19.9,
+    "train_start": "2023-10-03",
+    "train_end": "2025-08-01",
+    "val_end": "2026-02-25",
+    "test_end": "2026-09-24"
+  },
+  "primary_test_n": 182,
+  "model_a_tuned_params": {
+    "max_depth": 2,
+    "min_child_weight": 5,
+    "reg_alpha": 1.0,
+    "reg_lambda": 5.0,
+    "subsample": 0.8,
+    "colsample_bytree": 0.7
+  },
+  "model_b_tuned_params": {
+    "max_depth": 2,
+    "min_child_weight": 10,
+    "reg_alpha": 1.0,
+    "reg_lambda": 5.0,
+    "subsample": 0.7,
+    "colsample_bytree": 0.7
+  },
+  "model_a_cv_log_loss": 0.6850334763526916,
+  "model_b_cv_log_loss": 0.6848925709724426,
+  "primary_result": {
+    "n": 182,
+    "seed42": {
+      "auc_a": 0.5471698113207547,
+      "auc_b": 0.5552383316782522,
+      "auc_delta": 0.0080685203574975,
+      "mean_loss_a": 0.6841512283126077,
+      "mean_loss_b": 0.6828096060307471,
+      "wilcoxon_p_one_sided": 0.35090379037538216
+    },
+    "seed43": {
+      "auc_a": 0.5482869910625621,
+      "auc_b": 0.5445630585898709,
+      "auc_delta": -0.003723932472691205,
+      "mean_loss_a": 0.6838711043308069,
+      "mean_loss_b": 0.6799712140154053,
+      "wilcoxon_p_one_sided": 0.0790644156322452
+    }
+  },
+  "full_test_set_descriptive": {
+    "n": 516,
+    "auc_a": 0.5206349206349207,
+    "auc_b": 0.5329226881465687,
+    "auc_delta": 0.012287767511648062
+  },
+  "robustness_random_forest": {
+    "params_a": {
+      "max_depth": 4,
+      "min_samples_leaf": 10,
+      "max_features": "sqrt"
+    },
+    "params_b": {
+      "max_depth": 4,
+      "min_samples_leaf": 10,
+      "max_features": "sqrt"
+    },
+    "auc_a": 0.5208540218470705,
+    "auc_b": 0.5201092353525322,
+    "auc_delta": -0.000744786494538352,
+    "wilcoxon_p_one_sided": 0.3582237903731246,
+    "direction_matches_xgboost": false
+  },
+  "robustness_leave_one_interaction_out": {
+    "realized_volatility_x_relative_volume": {
+      "auc_without_this_interaction": 0.5541211519364448,
+      "auc_delta_vs_model_a": 0.006951340615690138,
+      "wilcoxon_p_vs_model_a": 0.4272571400406422
+    },
+    "gamma_x_moneyness": {
+      "auc_without_this_interaction": 0.545059582919563,
+      "auc_delta_vs_model_a": -0.0021102284011916828,
+      "wilcoxon_p_vs_model_a": 0.41133637741538254
+    },
+    "breakout_magnitude_score_x_trend_strength_score": {
+      "auc_without_this_interaction": 0.5369910625620656,
+      "auc_delta_vs_model_a": -0.010178748758689071,
+      "wilcoxon_p_vs_model_a": 0.40696884831283325
+    }
+  },
+  "robustness_leave_one_ticker_out": {
+    "AAPL": {
+      "n": 151,
+      "auc_a": 0.5425878941645523,
+      "auc_b": 0.5587169264226169,
+      "auc_delta": 0.016129032258064613,
+      "wilcoxon_p_one_sided": 0.44606416005221683
+    },
+    "AMD": {
+      "n": 152,
+      "auc_a": 0.5155913978494624,
+      "auc_b": 0.5865591397849462,
+      "auc_delta": 0.07096774193548383,
+      "wilcoxon_p_one_sided": 0.011114340447598778
+    },
+    "MSTR": {
+      "n": 152,
+      "auc_a": 0.5445127304653204,
+      "auc_b": 0.5808604038630378,
+      "auc_delta": 0.036347673397717384,
+      "wilcoxon_p_one_sided": 0.05939715399896602
+    },
+    "NVDA": {
+      "n": 152,
+      "auc_a": 0.558230782949884,
+      "auc_b": 0.5637595862314962,
+      "auc_delta": 0.005528803281612205,
+      "wilcoxon_p_one_sided": 0.6352597866896778
+    },
+    "SMCI": {
+      "n": 151,
+      "auc_a": 0.5211038961038961,
+      "auc_b": 0.5517676767676768,
+      "auc_delta": 0.030663780663780726,
+      "wilcoxon_p_one_sided": 0.11907264619461999
+    },
+    "TSLA": {
+      "n": 152,
+      "auc_a": 0.5205992509363295,
+      "auc_b": 0.5386124487248083,
+      "auc_delta": 0.018013197788478763,
+      "wilcoxon_p_one_sided": 0.2768237938006501
+    }
+  },
+  "robustness_exit_reason_stratified": {
+    "reversal_guard": {
+      "n": 76,
+      "auc_a": NaN,
+      "auc_b": NaN,
+      "auc_delta": NaN,
+      "wilcoxon_p_one_sided": 0.9264231464544622
+    },
+    "stop_loss": {
+      "n": 106,
+      "auc_a": NaN,
+      "auc_b": NaN,
+      "auc_delta": NaN,
+      "wilcoxon_p_one_sided": 0.014071361152985488
+    }
+  },
+  "robustness_shuffled_target_placebo": {
+    "auc_a_shuffled": 0.49267626613704074,
+    "auc_b_shuffled": 0.5050893743793445,
+    "auc_delta_shuffled": 0.012413108242303794,
+    "wilcoxon_p_one_sided_shuffled": 0.5732939862333297,
+    "significant_at_0.05": false
+  },
+  "concentration_check": {
+    "per_ticker_mean_loss_diff": {
+      "AAPL": {
+        "n": 31,
+        "mean_log_loss_diff_a_minus_b": 0.00144414363368865
+      },
+      "AMD": {
+        "n": 30,
+        "mean_log_loss_diff_a_minus_b": -0.014340054988861085
+      },
+      "MSTR": {
+        "n": 30,
+        "mean_log_loss_diff_a_minus_b": 0.002166840434074402
+      },
+      "NVDA": {
+        "n": 30,
+        "mean_log_loss_diff_a_minus_b": 0.003971236944198609
+      },
+      "SMCI": {
+        "n": 31,
+        "mean_log_loss_diff_a_minus_b": 0.020856157425911195
+      },
+      "TSLA": {
+        "n": 30,
+        "mean_log_loss_diff_a_minus_b": -0.006702491641044616
+      }
+    },
+    "first_half_mean_loss_diff": 0.0009453270461533096,
+    "second_half_mean_loss_diff": 0.001737917517567729
+  },
+  "decision_inputs": {
+    "primary_n": 182,
+    "n_meets_floor": true,
+    "primary_significant_both_seeds": false,
+    "effect_size_met_both_seeds": false,
+    "rf_direction_ok": false,
+    "loio_direction_ok": false,
+    "loto_direction_ok": true,
+    "stratified_direction_ok": false,
+    "placebo_clean": true,
+    "all_four_robustness_ok": false,
+    "all_five_robustness_ok": false
+  },
+  "verdict": "REJECTED",
+  "verdict_reason": "primary test not significant at alpha=0.05 (both seeds); effect size (AUC delta) below 0.05 threshold (both seeds); Random Forest robustness check direction/positive-effect failed -- XGBoost and Random Forest DISAGREE; leave_one_interaction_out: at least one interaction removal reverses direction; exit_reason_stratified: at least one subgroup reverses direction"
+}

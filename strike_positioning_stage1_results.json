@@ -1,0 +1,171 @@
+{
+  "n_total": 605,
+  "n_meets_floor": true,
+  "primary_result": {
+    "seed42": {
+      "r": 0.024828067766294374,
+      "p_one_sided": 0.082,
+      "n": 605
+    },
+    "seed43": {
+      "r": 0.024828067766294374,
+      "p_one_sided": 0.107,
+      "n": 605
+    }
+  },
+  "robustness_leave_one_ticker_out": {
+    "AAPL": {
+      "seed42": {
+        "r": 0.010416922815287393,
+        "p_one_sided": 0.149,
+        "n": 505
+      },
+      "seed43": {
+        "r": 0.010416922815287393,
+        "p_one_sided": 0.167,
+        "n": 505
+      }
+    },
+    "TSLA": {
+      "seed42": {
+        "r": 0.03326111375994649,
+        "p_one_sided": 0.125,
+        "n": 504
+      },
+      "seed43": {
+        "r": 0.03326111375994649,
+        "p_one_sided": 0.144,
+        "n": 504
+      }
+    },
+    "NVDA": {
+      "seed42": {
+        "r": 0.0016178437748075275,
+        "p_one_sided": 0.158,
+        "n": 504
+      },
+      "seed43": {
+        "r": 0.0016178437748075275,
+        "p_one_sided": 0.185,
+        "n": 504
+      }
+    },
+    "AMD": {
+      "seed42": {
+        "r": 0.10567282361814763,
+        "p_one_sided": 0.002,
+        "n": 504
+      },
+      "seed43": {
+        "r": 0.10567282361814763,
+        "p_one_sided": 0.0,
+        "n": 504
+      }
+    },
+    "SMCI": {
+      "seed42": {
+        "r": -0.04814109141636398,
+        "p_one_sided": 0.373,
+        "n": 504
+      },
+      "seed43": {
+        "r": -0.04814109141636398,
+        "p_one_sided": 0.373,
+        "n": 504
+      }
+    },
+    "MSTR": {
+      "seed42": {
+        "r": 0.07323667171234301,
+        "p_one_sided": 0.046,
+        "n": 504
+      },
+      "seed43": {
+        "r": 0.07323667171234301,
+        "p_one_sided": 0.054,
+        "n": 504
+      }
+    }
+  },
+  "robustness_alternate_horizon": {
+    "10day": {
+      "seed42": {
+        "r": -0.013590871991534994,
+        "p_one_sided": 0.3,
+        "n": 605
+      },
+      "seed43": {
+        "r": -0.013590871991534994,
+        "p_one_sided": 0.31,
+        "n": 605
+      }
+    },
+    "50day": {
+      "seed42": {
+        "r": 0.2359883482477622,
+        "p_one_sided": 0.0,
+        "n": 605
+      },
+      "seed43": {
+        "r": 0.2359883482477622,
+        "p_one_sided": 0.0,
+        "n": 605
+      }
+    }
+  },
+  "n_variant_rows": 605,
+  "variant_consistency_check_mismatches": 0,
+  "robustness_alternate_parameters": {
+    "alternate_moneyness_band:15pct": {
+      "seed42": {
+        "r": 0.04991044469727286,
+        "p_one_sided": 0.056,
+        "n": 605
+      },
+      "seed43": {
+        "r": 0.04991044469727286,
+        "p_one_sided": 0.079,
+        "n": 605
+      }
+    },
+    "alternate_dte_window:7-30dte": {
+      "seed42": {
+        "r": 0.0016983322138720996,
+        "p_one_sided": 0.174,
+        "n": 605
+      },
+      "seed43": {
+        "r": 0.0016983322138720996,
+        "p_one_sided": 0.183,
+        "n": 605
+      }
+    }
+  },
+  "decision_inputs": {
+    "n_total": 605,
+    "n_ok": true,
+    "primary_r": 0.024828067766294374,
+    "primary_p42": 0.082,
+    "primary_p43": 0.107,
+    "primary_significant_both_seeds": false,
+    "effect_size_met": false,
+    "direction_positive": true,
+    "robustness_directions": {
+      "leave_one_ticker_out": {
+        "AAPL": true,
+        "TSLA": true,
+        "NVDA": true,
+        "AMD": true,
+        "SMCI": false,
+        "MSTR": true
+      },
+      "alternate_horizon:10day": false,
+      "alternate_horizon:50day": true,
+      "alternate_moneyness_band:15pct": true,
+      "alternate_dte_window:7-30dte": true
+    },
+    "all_five_robustness_direction_ok": false
+  },
+  "stage1_verdict": "REJECTED",
+  "stage1_verdict_reason": "primary test not significant at corrected alpha=0.0167 at both seeds (p42=0.0820, p43=0.1070); effect size |r|=0.0248 below threshold 0.15; leave_one_ticker_out: direction reverses excluding ['SMCI']; alternate_horizon:10day reverses direction"
+}

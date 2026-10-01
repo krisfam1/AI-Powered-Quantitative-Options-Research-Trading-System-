@@ -1,0 +1,143 @@
+Found 13 reviews
+
+=== opt-live-AAPL-dc17682e-2fc3-4cfb-b08a-c2e19c3216ed ===
+This trade lost -52.7% and was closed via stop-loss, which is the intended risk-control mechanism working as designed rather than a process failure. Notably, the option briefly traded up to $2.14 shortly after entry (11:04 AM ET) before reversing hard down to a $1.21 trough — suggesting the entry may have been slightly early or the underlying moved against the put thesis shortly after fill, with no meaningful follow-through to the upside. With only 6 days to expiry (entered 2026-08-25, expiring 2026-08-31), this position carried significant gamma/theta risk, and a ~48% adverse move in premium within hours is consistent with short-dated options amplifying volatility. Worth flagging: check whether entry timing aligns with a specific signal/catalyst that failed to materialize, and review whether stop-loss placement on short-DTE contracts is wide enough to avoid getting stopped out on normal intraday noise versus genuine thesis invalidation. No process violations are evident here — this looks like a properly executed stop-loss on a trade where the directional thesis simply didn't play out.
+
+=== opt-live-TSLA-a760b557-54cf-4c4b-8a5d-5baf2ff11410 ===
+This trade lost 46% and hit the stop-loss just 15 minutes after entry, with premium collapsing from a peak of 4.95 to a trough of 2.38 within that same narrow window — a classic sign of entering right into early-session volatility/whipsaw rather than a stable trend. With only 5 days to expiry, this contract had significant gamma/theta risk, meaning small underlying moves against the position could cause outsized premium swings, which appears to be exactly what happened. The rapid peak-to-trough move within 15 minutes of the open suggests the entry may have been made during the opening volatility spike (9:30-9:47 AM ET) rather than waiting for price to stabilize, which is a pattern worth flagging. The exit process itself (stop_loss trigger) appears to have functioned as intended, cutting losses rather than letting them run further. For future review: consider whether entries during the first 15-30 minutes of market open are systematically riskier for short-dated options, and whether stop-loss thresholds are appropriately calibrated for the elevated volatility typical of near-expiry contracts.
+
+=== opt-live-TSLA-430bac78-d219-46c9-b806-77189afe522a ===
+**Analysis:**
+
+This trade closed at a -43.5% loss via stop-loss on a TSLA put with only 6 days to expiry — a short-dated contract that should have been expected to show high premium volatility. Notably, the price data shows the option **peaked at $7.34** (a +70% gain from entry) on 2026-08-26, the day after entry, before collapsing to a $2.43 exit — meaning a substantial unrealized profit was available and not captured before reversing into a stop-out. This pattern suggests either no profit-taking/trailing-stop mechanism was in place, or the exit logic only reacts to downside stop-loss levels rather than locking in upside spikes, which is a significant process concern worth flagging. Additionally, the trough ($2.66) occurred *before* the peak, indicating early adverse movement was tolerated (not stopped out) while later strength was also not harvested — raising questions about whether the stop-loss trigger/threshold and any take-profit logic are well-calibrated for short-dated, high-gamma contracts like this one. Worth reviewing: whether a trailing stop or partial profit-taking rule could meaningfully improve outcomes on trades that show early large favorable excursions before reverting.
+
+=== opt-live-AMD-af9d7015-285e-415f-9fa8-19b0114cbe4b ===
+This trade closed as a loss via stop-loss, down 41.5% on a short-dated (6 day) AMD put. The price action shows the option actually traded at 5.00 shortly after entry (a potential better exit or even profit point if entry was near/before that peak) before collapsing to a 2.80 trough by mid-morning — suggesting the underlying moved against the put thesis quickly and decay/delta losses accelerated intraday, which is typical for such short-dated single-day moves. The exit process appears to have functioned correctly (stop-loss triggered as designed), but the gap between the peak (5.00 at 9:31 AM) and entry/exit handling is worth flagging — if entry occurred after the peak, that raises a question about entry timing/signal lag. Given the very short time-to-expiry (6 days) and the sharp early reversal, this looks like a case of poor timing relative to a fast-moving underlying rather than a stop-loss or system malfunction. For future review: consider whether entries on very short-DTE contracts near intraday extremes are systematically vulnerable to this kind of whipsaw, and whether earlier partial profit-taking near intraday peaks could reduce this pattern.
+
+=== opt-live-AAPL-b179505c-81c6-42b8-a7f8-fac65d9726f5 ===
+This trade lost 40% ($318) on a stop-loss exit, which appears to have functioned as intended — the loss was capped rather than left to run, suggesting the risk management process worked correctly even though the trade itself didn't pay off. One concern: the contract had only 5 days to expiry at entry (2026-08-28 to 2026-09-02), and it's a $320 strike call on AAPL — this is a short-dated, likely out-of-the-money or near-the-money position where theta decay and gamma risk are both elevated, making rapid premium erosion (2.65 → 1.59) unsurprising if the underlying didn't move favorably or quickly enough. Worth reviewing whether entries this close to expiry are systematically producing worse outcomes (higher volatility of P&L, more stop-outs) versus giving the trade more time/room, and whether the stop-loss threshold (~40%) is well-calibrated for such short-dated contracts where premium can swing sharply on small underlying moves. No process violations are evident from the data itself, but it's worth confirming the original thesis/catalyst for entering a 5-day call to ensure entries aren't being taken too close to expiry without sufficient edge to justify the added risk.
+
+=== opt-live-TSLA-94f9e086-db9a-4bdb-a04f-0cf2d8df190f ===
+## Analysis
+
+This trade lost 56.8% of premium, exiting via stop-loss on a short-dated (9-day) TSLA call. The gamma context shows a **positive** gamma regime, not negative, and the wall distance was tight at 1.72% — meaning half of a strict entry filter (proximity to wall) was satisfied, but the regime condition was not. In a positive gamma regime, dealers tend to suppress volatility and mean-revert price action, which is a poor environment for a long call needing a sustained directional breakout — this is a plausible structural reason the trade failed to follow through.
+
+**Gamma rule check:** A strict rule requiring negative regime AND very close to a wall would have **skipped this trade** outright, since regime was positive. Given the outcome (a 56.8% loss), skipping would clearly have been **better** — the gamma condition alone would have avoided this loss.
+
+**Volatility:** `estimated_volatility` is null, so no assessment can be made there — this is itself a data-quality gap worth flagging, since volatility context is normally a secondary filter and its absence removes a layer of pre-trade risk assessment.
+
+**Price extremes what-ifs:** The trough ($1.76) hit at 9:31 AM ET, shortly after entry, and represents a drawdown of ~70% from entry premium — far breaching even a stop-loss 10 points wider (i.e., ~67% stop). So (a) a 10-point-wider stop would **not** have changed the outcome; price traded well below that level regardless. For (b), the peak ($6.15) occurred *after* the trough, at 2:00 PM, and was only ~2.5% above entry (6.00) — nowhere near a 40%+ gain. So a reversal-guard exit logic never would have triggered; the trade never had a meaningful profit cushion to lock in. The trade was simply underwater almost immediately and stayed there.
+
+## Concerns
+- Entry occurred against the gamma regime filter's intended logic (positive regime, not negative).
+- Missing volatility data reduces confidence in the pre-trade risk read.
+- The stop-loss level, whatever it was, was reasonable and the loss was driven by immediate adverse movement, not stop placement.
+
+RECOMMENDATION: RECONSIDER - entry timing/gamma regime filter - trade was entered in a positive gamma regime despite being near a wall, and a strict negative-regime requirement would have skipped this loss entirely.
+
+=== opt-live-AMD-6601c3ae-d058-4d05-b4ff-cddf5578aafb ===
+## Trade Review: AMD 447.5P (9/9/26 expiry)
+
+**Outcome:** Loss of -40.2%, exited via stop-loss. Premium collapsed from 8.45 to 5.05 — this was a short-dated put (8 DTE at entry) that needed a fast, decisive move down to work, and instead decayed/moved against the position quickly.
+
+**Gamma context — strong signal, correctly aligned:** Regime was negative with net gamma exposure of -546.56, and the wall distance was just 0.46% from the 455 strike — that's about as tight as a wall signal gets. A strict rule requiring negative regime AND very close proximity to a wall would have **taken this trade**, not skipped it. So the entry process, at least by this filter, was followed correctly and the setup was objectively strong on paper. The loss here isn't a case of a weak/marginal signal being force-fed — it's a good-looking setup that simply didn't pay off, which happens even with correct process. This is worth flagging only in the sense that "strong gamma signal" is not a guarantee, and win-rate tracking on wall-distance-under-0.5% setups specifically would clarify if this is a pattern or a one-off.
+
+**Estimated volatility:** Not available (None) — can't assess whether IV was elevated or cheap at entry, which is itself a gap. For short-dated negative-gamma plays near a wall, knowing whether you're paying inflated premium matters a lot given theta burn on 8 DTE contracts; this data being absent limits full diagnosis of whether entry price (8.45) was reasonable.
+
+**Price extremes / what-if analysis:** No price_extremes (peak/trough) data was provided in this trade record, so the (a) wider-stop and (b) reversal-guard questions cannot be answered with actual data — only the entry/exit premiums and stop-loss outcome are known. Speculating on unrealized peak favorability without that data would not be honest analysis. This absence itself is worth flagging: without peak/trough tracking, it's impossible to know if the stop was too tight (price briefly dipped further before recovering) or exactly right (never came close to profitable).
+
+**Concerns for future review:** (1) missing estimated_volatility and price_extremes data limits post-trade diagnostics meaningfully; (2) an 8-day-to-expiry put is high-theta-risk even with a good gamma setup, so entry timing/DTE choice deserves scrutiny independent of the gamma signal; (3) one trade isn't enough to indict the gamma-wall rule, but tracking a larger sample of sub-0.5%-wall-distance entries would show if this is variance or a real weakness.
+
+RECOMMENDATION: RECONSIDER - missing volatility/price-extremes data - can't verify entry IV richness or whether the stop-loss width was appropriate without this data, limiting confidence in an otherwise well-aligned gamma-based entry.
+
+=== opt-live-AMD-31a3c997-8b19-4300-9eac-b01a92ade8ec ===
+## Analysis
+
+This was a losing trade: a put entered at 7.30, stopped out at 5.00 for a -31.5% loss. The option actually peaked at 7.78 (up ~6.6%) just after entry (10:30 AM ET) and then collapsed to a trough of 5.11 (down ~30%) by 11:56 AM ET — all within roughly 90 minutes on entry day itself. The stop was triggered essentially at/near the trough, meaning exit timing was mechanically correct (stop-loss did its job of capping loss), but the trade thesis failed almost immediately with no real follow-through in the intended direction.
+
+**Gamma context:** The regime was negative with a wall only 0.03% away (essentially at the wall, 455.0 nearest strike/level) — this is actually a textbook *strong* setup by strict gamma rules (negative regime AND very close to a wall). So a strict gamma-based entry filter would have **taken this trade**, not skipped it. That means the loss can't be attributed to a weak/marginal gamma signal — the signal was strong and the trade still failed fast, which is a more concerning pattern than a filter failure, since it suggests either poor timing within the day or that proximity-to-wall alone isn't sufficient to predict short-term direction.
+
+**Volatility:** estimated_volatility is None, so no read is available — worth flagging as a data gap rather than a negative signal.
+
+**What-if on stop width:** The trough (5.11) is barely below the actual exit (5.00), and premium never recovered above the entry-adjacent peak afterward per the data given — a 10-point-wider stop would have filled near/at the trough anyway, so it likely would **not have materially changed the outcome** (still a large loss, possibly marginally smaller or about the same since 5.11 vs 5.00 is close).
+
+**What-if on reversal guard:** The peak of 7.78 (+6.6%) came before the drop but never reached the 40%+ gain threshold, so a reversal-guard/lock-in-gains rule would **not have triggered** here — there was no substantial unrealized profit to protect. This confirms the loss was a straightforward adverse move against the position from near the entry point, not a case of surrendering back a large winner.
+
+RECOMMENDATION: RECONSIDER - entry timing/DTE choice - a strong gamma wall signal still produced an immediate ~30% reversal within 90 minutes on a 8-day-to-expiry contract, suggesting proximity-to-wall alone is insufficient and short-DTE gamma trades may need intraday confirmation before entry.
+
+=== opt-live-SMCI-177e582a-4a3e-45b3-9adb-4ea9e905132a ===
+**Outcome and process review:** This trade lost 42% and exited via stop-loss, which is a defined-risk exit doing its job — the process was followed mechanically as intended. However, this was a very short-dated call (9 days to expiry) bought at a modest premium, meaning it had little room to absorb adverse moves before decay and gamma sensitivity accelerated losses. The size (6 contracts) and full stop-out suggest the setup was more fragile than the trade thesis likely accounted for.
+
+**Gamma context:** The regime was "positive," not negative, and while the wall distance (1.23%) was close, a strict rule requiring **negative regime AND very close to a wall** would have skipped this trade outright since the regime condition fails. In positive gamma regimes, market makers tend to dampen volatility and mean-revert price, which is a headwind for a directional long call — this is a plausible contributor to the loss. Skipping this trade under a strict rule would have been better for this specific outcome, since the trade lost decisively rather than chopping to breakeven.
+
+**Estimated volatility:** No value was provided (None), so no volatility-based filtering could have been applied here — this is a data gap worth flagging, since volatility context could have added another layer of confirmation or rejection.
+
+**Price extremes / what-if analysis:** No price_extremes (peak/trough) data was provided in this trade record, so the stop-loss-width and reversal-guard what-ifs cannot be answered with real data — this should be flagged as a missing field for future review rather than speculated on.
+
+**Pattern to flag:** Entering directional gamma-sensitive trades in a positive-gamma regime, especially this close to expiry, is a recurring risk worth scrutinizing across the trade log.
+
+RECOMMENDATION: RECONSIDER - gamma regime filter at entry - trade was taken in a positive gamma regime (mean-reverting environment) which works against a long directional call and a strict negative-regime rule would have skipped it.
+
+=== opt-live-SMCI-6e3ce94a-e240-4fd3-809b-65c89be4a791 ===
+## Trade Review: SMCI 260911C00037500
+
+**Outcome & likely drivers:** This trade lost -39.5% ($343) via stop-loss on a short-dated call (9 DTE at entry). The option actually spiked to $1.75 (+41% from entry) just minutes after entry (9:31 AM ET) before collapsing to a $0.83 trough by 11:01 AM and eventually stopping out at $0.75. This is a classic "right direction briefly, then full reversal" pattern — likely a morning fade/failed breakout in SMCI that didn't hold.
+
+**Gamma signal check:** The regime was **positive**, not negative — this already fails a strict negative-regime requirement. Wall distance was 7.09%, which is not "very close" (typically <3-5% would qualify as strong/tight). So this was a **weak gamma signal on both counts**. A strict rule requiring negative regime AND close proximity to a wall would have **skipped this trade entirely**. Given the outcome, skipping would have been **better** — the trade lost money, and the weak/contradictory gamma setup (positive regime, un-strengthened options positioning, moderate wall distance) was a reasonable red flag that materialized as a loss.
+
+**Volatility:** No estimated_volatility value was provided (None), so this can't be assessed — worth flagging as a data gap rather than a signal issue.
+
+**What-if on stop-loss width:** Actual trough was $0.83 (-33% from entry), and exit was $0.75 (-39.5%). A stop 10pp wider (~-49.5%, roughly $0.63) would not have been hit based on the trough shown — but note the trough ($0.83) is *above* where the trade actually exited ($0.75), meaning price kept falling after the trough timestamp or the stop was hit on a later leg not captured in bars_analyzed. Given the data shown, a wider stop wouldn't have saved this trade unless price never fell below $0.75 after 11:01 AM, which contradicts the exit itself — so this is inconclusive/likely neutral-to-negative for a wider stop.
+
+**What-if on reversal guard:** Peak was $1.75 at 9:31 AM, just +41% above entry — this does cross a 40%+ threshold very early. A reversal-guard exit locking in gains once up 40%+ with sustained adverse movement would very likely have **caught this peak or exited on the way down substantially above the eventual $0.75 stop-loss**, meaningfully improving this outcome. This is the most actionable finding: the trade had a real, sizable profit window that was fully given back.
+
+RECOMMENDATION: RECONSIDER - reversal-guard/profit-lock exit logic - price peaked +41% within 30 minutes of entry before fully reversing into a stop-loss, a clear miss for capturing early gains.
+
+=== opt-live-AMD-227eaf91-70ca-4bf5-949d-55b1a4c3b9b9 ===
+## Analysis
+
+This was a losing put trade on AMD, stopped out for -41.3% after premium decayed from 7.15 to 4.20. With only 6 DTE at entry, the position was highly exposed to theta decay and gamma-driven whipsaws, and a -41% stop-loss loss suggests the underlying moved against the put (price rose or stayed flat) while time decay compounded the damage — a common outcome for short-dated long premium in a negative gamma regime that didn't move quickly enough in the intended direction.
+
+**Gamma context**: The regime was negative (supportive of a put-favorable, momentum-amplifying environment) and wall distance was 3.75% — not "very close" to the wall by a strict standard (typically under ~1-2% would qualify as tight proximity). This is a moderate, not strong, signal: negative regime is present, but the wall proximity is borderline/weak. A strict rule requiring negative regime AND very close to a wall likely would have **skipped** this trade given the 3.75% distance. Given the trade lost -41%, skipping would have been **better** for this specific outcome.
+
+**Estimated volatility**: Not populated (None), so no volatility-based confirmation was available — this itself is a gap, since entering a short-DTE options trade without volatility context removes a key filter that could have flagged whether the setup was genuinely primed for a big move or just noise.
+
+**Price extremes / what-if**: No price_extremes (peak/trough) data was provided in this trade record, so the stop-width and reversal-guard what-if questions cannot be answered with real data here — this is a notable gap for post-trade review, since without peak/trough tracking it's impossible to know if a wider stop would have recovered the trade or if it ran further against the position before any bounce.
+
+**Concerns worth flagging**: (1) missing estimated_volatility and price_extremes data limits post-trade diagnostic value going forward; (2) wall_distance_pct of 3.75% is a borderline case that a stricter gamma filter would have excluded, and hindsight favors the filter; (3) very short DTE (6 days) amplifies both gamma risk and decay risk simultaneously, which may warrant scrutiny as a pattern across trades.
+
+RECOMMENDATION: RECONSIDER - gamma wall-distance entry threshold - a strict "very close to wall" filter (well under 3.75%) would have skipped this trade and avoided the -41% loss.
+
+=== opt-live-MSTR-4ad18506-8ca1-4bdf-aaa4-4ff2873b59c1 ===
+## Trade Review: MSTR260911C00147000
+
+**Outcome:** Loss of -40.6% ($205), exited via stop-loss. This was an 8-day-to-expiry call bought at 5.05, stopped out at 3.00.
+
+**Gamma context — weak/unfavorable signal for a long-call entry.** The regime was **positive gamma**, not negative, and while the wall distance (2.21%, wall at 140) is reasonably close, a positive gamma regime typically implies dealer hedging suppresses volatility/mean-reverts price rather than accelerating moves — not ideal for a short-dated directional call. A strict rule of "negative regime AND very close to a wall" would have **skipped this trade** entirely, since regime alone fails the filter. Given the trade lost 40%+, skipping would clearly have been **better** here — the gamma setup did not support the long-call thesis from the start.
+
+**Estimated volatility:** Not available (None), so no assessment possible there — worth flagging as a data gap for this trade's context.
+
+**Price extremes — the real story of this trade.** All the action happened intraday on entry day itself: trough of 1.64 at 09:57 ET and peak of 5.90 at 15:58 ET, both on 2026-09-03. This means price cratered to 1.64 (a ~68% drawdown from entry premium) then rallied hard to 5.90 (+17% above entry) — all within one session — before eventually being stopped out at 3.00 sometime after.
+
+- **(a) Wider stop (10pp wider, so ~-50% instead of -40%):** The trough of 1.64 represents roughly a -68% move from entry, far beyond even a 10pp-wider stop. If the stop had been hit on the way down before the peak occurred, a wider stop wouldn't have helped — price would have blown through it too. However, if the stop was actually triggered *after* the peak, on the way back down, a wider stop might have avoided the exit at 3.00 but exposed the position to that earlier catastrophic 1.64 trough risk, and there's no guarantee the option recovered again afterward. This is genuinely ambiguous without exact stop-hit timing, but it's not a case where a modestly wider stop clearly saves the trade.
+- **(b) Reversal-guard exit:** The peak (5.90) represents roughly **+17% from entry (5.05)**, not a 40%+ gain, so a "lock in gains after +40%" rule would **never have triggered** — the position never reached the 40% profit threshold needed to activate such a guard. This tool would not have helped this specific trade.
+
+**Concerns/patterns:** The entry chased into a positive-gamma regime for a directional bet, the trough occurred within an hour of the open (extreme early volatility), and the eventual peak, while a nice intraday swing, fell short of any reasonable profit-taking trigger — suggesting the position was likely held through a full round-trip (spike up, then decay back toward the stop) without an exit near the 5.90 peak.
+
+RECOMMENDATION: RECONSIDER - gamma regime filter at entry - trade was taken in a positive gamma regime which doesn't support directional call conviction, and a strict negative-regime-plus-wall-proximity rule would have skipped this loss entirely.
+
+=== opt-live-NVDA-dcf3536f-8cce-4a6f-948f-e2a1c467943d ===
+## Trade Review: NVDA 260909C00237500
+
+**Outcome:** Loss of -38.2% (-$364), exited via stop-loss with only 5 trading days to expiry at entry — an extremely short-dated, high-theta-decay setup that requires a fast, decisive move to work.
+
+**Gamma context analysis:** The regime was **positive**, not negative, and price was 3.26% from the nearest wall (240.0) — not "very close" by strict standards (typically <1-1.5% is considered tight). This is a **weak gamma signal** for a directional long-call bet. Positive gamma regimes tend to suppress realized volatility and pin price near walls/dealer hedging levels, which is a poor backdrop for a short-DTE call needing a sharp breakout. A strict rule requiring **negative regime AND very close to a wall** would have **skipped this trade** entirely. Given the actual outcome (a loss), skipping would clearly have been **better** — the gamma setup was misaligned with the trade thesis from the start.
+
+**Estimated volatility:** Not available (None), so no elevated/low volatility confirmation could have supported or refuted the entry — this is itself a gap, since entering a 5-DTE option with no volatility read is inherently riskier and less informed.
+
+**Process concerns:** No price_extremes (peak/trough) data was provided, so the (a) wider-stop and (b) reversal-guard what-ifs cannot be answered with real data — that analysis would be speculative and is skipped per instructions. The core issue here is thesis/signal mismatch: a positive-gamma, non-wall-adjacent setup was paired with a very short expiry, which is a low-probability combination for premium buyers. The stop-loss doing its job (limiting loss to -38% rather than a total wipeout by 260909 expiry) is arguably the one part of the process that worked correctly.
+
+**Pattern to flag:** Entering short-DTE long calls without a negative-gamma/near-wall confirmation, and without volatility data, appears to be a recurring risk factor worth tightening in future entry criteria.
+
+RECOMMENDATION: RECONSIDER - entry timing/gamma filter - trade was entered in a positive-gamma regime 3.26% from a wall, which a strict negative-regime-near-wall rule would have skipped, avoiding this loss.
+

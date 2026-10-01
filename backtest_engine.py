@@ -21,6 +21,7 @@ from risk_manager import (
 )
 
 _ET = ZoneInfo("America/New_York")
+_bar_cache: dict = {}
 
 # ── Sentiment keyword sets ────────────────────────────────────────────────────
 _POSITIVE_WORDS = frozenset({
@@ -141,6 +142,18 @@ def check_breakout(
     return float(bars[current_index].close) > prior_high
 
 
+def check_breakdown(
+    bars: list[Any], current_index: int, lookback: int = 20
+) -> bool:
+    """Return whether the current close is below the prior lookback low."""
+    if current_index < lookback:
+        return False
+
+    prior_low = min(
+        float(bar.low)
+        for bar in bars[current_index - lookback : current_index]
+    )
+    return float(bars[current_index].close) < prior_low
 def calculate_atr(
     bars: list[Any], current_index: int, period: int = 14
 ) -> float:
@@ -332,6 +345,49 @@ def check_ma_trend(bars: list[Any], current_index: int, period: int = 50) -> boo
     return float(bars[current_index].close) > ma
 
 
+def get_daily_regime(ticker: str, as_of_timestamp, period: int = 50) -> str:
+    """Return 'bullish' or 'bearish' based on daily-close vs daily-period MA.
+
+    Uses a separate daily-bar pull (not the intraday bars used elsewhere) so the
+    regime read reflects the bigger-picture trend, not short-term intraday noise.
+    """
+    end = as_of_timestamp
+    start = end - timedelta(days=period * 2 + 30)
+    cache_key = ("REGIME", ticker.upper(), end.date().isoformat())
+    if cache_key in _bar_cache:
+        daily_bars = _bar_cache[cache_key]
+    else:
+        api_key = os.environ.get("ALPACA_API_KEY")
+        secret_key = os.environ.get("ALPACA_SECRET_KEY")
+        request = StockBarsRequest(
+            symbol_or_symbols=ticker,
+            timeframe=TimeFrame(1, TimeFrameUnit.Day),
+            start=start,
+            end=end,
+            feed=DataFeed.IEX,
+        )
+        client = StockHistoricalDataClient(api_key, secret_key)
+        daily_bars = list(client.get_stock_bars(request)[ticker])
+        _bar_cache[cache_key] = daily_bars
+
+    if len(daily_bars) < period:
+        return "neutral"
+
+    recent = daily_bars[-period:]
+    ma = sum(float(b.close) for b in recent) / period
+    current_close = float(daily_bars[-1].close)
+    return "bullish" if current_close > ma else "bearish"
+
+
+def check_ma_downtrend(bars: list[Any], current_index: int, period: int = 50) -> bool:
+    """Return True if the current close is below the ``period``-bar MA.
+
+    Uses prior bars only (no look-ahead) so the result is valid for backtesting.
+    """
+    ma = calculate_ma(bars, current_index, period)
+    if ma == 0.0:
+        return False
+    return float(bars[current_index].close) < ma
 def _is_last_bar_of_day(bars: list[Any], index: int) -> bool:
     """Return whether a bar is the final bar for its trading date."""
     if index == len(bars) - 1:
@@ -339,6 +395,12 @@ def _is_last_bar_of_day(bars: list[Any], index: int) -> bool:
     return bars[index + 1].timestamp.date() != bars[index].timestamp.date()
 
 
+def _days_held(position: dict, current_timestamp) -> int:
+    """Return the number of calendar days a position has been open."""
+    entry_timestamp = position["entry_timestamp"]
+    entry_date = entry_timestamp.astimezone(_ET).date()
+    current_date = current_timestamp.astimezone(_ET).date()
+    return (current_date - entry_date).days
 def _trade_id(prefix: str, timestamp: datetime) -> str:
     """Create a stable ID for a ticker and strategy variant."""
     timestamp_key = timestamp.astimezone(timezone.utc).strftime(
@@ -468,6 +530,11 @@ def run_backtest(
     news_sentiment_lookback_hours = int(config.get("news_sentiment_lookback_hours", 24))
 
     position_risk_pct = float(config.get("position_risk_pct", 0.01))
+    allow_overnight_hold = bool(config.get("allow_overnight_hold", False))
+    max_hold_days = int(config.get("max_hold_days", 10))
+    direction = str(config.get("direction", "long"))
+    use_regime_filter = bool(config.get("use_regime_filter", False))
+    regime_period = int(config.get("regime_period", 50))
 
     trade_log.init_db()
     bars = prefetched_bars if prefetched_bars is not None else get_historical_bars(ticker, start_date, end_date)
@@ -514,19 +581,32 @@ def run_backtest(
                 current_atr = calculate_atr(bars, index)
                 if current_atr > 0:
                     entry_price = float(open_position["entry_price"])
-                    trigger_price = entry_price + (
-                        atr_trail_trigger * current_atr
-                    )
-                    if float(bar.high) >= trigger_price:
-                        proposed_stop = float(bar.close) - (
-                            atr_trail_distance * current_atr
-                        )
-                        if proposed_stop > stop_price:
+                    if direction == "long":
+                        trigger_price = entry_price + (atr_trail_trigger * current_atr)
+                        triggered = float(bar.high) >= trigger_price
+                    else:
+                        trigger_price = entry_price - (atr_trail_trigger * current_atr)
+                        triggered = float(bar.low) <= trigger_price
+                    if triggered:
+                        if direction == "long":
+                            proposed_stop = float(bar.close) - (atr_trail_distance * current_atr)
+                            improved = proposed_stop > stop_price
+                        else:
+                            proposed_stop = float(bar.close) + (atr_trail_distance * current_atr)
+                            improved = proposed_stop < stop_price
+                        if improved:
                             open_position["stop_loss_price"] = proposed_stop
                             open_position["stop_is_trailing"] = True
                             stop_price = proposed_stop
 
-            if float(bar.low) <= stop_price:
+            if direction == "long":
+                stop_hit = float(bar.low) <= stop_price
+                target_hit = float(bar.high) >= target_price
+            else:
+                stop_hit = float(bar.high) >= stop_price
+                target_hit = float(bar.low) <= target_price
+
+            if stop_hit:
                 exit_price = stop_price
                 exit_reason = (
                     "trailing_stop"
@@ -535,19 +615,26 @@ def run_backtest(
                 )
             elif (
                 (mode == "fixed_pct" or not open_position["stop_is_trailing"])
-                and float(bar.high) >= target_price
+                and target_hit
             ):
                 exit_price = target_price
                 exit_reason = "take_profit"
-            elif _is_last_bar_of_day(bars, index):
+            elif allow_overnight_hold and open_position.get("stop_is_trailing") and _days_held(open_position, timestamp) >= max_hold_days:
+                exit_price = close_price
+                exit_reason = "max_hold_days"
+            elif not (allow_overnight_hold and open_position.get("stop_is_trailing")) and _is_last_bar_of_day(bars, index):
                 exit_price = close_price
                 exit_reason = "eod_close"
 
             if exit_price is not None and exit_reason is not None:
                 entry_price = float(open_position["entry_price"])
                 position_size = float(open_position["position_size"])
-                pnl_dollars = (exit_price - entry_price) * position_size
-                pnl_percent = (exit_price - entry_price) / entry_price * 100
+                if direction == "long":
+                    pnl_dollars = (exit_price - entry_price) * position_size
+                    pnl_percent = (exit_price - entry_price) / entry_price * 100
+                else:
+                    pnl_dollars = (entry_price - exit_price) * position_size
+                    pnl_percent = (entry_price - exit_price) / entry_price * 100
                 outcome_class = (
                     "win"
                     if pnl_percent > 0
@@ -588,7 +675,16 @@ def run_backtest(
             if relative_volume < rv_threshold:
                 continue
 
-            if not check_breakout(bars, index, lookback=breakout_lookback):
+            if use_regime_filter:
+                regime = get_daily_regime(ticker, timestamp, period=regime_period)
+                if direction == "long" and regime == "bearish":
+                    continue
+                if direction == "short" and regime == "bullish":
+                    continue
+
+            if direction == "long" and not check_breakout(bars, index, lookback=breakout_lookback):
+                continue
+            if direction == "short" and not check_breakdown(bars, index, lookback=breakout_lookback):
                 continue
 
             if use_vwap_trend and not check_vwap_uptrend(bars, index, lookback=vwap_lookback):
@@ -599,7 +695,9 @@ def run_backtest(
                 if pct < atr_percentile_min:
                     continue
 
-            if use_ma_trend and not check_ma_trend(bars, index, period=ma_trend_period):
+            if use_ma_trend and direction == "long" and not check_ma_trend(bars, index, period=ma_trend_period):
+                continue
+            if use_ma_trend and direction == "short" and not check_ma_downtrend(bars, index, period=ma_trend_period):
                 continue
 
             if use_news_sentiment and not check_news_sentiment(
@@ -622,14 +720,22 @@ def run_backtest(
             entry_price = close_price
 
             if mode == "fixed_pct":
-                stop_loss_price = entry_price * (1 - stop_loss_pct)
-                target_price = entry_price * (1 + take_profit_pct)
+                if direction == "long":
+                    stop_loss_price = entry_price * (1 - stop_loss_pct)
+                    target_price = entry_price * (1 + take_profit_pct)
+                else:
+                    stop_loss_price = entry_price * (1 + stop_loss_pct)
+                    target_price = entry_price * (1 - take_profit_pct)
             else:
                 atr = calculate_atr(bars, index)
                 if atr <= 0:
                     continue
-                stop_loss_price = entry_price - (atr_stop_multiplier * atr)
-                target_price = entry_price + (atr_target_multiplier * atr)
+                if direction == "long":
+                    stop_loss_price = entry_price - (atr_stop_multiplier * atr)
+                    target_price = entry_price + (atr_target_multiplier * atr)
+                else:
+                    stop_loss_price = entry_price + (atr_stop_multiplier * atr)
+                    target_price = entry_price - (atr_target_multiplier * atr)
 
             position_size = float(calculate_position_size(
                 current_equity, entry_price, stop_loss_price,
@@ -653,11 +759,12 @@ def run_backtest(
                     "position_size": position_size,
                     "stop_loss_price": stop_loss_price,
                     "target_price": target_price,
-                    "risk_amount": entry_price - stop_loss_price,
+                    "risk_amount": abs(entry_price - stop_loss_price),
                 }
             )
             open_position = {
                 "trade_id": trade_id,
+                "entry_timestamp": timestamp,
                 "entry_price": entry_price,
                 "position_size": position_size,
                 "stop_loss_price": stop_loss_price,

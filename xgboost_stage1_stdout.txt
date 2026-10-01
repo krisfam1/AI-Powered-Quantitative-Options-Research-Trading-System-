@@ -1,0 +1,47 @@
+﻿[2026-09-25T00:36:21.538903] Loading data...
+[2026-09-25T00:36:21.574472] Loaded 2599 complete rows (0 dropped for missing feature values, e.g. realized_vol_percentile=None on early-history bars)
+[2026-09-25T00:36:21.575852] Split: train=1563 (2023-10-03..2025-08-01), val=520 (..2026-02-25), test=516 (..2026-09-24)
+[2026-09-25T00:36:21.578529] Primary (thinned, non-overlapping) test set: 182 observations (first trade per ticker per ISO week within the test period)
+[2026-09-25T00:36:21.584011] Tuning + fitting Model A (XGBoost, 13 base features)...
+[2026-09-25T00:36:38.298334] Model A best params: {'max_depth': 2, 'min_child_weight': 5, 'reg_alpha': 1.0, 'reg_lambda': 5.0, 'subsample': 0.8, 'colsample_bytree': 0.7} (mean CV log-loss 0.6850)
+[2026-09-25T00:36:38.298373] Tuning + fitting Model B (XGBoost, 13 base + 3 interaction features)...
+[2026-09-25T00:36:53.378647] Model B best params: {'max_depth': 2, 'min_child_weight': 10, 'reg_alpha': 1.0, 'reg_lambda': 5.0, 'subsample': 0.7, 'colsample_bytree': 0.7} (mean CV log-loss 0.6849)
+[2026-09-25T00:36:53.493760] Evaluating on PRIMARY test set (seed 42)...
+[2026-09-25T00:36:53.508375] PRIMARY (seed42): AUC_A=0.5472 AUC_B=0.5552 delta=+0.0081 loss_A=0.6842 loss_B=0.6828 p=0.35090379037538216
+[2026-09-25T00:36:53.508426] PRIMARY (seed43): AUC_A=0.5483 AUC_B=0.5446 delta=-0.0037 loss_A=0.6839 loss_B=0.6800 p=0.0790644156322452
+[2026-09-25T00:36:53.514255] Full (untinned) test set, DESCRIPTIVE ONLY: n=516 AUC_A=0.5206 AUC_B=0.5329 delta=+0.0123
+[2026-09-25T00:36:53.514284] Robustness 1/5: alternate_model:random_forest...
+[2026-09-25T00:37:56.309369]   RF: AUC_A=0.5209 AUC_B=0.5201 delta=-0.0007 p=0.3582237903731246
+[2026-09-25T00:37:56.309403] Robustness 2/5: leave_one_interaction_out...
+[2026-09-25T00:37:56.363483]   dropping realized_volatility_x_relative_volume: AUC=0.5541 (vs Model A 0.5472, full Model B 0.5552)
+[2026-09-25T00:37:56.413395]   dropping gamma_x_moneyness: AUC=0.5451 (vs Model A 0.5472, full Model B 0.5552)
+[2026-09-25T00:37:56.466970]   dropping breakout_magnitude_score_x_trend_strength_score: AUC=0.5370 (vs Model A 0.5472, full Model B 0.5552)
+[2026-09-25T00:37:56.467008] Robustness 3/5: leave_one_ticker_out...
+[2026-09-25T00:37:56.562925]   excluding AAPL: n=151 AUC_A=0.5426 AUC_B=0.5587 delta=+0.0161 p=0.44606416005221683
+[2026-09-25T00:37:56.650086]   excluding AMD: n=152 AUC_A=0.5156 AUC_B=0.5866 delta=+0.0710 p=0.011114340447598778
+[2026-09-25T00:37:56.736166]   excluding MSTR: n=152 AUC_A=0.5445 AUC_B=0.5809 delta=+0.0363 p=0.05939715399896602
+[2026-09-25T00:37:56.824233]   excluding NVDA: n=152 AUC_A=0.5582 AUC_B=0.5638 delta=+0.0055 p=0.6352597866896778
+[2026-09-25T00:37:56.914235]   excluding SMCI: n=151 AUC_A=0.5211 AUC_B=0.5518 delta=+0.0307 p=0.11907264619461999
+[2026-09-25T00:37:57.010184]   excluding TSLA: n=152 AUC_A=0.5206 AUC_B=0.5386 delta=+0.0180 p=0.2768237938006501
+[2026-09-25T00:37:57.010224] Robustness 4/5: alternate_horizon:exit_reason_stratified (stratifying the already-fit primary-set predictions)...
+[2026-09-25T00:37:57.010924]   reversal_guard: n=76 AUC_A=nan AUC_B=nan delta=+nan p=0.9264231464544622
+[2026-09-25T00:37:57.011536]   stop_loss: n=106 AUC_A=nan AUC_B=nan delta=+nan p=0.014071361152985488
+[2026-09-25T00:37:57.011556] Robustness 5/5: shuffled_target_placebo...
+[2026-09-25T00:37:57.110453]   SHUFFLED: AUC_A=0.4927 AUC_B=0.5051 delta=+0.0124 p=0.5732939862333297 (expect: NO significant effect)
+[2026-09-25T00:37:57.110490] Concentration check: per-ticker and chronological-half contribution to the primary effect...
+[2026-09-25T00:37:57.110761]   first-half mean(A-B) diff=0.0009453270461533096, second-half=0.001737917517567729
+[2026-09-25T00:37:57.110778]   AAPL: {'n': 31, 'mean_log_loss_diff_a_minus_b': 0.00144414363368865}
+[2026-09-25T00:37:57.110792]   AMD: {'n': 30, 'mean_log_loss_diff_a_minus_b': -0.014340054988861085}
+[2026-09-25T00:37:57.110800]   MSTR: {'n': 30, 'mean_log_loss_diff_a_minus_b': 0.002166840434074402}
+[2026-09-25T00:37:57.110808]   NVDA: {'n': 30, 'mean_log_loss_diff_a_minus_b': 0.003971236944198609}
+[2026-09-25T00:37:57.110815]   SMCI: {'n': 31, 'mean_log_loss_diff_a_minus_b': 0.020856157425911195}
+[2026-09-25T00:37:57.110822]   TSLA: {'n': 30, 'mean_log_loss_diff_a_minus_b': -0.006702491641044616}
+[2026-09-25T00:37:57.110830] 
+Applying decision rules...
+[2026-09-25T00:37:57.110859] 
+====================================================================================================
+[2026-09-25T00:37:57.110869] VERDICT: REJECTED
+[2026-09-25T00:37:57.110875] REASON: primary test not significant at alpha=0.05 (both seeds); effect size (AUC delta) below 0.05 threshold (both seeds); Random Forest robustness check direction/positive-effect failed -- XGBoost and Random Forest DISAGREE; leave_one_interaction_out: at least one interaction removal reverses direction; exit_reason_stratified: at least one subgroup reverses direction
+[2026-09-25T00:37:57.110891] ====================================================================================================
+[2026-09-25T00:37:57.112035] 
+Full results written to xgboost_stage1_results.json

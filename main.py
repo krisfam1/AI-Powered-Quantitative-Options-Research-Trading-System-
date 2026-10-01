@@ -1,3 +1,6 @@
+from dotenv import load_dotenv
+load_dotenv()
+
 """Main entry point.
 
 MODE controls what runs when you click Run in the workspace:
@@ -27,6 +30,7 @@ import ai_analyst
 import optimizer
 import live_trader
 import kill_server
+import forward_test_logger
 
 # ── Settings ──────────────────────────────────────────────────────────────────
 # In the workspace: set MODE to "live" or "research", leave LOOP = False.
@@ -35,7 +39,7 @@ import kill_server
 MODE = "live"   # "live" | "research"  (workspace only)
 LOOP = os.getenv("TRADING_LOOP", "0") == "1"
 
-LIVE_TICKERS       = ["AAPL", "TSLA", "NVDA"]
+LIVE_TICKERS       = ["AAPL", "TSLA", "NVDA", "AMD", "SMCI", "MSTR"]
 RESEARCH_TICKERS   = ["AAPL", "TSLA", "NVDA", "KO", "JPM"]
 CYCLE_INTERVAL_SEC = 5 * 60     # 5 minutes between signal checks
 ET                 = ZoneInfo("America/New_York")
@@ -45,13 +49,34 @@ api_key    = os.environ.get("ALPACA_API_KEY")
 secret_key = os.environ.get("ALPACA_SECRET_KEY")
 
 trading_client = TradingClient(api_key, secret_key, paper=True)
-account        = trading_client.get_account()
 
-print("\nConnection successful!")
-print(f"Account status:    {account.status}")
-print(f"Cash:              ${float(account.cash):,.2f}")
-print(f"Buying power:      ${float(account.buying_power):,.2f}")
-print(f"Portfolio value:   ${float(account.portfolio_value):,.2f}")
+
+STARTUP_RETRY_DELAYS_SEC = [5, 10, 20, 40, 60]   # ~2.25 min total before giving up
+
+
+def _print_connection_status() -> None:
+    """Fetch and print account status -- only called when this file runs directly.
+
+    FIX 2026-10-01 (CLAUDE.md Section 60): right after a reboot or resume the network
+    is often not up yet, and an unguarded get_account() here crashed the process within
+    ~2.5s -- NSSM then restarted it every ~64s (21 straight crashes on 2026-09-28
+    13:22-13:43 ET). Retry with backoff first; if every attempt fails, re-raise the
+    last error exactly as before (exit code 1, NSSM restarts the service)."""
+    for attempt, delay in enumerate(STARTUP_RETRY_DELAYS_SEC + [None], start=1):
+        try:
+            account = trading_client.get_account()
+            break
+        except Exception as exc:
+            if delay is None:
+                print(f"  Startup Alpaca check failed after {attempt} attempts -- giving up: {exc}")
+                raise
+            print(f"  Startup Alpaca check failed (attempt {attempt}): {exc} -- retrying in {delay}s")
+            time.sleep(delay)
+    print("\nConnection successful!")
+    print(f"Account status:    {account.status}")
+    print(f"Cash:              ${float(account.cash):,.2f}")
+    print(f"Buying power:      ${float(account.buying_power):,.2f}")
+    print(f"Portfolio value:   ${float(account.portfolio_value):,.2f}")
 
 
 # ── Market-hours helpers ───────────────────────────────────────────────────────
@@ -72,6 +97,19 @@ def market_closed_for_day() -> bool:
         return False
     from datetime import time as dtime
     return now_et.time() >= dtime(16, 5)
+
+
+def idle_until_next_et_day(poll_sec: int = 60) -> None:
+    """Block until the ET calendar date changes, re-checking the wall clock every
+    poll_sec. FIX 2026-10-01 (CLAUDE.md Section 60): the loops used to exit right
+    after 16:05 ET, and NSSM restarted them every ~63s until midnight (~450
+    restarts/evening, flooding the Event Log and signal_log.db). Idling here first
+    keeps the original once-a-day clean exit, just at midnight instead. Short polls
+    (not one long sleep) because a sleeping laptop doesn't advance time.sleep()'s
+    clock -- a single long sleep could overshoot into the next session."""
+    start_day = datetime.now(ET).date()
+    while datetime.now(ET).date() == start_day:
+        time.sleep(poll_sec)
 
 
 def minutes_to_open() -> int:
@@ -113,6 +151,11 @@ def run_live_trading_cycle() -> list[dict]:
                 else result.get("note") or "—"
             )
             print(f"    –  No trade  →  {reason}")
+
+    import exit_tracker
+    exits_logged = exit_tracker.check_and_log_exits()
+    if exits_logged:
+        print(f"\n  Logged {exits_logged} completed trade exit(s).")
 
     fired   = [r for r in results if r["signal_fired"]]
     skipped = [r for r in results if not r["signal_fired"]]
@@ -166,6 +209,7 @@ def run_live_trading_loop() -> None:
     kill_server.start(port=int(os.getenv("KILL_SERVER_PORT", "8080")))
 
     total_cycles   = 0
+    cycles_since_forward_test = 0
     total_orders   = 0
     today_date_et  = datetime.now(ET).date()
 
@@ -190,8 +234,9 @@ def run_live_trading_loop() -> None:
         if market_closed_for_day():
             print(f"\n  [{now_str}]  Market closed for today ({today_date_et}).")
             print(f"  Loop ran {total_cycles} cycles, placed {total_orders} orders today.")
-            print("  Exiting — VM will restart; market-hours check guards next session.\n")
+            print("  Idling until midnight ET, then exiting once — NSSM restarts it for the next session.\n")
             _log_loop_event("EOD", f"Exiting after {total_cycles} cycles, {total_orders} orders")
+            idle_until_next_et_day()
             sys.exit(0)
 
         # ── Pre-market / weekend wait ─────────────────────────────────────────
@@ -209,9 +254,19 @@ def run_live_trading_loop() -> None:
             continue
 
         # ── Market is open — run signal check cycle ───────────────────────────
+        from uptime_log import log_heartbeat
+        log_heartbeat("StockTradingBot")
         results      = run_live_trading_cycle()
         total_cycles += 1
         total_orders += sum(1 for r in results if r["signal_fired"])
+        cycles_since_forward_test += 1
+        if cycles_since_forward_test >= 12:  # roughly hourly, at 5-min cycles
+            cycles_since_forward_test = 0
+            try:
+                print("  Logging gamma/charm forward-test snapshot...")
+                forward_test_logger.log_today_modifiers(LIVE_TICKERS)
+            except Exception as exc:
+                print(f"  Forward-test logging failed: {exc}")
 
         next_check_str = (
             datetime.now(ET) + timedelta(seconds=CYCLE_INTERVAL_SEC)
@@ -316,13 +371,15 @@ def run_research_cycle() -> None:
 # Dispatch
 # ════════════════════════════════════════════════════════════════════════════
 
-if LOOP:
-    # Deployed VM: always run the continuous loop
-    run_live_trading_loop()
-elif MODE == "live":
-    # Workspace: single-pass for quick manual testing
-    run_live_trading_cycle()
-elif MODE == "research":
-    run_research_cycle()
-else:
-    print(f"Unknown MODE '{MODE}'. Set MODE to 'live' or 'research'.")
+if __name__ == "__main__":
+    _print_connection_status()
+    if LOOP:
+        # Deployed VM: always run the continuous loop
+        run_live_trading_loop()
+    elif MODE == "live":
+        # Workspace: single-pass for quick manual testing
+        run_live_trading_cycle()
+    elif MODE == "research":
+        run_research_cycle()
+    else:
+        print(f"Unknown MODE '{MODE}'. Set MODE to 'live' or 'research'.")

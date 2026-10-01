@@ -1,0 +1,50 @@
+﻿
+====================================================================================================
+=== RUN START 2026-09-25T02:52:40.064576+00:00 | window 2023-10-02 to 2026-09-25 | resuming with 2580 already-saved + 19 already-excluded rows ===
+
+=== AAPL: running backtest over 2023-10-02 to 2026-09-25 (option_type=call) ===
+
+AAPL options backtest: 404 trades
+Win rate: 38.9%  Net P&L: $-10762.18
+AAPL: 404 raw trades from backtest -- now looking up real historical IV per trade (skipping any already processed by a prior run)
+AAPL DONE: {'raw_trades': 404, 'saved': 1, 'excluded_no_iv': 6, 'excluded_no_features': 0, 'excluded_error': 0, 'already_done': 397}
+
+=== TSLA: running backtest over 2023-10-02 to 2026-09-25 (option_type=call) ===
+
+TSLA options backtest: 458 trades
+Win rate: 41.0%  Net P&L: $1059.27
+TSLA: 458 raw trades from backtest -- now looking up real historical IV per trade (skipping any already processed by a prior run)
+TSLA DONE: {'raw_trades': 458, 'saved': 4, 'excluded_no_iv': 3, 'excluded_no_features': 0, 'excluded_error': 0, 'already_done': 451}
+
+=== NVDA: running backtest over 2023-10-02 to 2026-09-25 (option_type=call) ===
+
+NVDA options backtest: 444 trades
+Win rate: 40.5%  Net P&L: $-16028.61
+NVDA: 444 raw trades from backtest -- now looking up real historical IV per trade (skipping any already processed by a prior run)
+NVDA DONE: {'raw_trades': 444, 'saved': 3, 'excluded_no_iv': 5, 'excluded_no_features': 0, 'excluded_error': 0, 'already_done': 436}
+
+=== AMD: running backtest over 2023-10-02 to 2026-09-25 (option_type=call) ===
+
+AMD options backtest: 453 trades
+Win rate: 38.6%  Net P&L: $-14362.69
+AMD: 453 raw trades from backtest -- now looking up real historical IV per trade (skipping any already processed by a prior run)
+AMD DONE: {'raw_trades': 453, 'saved': 3, 'excluded_no_iv': 1, 'excluded_no_features': 0, 'excluded_error': 0, 'already_done': 449}
+
+=== SMCI: running backtest over 2023-10-02 to 2026-09-25 (option_type=call) ===
+
+SMCI options backtest: 423 trades
+Win rate: 36.6%  Net P&L: $-18517.56
+SMCI: 423 raw trades from backtest -- now looking up real historical IV per trade (skipping any already processed by a prior run)
+SMCI DONE: {'raw_trades': 423, 'saved': 3, 'excluded_no_iv': 2, 'excluded_no_features': 0, 'excluded_error': 0, 'already_done': 418}
+
+=== MSTR: running backtest over 2023-10-02 to 2026-09-25 (option_type=call) ===
+
+MSTR options backtest: 436 trades
+Win rate: 37.4%  Net P&L: $23617.01
+MSTR: 436 raw trades from backtest -- now looking up real historical IV per trade (skipping any already processed by a prior run)
+MSTR DONE: {'raw_trades': 436, 'saved': 5, 'excluded_no_iv': 2, 'excluded_no_features': 0, 'excluded_error': 0, 'already_done': 429}
+
+=== RUN COMPLETE 2026-09-25T03:32:05.514810+00:00 ===
+Final saved N (this run's DB total): 2613
+Final excluded total (this run's DB total): 55
+This run's totals across all tickers: {'raw_trades': 2618, 'saved': 19, 'excluded_no_iv': 19, 'excluded_no_features': 0, 'excluded_error': 0, 'already_done': 2580}

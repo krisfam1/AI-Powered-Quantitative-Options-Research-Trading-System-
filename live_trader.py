@@ -1,3 +1,6 @@
+from dotenv import load_dotenv
+load_dotenv()
+
 """Paper-trading execution for the breakout/volume/sentiment strategy.
 
 Safety guarantees
@@ -31,6 +34,9 @@ from backtest_engine import (
     calculate_relative_volume,
     check_breakout,
     check_ma_trend,
+    check_breakdown,
+    check_ma_downtrend,
+    get_daily_regime,
     check_news_sentiment,
     get_historical_bars,
     get_news_for_ticker,
@@ -41,6 +47,7 @@ from risk_manager import (
     check_drawdown_pause,
     check_max_positions,
 )
+import trade_log
 
 # ── Configuration ─────────────────────────────────────────────────────────────
 KILL_SWITCH_PATH = Path("STOP_TRADING")
@@ -58,6 +65,13 @@ LIVE_CONFIG: dict[str, Any] = {
     "news_lookback_hours":     24,
     "position_risk_pct":       0.01,
     "max_position_value_pct":  0.20,
+    "atr_trail_trigger":       2.0,
+    "atr_trail_distance":      2.0,
+    "allow_overnight_hold":    True,  # ENABLED for supervised live smoke test
+    "max_hold_days":           10,
+    "direction":               "auto",  # "auto" = choose per-ticker based on regime
+    "use_regime_filter":       True,
+    "regime_period":           50,
 }
 
 # ── Trading client — paper=True is intentionally hardcoded ────────────────────
@@ -256,10 +270,34 @@ def check_signal_and_trade(ticker: str) -> dict[str, Any]:
         blocks.append(
             f"low relative volume ({rv:.2f} < {cfg['rv_threshold']:.2f})"
         )
-    if not check_breakout(bars, index, lookback=cfg["breakout_lookback"]):
+    configured_direction = cfg.get("direction", "long")
+    regime = None
+    if cfg.get("use_regime_filter") or configured_direction == "auto":
+        regime = get_daily_regime(ticker, now, period=cfg.get("regime_period", 50))
+
+    if configured_direction == "auto":
+        if regime == "bullish":
+            direction = "long"
+        elif regime == "bearish":
+            direction = "short"
+        else:
+            direction = "long"
+            blocks.append("regime is neutral, skipping (auto mode needs a clear trend)")
+    else:
+        direction = configured_direction
+        if cfg.get("use_regime_filter"):
+            if direction == "long" and regime == "bearish":
+                blocks.append("regime is bearish, skipping long")
+            if direction == "short" and regime == "bullish":
+                blocks.append("regime is bullish, skipping short")
+    if direction == "long" and not check_breakout(bars, index, lookback=cfg["breakout_lookback"]):
         blocks.append("no breakout")
-    if not check_ma_trend(bars, index, period=cfg["ma_trend_period"]):
+    if direction == "short" and not check_breakdown(bars, index, lookback=cfg["breakout_lookback"]):
+        blocks.append("no breakdown")
+    if direction == "long" and not check_ma_trend(bars, index, period=cfg["ma_trend_period"]):
         blocks.append(f"below MA{cfg['ma_trend_period']}")
+    if direction == "short" and not check_ma_downtrend(bars, index, period=cfg["ma_trend_period"]):
+        blocks.append(f"above MA{cfg['ma_trend_period']}")
     if not check_news_sentiment(
         news_items, bars[index].timestamp,
         lookback_hours=cfg["news_lookback_hours"],
@@ -319,8 +357,19 @@ def check_signal_and_trade(ticker: str) -> dict[str, Any]:
         return result
 
     # ── Position sizing ───────────────────────────────────────────────────────
-    stop_price   = round(entry_price - cfg["atr_stop_multiplier"]   * atr, 2)
-    target_price = round(entry_price + cfg["atr_target_multiplier"] * atr, 2)
+    try:
+        latest_bars = get_historical_bars(ticker, now - timedelta(minutes=5), now)
+        if latest_bars:
+            entry_price = float(latest_bars[-1].close)
+    except Exception:
+        pass
+
+    if direction == "long":
+        stop_price   = round(entry_price - cfg["atr_stop_multiplier"]   * atr - (entry_price * 0.001), 2)
+        target_price = round(entry_price + cfg["atr_target_multiplier"] * atr, 2)
+    else:
+        stop_price   = round(entry_price + cfg["atr_stop_multiplier"]   * atr + (entry_price * 0.001), 2)
+        target_price = round(entry_price - cfg["atr_target_multiplier"] * atr, 2)
     shares = calculate_position_size(
         equity, entry_price, stop_price,
         risk_pct=cfg["position_risk_pct"],
@@ -343,8 +392,8 @@ def check_signal_and_trade(ticker: str) -> dict[str, Any]:
     order_request = MarketOrderRequest(
         symbol=ticker,
         qty=shares,
-        side=OrderSide.BUY,
-        time_in_force=TimeInForce.DAY,
+        side=(OrderSide.BUY if direction == "long" else OrderSide.SELL),
+        time_in_force=(TimeInForce.GTC if cfg.get("allow_overnight_hold") else TimeInForce.DAY),
         order_class=OrderClass.BRACKET,
         take_profit=TakeProfitRequest(limit_price=target_price),
         stop_loss=StopLossRequest(stop_price=stop_price),
@@ -352,6 +401,22 @@ def check_signal_and_trade(ticker: str) -> dict[str, Any]:
     try:
         order = _trading_client.submit_order(order_request)
         order_id = str(order.id)
+        trade_log.log_trade_entry({
+            "trade_id": f"live-{ticker}-{order_id}",
+            "timestamp_entry": now.isoformat(),
+            "ticker": ticker,
+            "signal_type": "breakout_volume_confluence",
+            "direction": direction,
+            "volume_at_entry": float(bars[index].volume),
+            "relative_volume": rv,
+            "price_action_pattern": "breakout",
+            "news_present": int(len(news_items) > 0),
+            "entry_price": entry_price,
+            "position_size": shares,
+            "stop_loss_price": stop_price,
+            "target_price": target_price,
+            "risk_amount": equity * cfg["position_risk_pct"],
+        })
     except Exception as exc:  # noqa: BLE001
         note = f"order submission failed: {exc}"
         blocks.append("order rejected by broker")

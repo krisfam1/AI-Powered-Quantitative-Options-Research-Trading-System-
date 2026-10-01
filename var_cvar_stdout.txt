@@ -1,0 +1,57 @@
+﻿Verifying vectorized Black-Scholes matches the project's own scalar black_scholes_price()...
+  max abs diff (scalar vs vectorized), 4 test points: 0.0000000000 -- MUST be ~0
+
+Reproducing frozen V1 baseline (must match: $20,427.64, 251 trades)...
+  AAPL done
+  TSLA done
+  NVDA done
+  AMD done
+  SMCI done
+  MSTR done
+Reproduced: $20427.64, n=251
+
+Fetching real daily bars (with trailing lookback buffer)...
+  AAPL: 184 daily bars
+  TSLA: 184 daily bars
+  NVDA: 184 daily bars
+  AMD: 184 daily bars
+  SMCI: 184 daily bars
+  MSTR: 184 daily bars
+
+====================================================================================================
+PER-TRADE VaR/CVaR -- vectorized, computed at entry, no lookahead
+====================================================================================================
+  50/251 trades processed...
+  100/251 trades processed...
+  150/251 trades processed...
+  200/251 trades processed...
+  250/251 trades processed...
+Computed VaR/CVaR for 251 trades (0 skipped -- insufficient trailing data or degenerate DTE)
+
+VaR95 breach rate: 2.8% (well-calibrated model expects ~5%)
+VaR99 breach rate: 0.4% (well-calibrated model expects ~1%)
+
+--- Exit-reason breakdown ---
+  stop_loss (n=150): mean_realized_pnl=$-440.17  mean_VaR99=$-815.20  mean_CVaR99=$-819.91  breach99_rate=0.7%
+  reversal_guard (n=101): mean_realized_pnl=$855.97  mean_VaR99=$-815.77  mean_CVaR99=$-819.01  breach99_rate=0.0%
+
+====================================================================================================
+PORTFOLIO-LEVEL VaR/CVaR, weekly cadence
+====================================================================================================
+  2026-06-11: n_open=4 VaR95=$-5852 CVaR95=$-6331 VaR99=$-6612 CVaR99=$-6733  realized_next_wk=$2539  breach95=False  breach99=False
+  2026-06-18: n_open=6 VaR95=$-2515 CVaR95=$-3481 VaR99=$-4123 CVaR99=$-4487  realized_next_wk=$9157  breach95=False  breach99=False
+  2026-06-25: n_open=3 VaR95=$-1784 CVaR95=$-1990 VaR99=$-2118 CVaR99=$-2180  realized_next_wk=$-1177  breach95=False  breach99=False
+  2026-07-02: n_open=4 VaR95=$-2379 CVaR95=$-2819 VaR99=$-3082 CVaR99=$-3204  realized_next_wk=$1137  breach95=False  breach99=False
+  2026-07-09: n_open=4 VaR95=$-2622 CVaR95=$-2932 VaR99=$-3127 CVaR99=$-3242  realized_next_wk=$1162  breach95=False  breach99=False
+  2026-07-16: n_open=4 VaR95=$-2026 CVaR95=$-2379 VaR99=$-2615 CVaR99=$-2774  realized_next_wk=$-1439  breach95=False  breach99=False
+  2026-07-23: n_open=4 VaR95=$-2154 CVaR95=$-2560 VaR99=$-2832 CVaR99=$-3039  realized_next_wk=$-500  breach95=False  breach99=False
+  2026-07-30: n_open=5 VaR95=$-3482 CVaR95=$-3991 VaR99=$-4302 CVaR99=$-4576  realized_next_wk=$1108  breach95=False  breach99=False
+  2026-08-06: n_open=4 VaR95=$-2295 CVaR95=$-2684 VaR99=$-2938 CVaR99=$-3140  realized_next_wk=$-1167  breach95=False  breach99=False
+  2026-08-13: n_open=4 VaR95=$-2991 CVaR95=$-3494 VaR99=$-3794 CVaR99=$-4049  realized_next_wk=$-971  breach95=False  breach99=False
+  2026-08-20: n_open=5 VaR95=$-3023 CVaR95=$-3520 VaR99=$-3854 CVaR99=$-4102  realized_next_wk=$-764  breach95=False  breach99=False
+  2026-08-27: n_open=5 VaR95=$-3061 CVaR95=$-3529 VaR99=$-3806 CVaR99=$-4086  realized_next_wk=$-629  breach95=False  breach99=False
+  2026-09-03: n_open=6 VaR95=$-3210 CVaR95=$-3811 VaR99=$-4217 CVaR99=$-4551  realized_next_wk=$257  breach95=False  breach99=False
+
+Weekly breach summary: 0/13 weeks breached VaR95, 0/13 breached VaR99
+
+Full results written to var_cvar_investigation_results.json

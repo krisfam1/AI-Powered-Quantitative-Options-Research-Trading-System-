@@ -1,0 +1,50 @@
+﻿====================================================================================================
+VALIDATION -- before trusting the LSM pricer on real data
+====================================================================================================
+Test 1 (American CALL, q=0, should ~= European BS call, no early-exercise value expected):
+  BS European call:  0.7175
+  LSM American call:  0.7115 (se=0.0090)
+  Relative diff: 0.833%  -- PASS if small (<2-3%, MC noise)
+
+Test 2 (American PUT, q=0, should show a REAL positive early-exercise premium):
+  BS European put:   5.5565
+  LSM American put:   5.5799 (se=0.0188)
+  Premium: +0.0234 (+0.42%) -- PASS if clearly positive, confirms the pricer does real work
+
+====================================================================================================
+MAIN INVESTIGATION: real 2,599-row trade population (ml_xgboost_interaction_data.db)
+====================================================================================================
+Loaded 2599 real trades
+  500/2599 processed...
+  1000/2599 processed...
+  1500/2599 processed...
+  2000/2599 processed...
+  2500/2599 processed...
+
+Processed 2599 trades (0 errors/skipped)
+
+--- OVERALL distribution: LSM American vs current BS European price ---
+Zero-dividend (matches project's own assumption): mean=-0.2789% median=-0.2973% std=0.5419% min=-2.2990% max=+1.9376% | mean $ = -0.01801
+Realistic dividend (external assumption): mean=-0.3692% median=-0.3743% std=0.6012% min=-2.5304% max=+1.9039% | mean $ = -0.01999
+
+--- By ticker (realistic-dividend case) ---
+  AAPL: n=398 div_yield=0.45%  q0_gap=-0.4067%  qreal_gap_mean=-0.9734%  qreal_gap_max=+0.5646%
+  AMD: n=452 div_yield=0.00%  q0_gap=-0.2412%  qreal_gap_mean=-0.2412%  qreal_gap_max=+1.6116%
+  MSTR: n=434 div_yield=0.00%  q0_gap=-0.2495%  qreal_gap_mean=-0.2495%  qreal_gap_max=+1.4734%
+  NVDA: n=439 div_yield=0.03%  q0_gap=-0.2789%  qreal_gap_mean=-0.2997%  qreal_gap_max=+1.9039%
+  SMCI: n=421 div_yield=0.00%  q0_gap=-0.2115%  qreal_gap_mean=-0.2115%  qreal_gap_max=+1.8847%
+  TSLA: n=455 div_yield=0.00%  q0_gap=-0.2948%  qreal_gap_mean=-0.2948%  qreal_gap_max=+1.3222%
+
+--- By moneyness bucket (realistic-dividend case) ---
+  low (deepest OTM): n=949 mean_gap=-0.1994% max_gap=+1.9039%
+  mid: n=786 mean_gap=-0.2827% max_gap=+1.2152%
+  high (closest ATM): n=864 mean_gap=-0.6343% max_gap=+1.0503%
+
+--- Top 5 largest individual gaps found (realistic-dividend case) ---
+  NVDA 2024-09-26: BS=1.0375 LSM(q_real)=1.0572 gap=+1.9039% moneyness=0.9217
+  SMCI 2024-09-26: BS=5.6083 LSM(q_real)=5.7140 gap=+1.8847% moneyness=0.8889
+  AMD 2026-07-02: BS=10.4313 LSM(q_real)=10.5994 gap=+1.6116% moneyness=0.9050
+  SMCI 2026-09-16: BS=0.8309 LSM(q_real)=0.8438 gap=+1.5466% moneyness=0.9132
+  NVDA 2025-04-16: BS=1.2659 LSM(q_real)=1.2851 gap=+1.5127% moneyness=0.9217
+
+Full results written to american_vs_european_pricing_investigation.json

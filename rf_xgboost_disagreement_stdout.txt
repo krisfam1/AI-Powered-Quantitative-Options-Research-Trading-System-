@@ -1,0 +1,94 @@
+﻿Loading data...
+train_val=3226 test=801 (test: 2025-12-31..2026-07-15)
+
+Fitting baseline models (best hyperparameters from the closed experiments, seed=42)...
+Full test set (n=801): R2_Ridge=-0.3633 R2_RF=0.0475 R2_XGB=-0.9115
+
+====================================================================================================
+CHECK 1: Prediction-level disagreement (RF vs XGBoost) on the full test set
+====================================================================================================
+Overall: mean disagreement (RF-XGB)=-0.0212, std=0.2406, mean|disagreement|=0.1155
+Overall: mean|err| RF=0.2322  XGB=0.2601
+
+--- By ticker ---
+  AAPL: n=132 mean_disagree=+0.1369 mean|disagree|=0.1369 err_RF=0.1619 err_XGB=0.0693 RF_more_accurate=14% of days
+  AMD: n=133 mean_disagree=-0.2018 mean|disagree|=0.2376 err_RF=0.2975 err_XGB=0.5173 RF_more_accurate=81% of days
+  MSTR: n=134 mean_disagree=-0.0798 mean|disagree|=0.1038 err_RF=0.2532 err_XGB=0.3245 RF_more_accurate=64% of days
+  NVDA: n=134 mean_disagree=+0.0574 mean|disagree|=0.0586 err_RF=0.1134 err_XGB=0.0937 RF_more_accurate=25% of days
+  SMCI: n=134 mean_disagree=-0.0710 mean|disagree|=0.0908 err_RF=0.4074 err_XGB=0.4144 RF_more_accurate=54% of days
+  TSLA: n=134 mean_disagree=+0.0324 mean|disagree|=0.0668 err_RF=0.1589 err_XGB=0.1403 RF_more_accurate=34% of days
+
+--- By chronological quartile of the test period ---
+  Q1 (2025-12-31..2026-02-19, n=200): mean_disagree=+0.0381 err_RF=0.2328 err_XGB=0.2405
+  Q2 (2026-02-19..2026-04-08, n=200): mean_disagree=+0.0092 err_RF=0.2360 err_XGB=0.2347
+  Q3 (2026-04-09..2026-05-27, n=200): mean_disagree=-0.0190 err_RF=0.2279 err_XGB=0.2373
+  Q4 (2026-05-27..2026-07-15, n=201): mean_disagree=-0.1124 err_RF=0.2320 err_XGB=0.3273
+
+--- By realized volatility regime (terciles of the actual target value) ---
+  low vol (target 0.162-0.402, n=267): mean_disagree=+0.0934 err_RF=0.1753 err_XGB=0.1076
+  mid vol (target 0.402-0.722, n=267): mean_disagree=-0.0202 err_RF=0.1204 err_XGB=0.1659
+  high vol (target 0.724-1.670, n=267): mean_disagree=-0.1367 err_RF=0.4008 err_XGB=0.5067
+
+====================================================================================================
+CHECK 2: Feature importance comparison (RF vs XGBoost)
+====================================================================================================
+
+--- Native importances (RF: mean decrease impurity, XGBoost: gain) ---
+Feature                         RF (impurity)     XGBoost (gain)    
+term_structure_slope_pct        0.0402            0.0941            
+oi_skew                         0.0627            0.0821            
+trailing_realized_vol_20d       0.1979            0.1656            
+delta                           0.0598            0.1076            
+gamma                           0.1584            0.1082            
+theta                           0.2527            0.1702            
+charm                           0.0477            0.1497            
+vega_per_1pct_iv                0.1807            0.1225            
+
+--- Permutation importance on the SAME test set (fairest apples-to-apples comparison) ---
+Feature                         RF (perm R2 drop)   XGBoost (perm R2 drop)
+term_structure_slope_pct        0.0024              0.0007              
+oi_skew                         -0.0016             -0.0198             
+trailing_realized_vol_20d       0.2505              -0.0553             
+delta                           -0.0217             0.1025              
+gamma                           0.0173              0.2229              
+theta                           -0.0584             -0.4357             
+charm                           -0.0147             -0.0201             
+vega_per_1pct_iv                -0.1086             -0.6574             
+
+RF top-3 features (permutation): ['trailing_realized_vol_20d', 'gamma', 'term_structure_slope_pct']
+XGBoost top-3 features (permutation): ['gamma', 'delta', 'term_structure_slope_pct']
+Overlap: {'gamma', 'term_structure_slope_pct'}
+
+====================================================================================================
+CHECK 3: Stability check -- does XGBoost's result flip with seed/hyperparameter changes?
+====================================================================================================
+
+--- Seed sensitivity (same hyperparameters, seeds 42-48) ---
+  seed=42: R2_RF=+0.0475  R2_XGB=-0.9115
+  seed=43: R2_RF=+0.0050  R2_XGB=-0.5647
+  seed=44: R2_RF=-0.0057  R2_XGB=-0.7231
+  seed=45: R2_RF=+0.0176  R2_XGB=-0.7453
+  seed=46: R2_RF=+0.0195  R2_XGB=-0.7005
+  seed=47: R2_RF=-0.0000  R2_XGB=-0.5802
+  seed=48: R2_RF=+0.0718  R2_XGB=-0.7293
+
+RF across seeds:  mean=+0.0222 std=0.0259 range=[-0.0057, +0.0718] all_positive=False
+XGB across seeds: mean=-0.7078 std=0.1072 range=[-0.9115, -0.5647] all_negative=True
+
+--- Nearby-hyperparameter sensitivity for XGBoost (toggling one param at a time from the found optimum) ---
+  base (found optimum): R2=-0.9115
+  subsample 0.7 (was 0.8): R2=-0.8185
+  colsample_bytree 0.7 (was 0.8): R2=-0.5857
+  reg_alpha 0.1 (was 1.0): R2=-0.7390
+  reg_lambda 5.0 (was 1.0): R2=-0.7390
+  max_depth 2 (was 3): R2=-0.2807
+  min_child_weight 10 (was 5): R2=-0.6848
+
+====================================================================================================
+CHECK 4: Overfitting diagnostics -- train (in-sample) vs test performance gap
+====================================================================================================
+  Ridge: R2_train=0.1126 R2_test=-0.3633 GAP=0.4759  |  MAE_train=0.4224 MAE_test=0.2897 GAP=-0.1328
+  RandomForest: R2_train=0.3730 R2_test=0.0475 GAP=0.3255  |  MAE_train=0.3419 MAE_test=0.2322 GAP=-0.1098
+  XGBoost: R2_train=0.6776 R2_test=-0.9115 GAP=1.5890  |  MAE_train=0.2711 MAE_test=0.2601 GAP=-0.0111
+
+Full results written to rf_xgboost_disagreement_investigation.json

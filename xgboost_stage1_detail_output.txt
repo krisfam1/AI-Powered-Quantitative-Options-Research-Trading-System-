@@ -1,0 +1,27 @@
+﻿n_train_val=2083 n_primary_test=182
+
+=== PRIMARY RESULT, both seeds, full Wilcoxon stat+p ===
+seed=42: N=182 nonzero_diffs=182 (B_better_on=89, A_better_on=93) W_stat=8599.0000 p_one_sided=0.350904 AUC_A=0.547170 AUC_B=0.555238 AUC_delta=+0.008069 mean_loss_A=0.684151 mean_loss_B=0.682810
+seed=43: N=182 nonzero_diffs=182 (B_better_on=104, A_better_on=78) W_stat=9331.0000 p_one_sided=0.079064 AUC_A=0.548287 AUC_B=0.544563 AUC_delta=-0.003724 mean_loss_A=0.683871 mean_loss_B=0.679971
+
+=== RANDOM FOREST robustness, exact ===
+RF params_a={'max_depth': 4, 'min_samples_leaf': 10, 'max_features': 'sqrt'} params_b={'max_depth': 4, 'min_samples_leaf': 10, 'max_features': 'sqrt'}
+N=182 nonzero_diffs=182 (B_better_on=101, A_better_on=81) W_stat=8585.0000 p_one_sided=0.358224 AUC_A=0.520854 AUC_B=0.520109 AUC_delta=-0.000745
+
+=== LEAVE_ONE_INTERACTION_OUT, exact, with reference to full Model B and Model A ===
+reference: Model A AUC=0.547170, full Model B AUC=0.555238
+drop realized_volatility_x_relative_volume: AUC_without=0.554121 (full_B=0.555238, A=0.547170) delta_vs_A=+0.006951 delta_vs_full_B=-0.001117 W_stat_vs_A=8457.0 p_vs_A=0.4272571400406422
+drop gamma_x_moneyness: AUC_without=0.545060 (full_B=0.555238, A=0.547170) delta_vs_A=-0.002110 delta_vs_full_B=-0.010179 W_stat_vs_A=8486.0 p_vs_A=0.41133637741538254
+drop breakout_magnitude_score_x_trend_strength_score: AUC_without=0.536991 (full_B=0.555238, A=0.547170) delta_vs_A=-0.010179 delta_vs_full_B=-0.018247 W_stat_vs_A=8494.0 p_vs_A=0.40696884831283325
+
+=== LEAVE_ONE_TICKER_OUT, exact, all 6 ===
+exclude AAPL: n=151 AUC_A=0.542588 AUC_B=0.558717 delta=+0.016129 W_stat=5811.0 p=0.44606416005221683
+exclude AMD: n=152 AUC_A=0.515591 AUC_B=0.586559 delta=+0.070968 W_stat=7057.0 p=0.011114340447598778
+exclude MSTR: n=152 AUC_A=0.544513 AUC_B=0.580860 delta=+0.036348 W_stat=6662.0 p=0.05939715399896602
+exclude NVDA: n=152 AUC_A=0.558231 AUC_B=0.563760 delta=+0.005529 W_stat=5626.0 p=0.6352597866896778
+exclude SMCI: n=151 AUC_A=0.521104 AUC_B=0.551768 delta=+0.030664 W_stat=6373.0 p=0.11907264619461999
+exclude TSLA: n=152 AUC_A=0.520599 AUC_B=0.538612 delta=+0.018013 W_stat=6136.0 p=0.2768237938006501
+
+=== SHUFFLED_TARGET_PLACEBO, exact, compared side-by-side with real-label primary result ===
+SHUFFLED: N=182 W_stat=8195.0 p_one_sided=0.5732939862333297 AUC_A=0.492676 AUC_B=0.505089 AUC_delta=+0.012413
+REAL (seed42, for comparison): AUC_delta=+0.008069, p=None  (see primary block above for exact p)

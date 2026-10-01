@@ -1,0 +1,56 @@
+{
+  "ARM": {
+    "checked": 28,
+    "populated": 28,
+    "rate": 1.0,
+    "missing": []
+  },
+  "RIVN": {
+    "checked": 28,
+    "populated": 28,
+    "rate": 1.0,
+    "missing": []
+  },
+  "LCID": {
+    "checked": 28,
+    "populated": 28,
+    "rate": 1.0,
+    "missing": []
+  },
+  "SOFI": {
+    "checked": 28,
+    "populated": 28,
+    "rate": 1.0,
+    "missing": []
+  },
+  "COIN": {
+    "checked": 28,
+    "populated": 28,
+    "rate": 1.0,
+    "missing": []
+  },
+  "PLTR": {
+    "checked": 28,
+    "populated": 28,
+    "rate": 1.0,
+    "missing": []
+  },
+  "AFRM": {
+    "checked": 28,
+    "populated": 28,
+    "rate": 1.0,
+    "missing": []
+  },
+  "AAPL": {
+    "checked": 28,
+    "populated": 28,
+    "rate": 1.0,
+    "missing": []
+  },
+  "MSTR": {
+    "checked": 28,
+    "populated": 28,
+    "rate": 1.0,
+    "missing": []
+  }
+}
