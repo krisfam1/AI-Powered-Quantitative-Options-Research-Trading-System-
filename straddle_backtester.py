@@ -92,6 +92,14 @@ def hedge_pnl(path, K, sigma, expiry_days, cost_bp=HEDGE_COST_BP):
     return pnl, cost
 
 
+def liquidity_ok_zero_unknown(spread_history, leg_ois, exp_oi):
+    """Data-quality refinement (2026-10-01, after the first DEV run): EODHD also reports ATM open interest
+    as 0 on heavily traded expirations (e.g. TSLA/AAPL/NVDA monthly ATM legs with 245k-1.5M contracts of
+    expiration OI and ~1% spreads), which is not credible. Here a leg OI of 0 is treated like a missing
+    one. Reported ALONGSIDE the as-specified rule, never instead of it."""
+    return liquidity_ok(spread_history, [None if x == 0 else x for x in leg_ois], exp_oi)
+
+
 def liquidity_ok(spread_history, leg_ois, exp_oi):
     """Missing OI is UNKNOWN, not zero (EODHD leaves OI null on many half-dollar strikes; found on the
     first measured snapshot, 2026-10-01, before any result existed): a leg with None skips the per-leg
@@ -156,6 +164,8 @@ def evaluate(c, ticker, cyc, prices, earnings, spread_hist):
                earnings_in_window=None if earnings.get(ticker) is None else
                int(any(cyc["entry"] < e <= cyc["expiry"] for e in earnings[ticker])))
     res["eligible"] = int(liquidity_ok(spread_hist[ticker][-SPREAD_LOOKBACK:], (cl["oi"], pu["oi"]), exp_oi))
+    res["eligible_zero_oi_unknown"] = int(liquidity_ok_zero_unknown(spread_hist[ticker][-SPREAD_LOOKBACK:],
+                                                                    (cl["oi"], pu["oi"]), exp_oi))
 
     # wings for the iron butterfly (|delta| nearest 0.10, strictly outside K, quoted)
     calls = [(k, q) for (t, k), q in ch.items() if t == "call" and k > K and _quoted(q) and q["delta"] is not None]

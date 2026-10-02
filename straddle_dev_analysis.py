@@ -29,10 +29,10 @@ def load():
     return rows
 
 
-def by_cycle(rows):
+def by_cycle(rows, elig_col="eligible"):
     g = defaultdict(list)
     for r in rows:
-        if r["excluded"] is None and r.get("eligible") == 1 and r.get("signal") is not None \
+        if r["excluded"] is None and r.get(elig_col) == 1 and r.get("signal") is not None \
                 and r.get("long_exp_f000") is not None:
             g[r["entry"]].append(r)
     return {k: v for k, v in sorted(g.items()) if len(v) >= 6}
@@ -122,12 +122,19 @@ def power(sd, n_avail):
 
 def main():
     rows = load()
-    cyc = by_cycle(rows)
-    elig_counts = [len(v) for v in cyc.values()]
-    res = {"LABEL": "PIPELINE VALIDATION ON THE DEV WINDOW -- NOT EVIDENCE, NOT A TEST",
+    out = {"LABEL": "PIPELINE VALIDATION ON THE DEV WINDOW -- NOT EVIDENCE, NOT A TEST",
            "ticker_cycles": len(rows), "evaluated": sum(r["excluded"] is None for r in rows),
            "exclusions": {k: sum(r["excluded"] == k for r in rows) for k in {r["excluded"] for r in rows} if k},
-           "cycles_used": len(cyc), "eligible_names_per_cycle": {"min": min(elig_counts, default=0),
+           "as_specified_rule": analyse(by_cycle(rows, "eligible")),
+           "zero_oi_as_unknown_rule": analyse(by_cycle(rows, "eligible_zero_oi_unknown"))}
+    with open(OUT, "w") as f:
+        json.dump(out, f, indent=2, default=float)
+    print(json.dumps(out, indent=2, default=float))
+
+
+def analyse(cyc):
+    elig_counts = [len(v) for v in cyc.values()]
+    res = {"cycles_used": len(cyc), "eligible_names_per_cycle": {"min": min(elig_counts, default=0),
            "median": sorted(elig_counts)[len(elig_counts) // 2] if elig_counts else 0, "max": max(elig_counts, default=0)},
            "eligible_tickers": sorted({r["ticker"] for v in cyc.values() for r in v})}
     res["gs_straddle_basis"] = {f: stats(series(cyc, f"long_exp_{f}", f"shortstrad_exp_{f}", "sum")) for f in ("f000", "f050", "f100")}
@@ -137,9 +144,17 @@ def main():
     res["short_leg_iron_fly_only"] = {f: stats([mean(x) for v in cyc.values()
                                                if (x := [r[f"fly_exp_{f}"] for r in split(v)[1] if r.get(f"fly_exp_{f}") is not None])])
                                       for f in ("f000", "f100")}
-    res["implementable_day_before_exit_long_only"] = {f: stats([mean(r[f"long_db_{f}"] for r in split(v)[0] if r.get(f"long_db_{f}") is not None)
-                                                               for v in cyc.values()]) for f in ("f000", "f100")}
-    res["long_top_hedged_f100"] = stats([mean(r["long_exp_hedged_f100"] for r in split(v)[0]) for v in cyc.values()])
+    def per_cycle(col, side=0):
+        """Mean of col over one side of each cycle; cycles with no data for that column are skipped."""
+        out = []
+        for v in cyc.values():
+            vals = [r[col] for r in split(v)[side] if r.get(col) is not None]
+            if vals:
+                out.append(mean(vals))
+        return out
+    res["implementable_day_before_exit_long_only"] = {f: stats(per_cycle(f"long_db_{f}")) for f in ("f000", "f100")}
+    res["long_top_hedged_f100"] = stats(per_cycle("long_exp_hedged_f100"))
+    res["long_top_unhedged_f100_same_cycles"] = stats(per_cycle("long_exp_f100"))
     res["secondary_term_slope"] = "not computed in this pass (needs near/far ATM IV; secondary, robustness only)"
     res["placebo_within_cycle_shuffle"] = placebo(cyc)
     res["ticker_fixed_effects"] = ticker_fe(cyc)
@@ -154,9 +169,13 @@ def main():
     gs_sd = res["gs_straddle_basis"]["f100"].get("sd")
     if gs_sd:
         res["power_gs_straddle_basis_f100"] = power(gs_sd, (len(cyc), 36, 192))
-    with open(OUT, "w") as f:
-        json.dump(res, f, indent=2, default=float)
-    print(json.dumps(res, indent=2, default=float))
+    # delta-hedged top-minus-bottom straddle spread (both sides hedged daily at the close, both at the ask:
+    # the cost terms roughly cancel, so this is a NOISE proxy for the power analysis, not a return estimate)
+    hed = [a - b for a, b in zip(per_cycle("long_exp_hedged_f100", 0), per_cycle("long_exp_hedged_f100", 1))]
+    res["gs_hedged_spread_noise_proxy"] = stats(hed)
+    if len(hed) > 1:
+        res["power_gs_hedged_spread"] = power(stdev(hed), (len(cyc), 36, 192))
+    return res
 
 
 if __name__ == "__main__":

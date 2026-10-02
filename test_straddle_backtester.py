@@ -60,6 +60,9 @@ class Pieces(unittest.TestCase):
         self.assertFalse(sb.liquidity_ok([0.02], (150, 150), 900))                # expiry OI below 1000
         self.assertTrue(sb.liquidity_ok([0.02], (None, None), 2000))              # missing leg OI = unknown
         self.assertFalse(sb.liquidity_ok([0.02], (None, 50), 2000))               # known leg still checked
+        self.assertFalse(sb.liquidity_ok([0.02], (0, 500), 2000))                 # as specified: 0 is 0
+        self.assertTrue(sb.liquidity_ok_zero_unknown([0.02], (0, 500), 2000))     # refinement: 0 = unknown
+        self.assertFalse(sb.liquidity_ok_zero_unknown([0.02], (0, 50), 2000))
 
     def test_group_sizes(self):
         self.assertEqual(sb.group_sizes(25), 5)

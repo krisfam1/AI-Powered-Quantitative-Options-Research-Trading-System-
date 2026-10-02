@@ -1301,6 +1301,31 @@ Takes Target C's slot (Sections 1, 60). Trial #12 in the program tally (Section 
   - The health check reports DEV snapshot progress.
   - DEV collection started manually at ~20:30 ET 2026-10-01.
 
+**Phase 1 result (2026-10-01): pipeline validated; NO-GO on drafting the pre-registration yet.** Full report: `straddle_phase1_report.md`; numbers in `straddle_dev_analysis_results.json`.
+- **DEV collection complete:** 2,714 snapshots, **2,758 requests** total, 614,577 contracts, 0 errors.
+  - 75 empty snapshots are real EODHD gaps: all of 2025-01-16 (day-before exit for one cycle only) plus 16 ticker-days rejected by the same-day filter.
+- **Backtest coverage:** 1,325/1,357 ticker-cycles evaluated (7 split exclusions, 11 short history, 14 no ATM quotes).
+- **Second open-interest problem**, found after the first run had shown returns, so both versions are reported, never one silently:
+  - EODHD also reports false **0** OI on liquid ATM legs.
+  - As-specified rule: 780 eligible ticker-cycles. Refinement treating 0 as unknown (`eligible_zero_oi_unknown`): 987.
+- **Goyal–Saretto on DEV** (as-specified / refinement):
+  - Straddle-basis spread at mid +6.5% / +10.0% per cycle (t 0.6 / 0.9; placebo p 0.25 / 0.11); after quoted spreads +2.7% / +5.4%.
+  - Implementable book (long straddle + iron fly) after costs −0.8% / +1.2%.
+  - **Delta-hedged spread −1.5% / −0.9%.**
+  - Trade-level corr(signal, return) ≈ 0 (−0.003 raw, +0.01 to +0.03 two-way demeaned).
+  - Reads as: published sign, noise-level, and gone once hedged.
+- **Regime caveat:** realized vol beat implied in this window. Long straddles returned +13% to +18% per cycle, and iron flies lost ~15% of max-loss capital per cycle.
+- **Power** (80%, one-sided 0.05), minimum detectable effect per cycle:
+  - Hedged spread: 13% at 23 cycles, 10% at 36, 4.4% at 192.
+  - Implementable book: 14% / 11% / 4.9%.
+  - Hedging cuts single-leg noise (0.48 → 0.19) but not the spread's (0.25), whose noise is name-specific. **Breadth is the binding constraint, more than history length.**
+- **Path to GO:**
+  - Buy the ORATS near-EOD archive (2007 → present, 5,000+ symbols, NBBO): **$599 one-time, not a subscription.**
+  - Re-scope to a few hundred liquid names, with 2007–2023 as untouched confirmation data.
+  - Re-run power. Draft only if the detectable effect is ≤ ~2% per cycle, with the **delta-hedged spread as the primary metric**.
+  - **This is a user decision.**
+- BLIND untouched; IV Stage 2 and SPY GEX v3 unchanged.
+
 ## 61. How to use this file
 
 - Read this file first, every session, in this folder.

@@ -1,0 +1,498 @@
+{
+  "LABEL": "PIPELINE VALIDATION ON THE DEV WINDOW -- NOT EVIDENCE, NOT A TEST",
+  "ticker_cycles": 1357,
+  "evaluated": 1325,
+  "exclusions": {
+    "split_in_window": 7,
+    "no_atm_quotes": 14,
+    "insufficient_history": 11
+  },
+  "as_specified_rule": {
+    "cycles_used": 23,
+    "eligible_names_per_cycle": {
+      "min": 8,
+      "median": 50,
+      "max": 53
+    },
+    "eligible_tickers": [
+      "AAPL",
+      "AFRM",
+      "AMAT",
+      "AMD",
+      "AMZN",
+      "ARM",
+      "ASML",
+      "AVGO",
+      "BA",
+      "BAC",
+      "CAT",
+      "COIN",
+      "COST",
+      "CVX",
+      "DIS",
+      "DKNG",
+      "GE",
+      "GM",
+      "GOOGL",
+      "GS",
+      "HD",
+      "INTC",
+      "JNJ",
+      "JPM",
+      "LLY",
+      "LRCX",
+      "MA",
+      "MARA",
+      "MCD",
+      "META",
+      "MRNA",
+      "MS",
+      "MSFT",
+      "MSTR",
+      "MU",
+      "NIO",
+      "NKE",
+      "NVDA",
+      "OXY",
+      "PFE",
+      "PLTR",
+      "PYPL",
+      "QCOM",
+      "RIOT",
+      "RIVN",
+      "ROKU",
+      "SBUX",
+      "SMCI",
+      "SNAP",
+      "SOFI",
+      "TGT",
+      "TSLA",
+      "TXN",
+      "UNH",
+      "V",
+      "WMT",
+      "XOM"
+    ],
+    "gs_straddle_basis": {
+      "f000": {
+        "n": 23,
+        "mean": 0.06512927421095849,
+        "sd": 0.5340033702871527,
+        "t": 0.5849195786600215
+      },
+      "f050": {
+        "n": 23,
+        "mean": 0.046246911462596706,
+        "sd": 0.5353746796315207,
+        "t": 0.4142750942215373
+      },
+      "f100": {
+        "n": 23,
+        "mean": 0.027366689603009746,
+        "sd": 0.536932393160169,
+        "t": 0.24443679382867364
+      }
+    },
+    "gs_mid_top_minus_bottom": {
+      "n": 23,
+      "mean": 0.06512927421095849,
+      "sd": 0.5340033702871527,
+      "t": 0.5849195786600215
+    },
+    "implementable_long_straddle_plus_iron_fly": {
+      "f000": {
+        "n": 23,
+        "mean": 0.01682914814885059,
+        "sd": 0.2756230845651552,
+        "t": 0.29282655816036474
+      },
+      "f050": {
+        "n": 23,
+        "mean": 0.004012765425628223,
+        "sd": 0.2729504647693222,
+        "t": 0.07050563896328697
+      },
+      "f100": {
+        "n": 23,
+        "mean": -0.008155015094947142,
+        "sd": 0.27056517972318955,
+        "t": -0.14454956290181686
+      }
+    },
+    "long_leg_only": {
+      "f000": {
+        "n": 23,
+        "mean": 0.1485501640773214,
+        "sd": 0.4856251233136207,
+        "t": 1.4670195701864606
+      },
+      "f100": {
+        "n": 23,
+        "mean": 0.12878650719689674,
+        "sd": 0.47948438304993346,
+        "t": 1.288130360082858
+      }
+    },
+    "short_leg_iron_fly_only": {
+      "f000": {
+        "n": 23,
+        "mean": -0.11489186777962021,
+        "sd": 0.3859858175008732,
+        "t": -1.4275188783808954
+      },
+      "f100": {
+        "n": 23,
+        "mean": -0.14509653738679104,
+        "sd": 0.37105981095091584,
+        "t": -1.8753271774159983
+      }
+    },
+    "implementable_day_before_exit_long_only": {
+      "f000": {
+        "n": 22,
+        "mean": 0.02421608196714244,
+        "sd": 0.3756578276635697,
+        "t": 0.3023589131798514
+      },
+      "f100": {
+        "n": 22,
+        "mean": -0.050719836976379294,
+        "sd": 0.3619888866764125,
+        "t": -0.6571945478048461
+      }
+    },
+    "long_top_hedged_f100": {
+      "n": 23,
+      "mean": 0.049845947711626946,
+      "sd": 0.1933863126608248,
+      "t": 1.2361410901095489
+    },
+    "long_top_unhedged_f100_same_cycles": {
+      "n": 23,
+      "mean": 0.12878650719689674,
+      "sd": 0.47948438304993346,
+      "t": 1.288130360082858
+    },
+    "secondary_term_slope": "not computed in this pass (needs near/far ATM IV; secondary, robustness only)",
+    "placebo_within_cycle_shuffle": {
+      "real_mean": 0.06512927421095849,
+      "p_one_sided": 0.24575424575424576,
+      "reps": 1000
+    },
+    "ticker_fixed_effects": {
+      "n_rows": 780,
+      "corr_raw": -0.002950789593931004,
+      "corr_two_way_demeaned": 0.010277237989546112,
+      "n_tickers": 57
+    },
+    "mean_straddle_return_mid_by_earnings_flag": {
+      "1": {
+        "n": 270,
+        "mean": 0.09429837825954983,
+        "sd": 0.827586989697996,
+        "t": 1.872287126979538
+      },
+      "0": {
+        "n": 480,
+        "mean": 0.058229900564588315,
+        "sd": 0.8410350256215655,
+        "t": 1.5168847474306673
+      },
+      "None": {
+        "n": 30,
+        "mean": 0.17221262439784615,
+        "sd": 0.7403148040571559,
+        "t": 1.2741166129994415
+      }
+    },
+    "power_implementable_f100": {
+      "cycles_needed_for_80pct_power": {
+        "1pct_per_cycle": 4528,
+        "2pct_per_cycle": 1132,
+        "3pct_per_cycle": 504,
+        "5pct_per_cycle": 182
+      },
+      "min_detectable_mean_per_cycle": {
+        "n=23": 0.14030843216668507,
+        "n=36": 0.11214926699526208,
+        "n=192": 0.048562057116850334
+      }
+    },
+    "power_gs_straddle_basis_f100": {
+      "cycles_needed_for_80pct_power": {
+        "1pct_per_cycle": 17832,
+        "2pct_per_cycle": 4458,
+        "3pct_per_cycle": 1982,
+        "5pct_per_cycle": 714
+      },
+      "min_detectable_mean_per_cycle": {
+        "n=23": 0.2784399025066142,
+        "n=36": 0.2225584769648901,
+        "n=192": 0.09637064743958432
+      }
+    },
+    "gs_hedged_spread_noise_proxy": {
+      "n": 23,
+      "mean": -0.014617831101853994,
+      "sd": 0.24585282291218727,
+      "t": -0.2851488722819025
+    },
+    "power_gs_hedged_spread": {
+      "cycles_needed_for_80pct_power": {
+        "1pct_per_cycle": 3739,
+        "2pct_per_cycle": 935,
+        "3pct_per_cycle": 416,
+        "5pct_per_cycle": 150
+      },
+      "min_detectable_mean_per_cycle": {
+        "n=23": 0.1274932131394517,
+        "n=36": 0.10190599509710163,
+        "n=192": 0.044126590276011235
+      }
+    }
+  },
+  "zero_oi_as_unknown_rule": {
+    "cycles_used": 23,
+    "eligible_names_per_cycle": {
+      "min": 23,
+      "median": 50,
+      "max": 53
+    },
+    "eligible_tickers": [
+      "AAPL",
+      "AFRM",
+      "AMAT",
+      "AMD",
+      "AMZN",
+      "ARM",
+      "ASML",
+      "AVGO",
+      "BA",
+      "BAC",
+      "CAT",
+      "COIN",
+      "COST",
+      "CVX",
+      "DIS",
+      "DKNG",
+      "GE",
+      "GM",
+      "GOOGL",
+      "GS",
+      "HD",
+      "INTC",
+      "JNJ",
+      "JPM",
+      "LLY",
+      "LRCX",
+      "MA",
+      "MARA",
+      "MCD",
+      "META",
+      "MRNA",
+      "MS",
+      "MSFT",
+      "MSTR",
+      "MU",
+      "NIO",
+      "NKE",
+      "NVDA",
+      "OXY",
+      "PFE",
+      "PLTR",
+      "PYPL",
+      "QCOM",
+      "RIOT",
+      "RIVN",
+      "ROKU",
+      "SBUX",
+      "SMCI",
+      "SNAP",
+      "SOFI",
+      "TGT",
+      "TSLA",
+      "TXN",
+      "UNH",
+      "V",
+      "WMT",
+      "XOM"
+    ],
+    "gs_straddle_basis": {
+      "f000": {
+        "n": 23,
+        "mean": 0.09999336969341013,
+        "sd": 0.5329826748275834,
+        "t": 0.8997503617787406
+      },
+      "f050": {
+        "n": 23,
+        "mean": 0.07693569079096917,
+        "sd": 0.5322825505069186,
+        "t": 0.6931856225829333
+      },
+      "f100": {
+        "n": 23,
+        "mean": 0.05375004209945377,
+        "sd": 0.5320459411738825,
+        "t": 0.48449978908062025
+      }
+    },
+    "gs_mid_top_minus_bottom": {
+      "n": 23,
+      "mean": 0.09999336969341013,
+      "sd": 0.5329826748275834,
+      "t": 0.8997503617787406
+    },
+    "implementable_long_straddle_plus_iron_fly": {
+      "f000": {
+        "n": 23,
+        "mean": 0.04307916415924234,
+        "sd": 0.2785651906933081,
+        "t": 0.7416591174175768
+      },
+      "f050": {
+        "n": 23,
+        "mean": 0.026968723480468245,
+        "sd": 0.2746849119066582,
+        "t": 0.47085751202484755
+      },
+      "f100": {
+        "n": 23,
+        "mean": 0.011959255434504549,
+        "sd": 0.2713775853686648,
+        "t": 0.21134602598158586
+      }
+    },
+    "long_leg_only": {
+      "f000": {
+        "n": 23,
+        "mean": 0.20171264947978165,
+        "sd": 0.5387058602989127,
+        "t": 1.7957478362854529
+      },
+      "f100": {
+        "n": 23,
+        "mean": 0.17895795333980358,
+        "sd": 0.5286702516607042,
+        "t": 1.6234168487418035
+      }
+    },
+    "short_leg_iron_fly_only": {
+      "f000": {
+        "n": 23,
+        "mean": -0.11555432116129696,
+        "sd": 0.3262358143035722,
+        "t": -1.6987069836687818
+      },
+      "f100": {
+        "n": 23,
+        "mean": -0.15503944247079446,
+        "sd": 0.30655576324091827,
+        "t": -2.4254740400164128
+      }
+    },
+    "implementable_day_before_exit_long_only": {
+      "f000": {
+        "n": 22,
+        "mean": 0.01113332069420802,
+        "sd": 0.43553685614728543,
+        "t": 0.11989778156827773
+      },
+      "f100": {
+        "n": 22,
+        "mean": -0.06909114363436518,
+        "sd": 0.42074871356034693,
+        "t": -0.7702131427203298
+      }
+    },
+    "long_top_hedged_f100": {
+      "n": 23,
+      "mean": 0.059027823311889,
+      "sd": 0.18666820923682936,
+      "t": 1.5165276237933605
+    },
+    "long_top_unhedged_f100_same_cycles": {
+      "n": 23,
+      "mean": 0.17895795333980358,
+      "sd": 0.5286702516607042,
+      "t": 1.6234168487418035
+    },
+    "secondary_term_slope": "not computed in this pass (needs near/far ATM IV; secondary, robustness only)",
+    "placebo_within_cycle_shuffle": {
+      "real_mean": 0.09999336969341013,
+      "p_one_sided": 0.11288711288711288,
+      "reps": 1000
+    },
+    "ticker_fixed_effects": {
+      "n_rows": 987,
+      "corr_raw": -0.0015004995306251506,
+      "corr_two_way_demeaned": 0.03350263506504577,
+      "n_tickers": 57
+    },
+    "mean_straddle_return_mid_by_earnings_flag": {
+      "1": {
+        "n": 345,
+        "mean": 0.12489393007907923,
+        "sd": 0.8267870860135977,
+        "t": 2.805803126983526
+      },
+      "0": {
+        "n": 598,
+        "mean": 0.09876151521735874,
+        "sd": 0.8691982114598743,
+        "t": 2.778558291656432
+      },
+      "None": {
+        "n": 44,
+        "mean": 0.10701221700190541,
+        "sd": 0.7050131184894427,
+        "t": 1.0068447308891484
+      }
+    },
+    "power_implementable_f100": {
+      "cycles_needed_for_80pct_power": {
+        "1pct_per_cycle": 4556,
+        "2pct_per_cycle": 1139,
+        "3pct_per_cycle": 507,
+        "5pct_per_cycle": 183
+      },
+      "min_detectable_mean_per_cycle": {
+        "n=23": 0.1407297257068095,
+        "n=36": 0.11248600913531155,
+        "n=192": 0.048707870740754125
+      }
+    },
+    "power_gs_straddle_basis_f100": {
+      "cycles_needed_for_80pct_power": {
+        "1pct_per_cycle": 17509,
+        "2pct_per_cycle": 4378,
+        "3pct_per_cycle": 1946,
+        "5pct_per_cycle": 701
+      },
+      "min_detectable_mean_per_cycle": {
+        "n=23": 0.27590590896851336,
+        "n=36": 0.22053304261657428,
+        "n=192": 0.09549360863991478
+      }
+    },
+    "gs_hedged_spread_noise_proxy": {
+      "n": 23,
+      "mean": -0.009081379506016469,
+      "sd": 0.25296882310551894,
+      "t": -0.17216653647454824
+    },
+    "power_gs_hedged_spread": {
+      "cycles_needed_for_80pct_power": {
+        "1pct_per_cycle": 3959,
+        "2pct_per_cycle": 990,
+        "3pct_per_cycle": 440,
+        "5pct_per_cycle": 159
+      },
+      "min_detectable_mean_per_cycle": {
+        "n=23": 0.1311833954143685,
+        "n=36": 0.1048555771772376,
+        "n=192": 0.045403796781983786
+      }
+    }
+  }
+}
