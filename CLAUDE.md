@@ -1278,6 +1278,29 @@ Takes Target C's slot (Sections 1, 60). Trial #12 in the program tally (Section 
   - Use: an earnings-in-window flag for stratification and robustness, not a filter on the primary.
 - **Phase 3 quotes:** Interactive Brokers (OPRA top-of-book $1.50/month, waived at $20/month in commissions; IBKR Pro, ~$500 balance). No Alpaca $99 tier.
 
+**Phase 1 build (2026-10-01; commits `fbe0322`, `d6e5deb`, `db4bc07`):**
+- **`straddle_schedule.py`:** the cycle calendar (holiday-aware: Good Friday 2025 → 4/17 expiry, Juneteenth 2026 → 6/18).
+- **`daily_prices.py` → `daily_prices.db`:** **consolidated SIP** daily closes from Alpaca, raw and split-adjusted, 59 tickers, 2022-06 onward.
+  - Historical SIP is free on the basic plan; verified on NVDA 2024-06-07: raw 1208.88 is the official close, while IEX gives 1208.42.
+  - Used for settlement, HV and hedging in this pipeline, instead of the project's usual IEX bars.
+- **`option_snapshot_collector.py` → `option_snapshots.db`** (tables `chain`, `snapshot_summary`):
+  - Entry snapshot: all expirations ≤ 60 DTE. Exit snapshot: the target expiration only. Strikes within ±25% of the raw close (EODHD `filter[strike_from/to]`, confirmed honored).
+  - Same-day (id-date) records only. Stops on the first 429, lockfile, resumable. Never collects BLIND unless `--blind`.
+- **Measured request cost (AAPL, cycle 2024-03-18 → 2024-04-19): 2 requests per ticker-cycle.** The entry snapshot returned 328 contracts across 7 expirations, the exit snapshot 66, and the strike filter halves the records (670 unfiltered).
+  - The retired backfill's logs show 1.0–2.1 pages per ticker-day without a strike filter (mean 1.2).
+  - **DEV estimate: ~2,700–3,300 requests** (2,714 ticker-day snapshots), not the 6–13k guessed earlier: under half of one day's ~10k quota.
+- **`straddle_backtester.py` + `test_straddle_backtester.py`** (16 hand-computed tests, all passing). The tests caught two things:
+  - A $0.00 exit bid is a valid quote (the leg is worthless), not a missing one.
+  - One of my own hand calculations was wrong.
+- **Rule fixed after the first snapshot, before any result:** EODHD leaves open interest **null** on many half-dollar strikes (e.g. AAPL 172.5, the ATM strike on 2024-03-18). Missing leg OI is treated as **unknown**, which skips the per-leg floor; the expiration-level floor (≥1,000, summed over known values) and the 5% spread rule still apply. The count of missing legs is recorded per trade (`leg_oi_missing`).
+- **`straddle_dev_analysis.py`:** the DEV pipeline validation (Goyal–Saretto basis at three cost levels, the implementable long-straddle + iron-fly book, hedged and day-before variants, within-cycle shuffled-rank placebo, two-way fixed-effects check, earnings split, power).
+  - Smoke-tested on synthetic trades with a planted effect, which it recovered (placebo p = 0.001).
+  - The term-structure secondary signal isn't computed in this pass.
+- **Automation:**
+  - `quota_probe_and_resume.py` launches the DEV collector on quota success (GEX catch-up first), in the retired backfill's place.
+  - The health check reports DEV snapshot progress.
+  - DEV collection started manually at ~20:30 ET 2026-10-01.
+
 ## 61. How to use this file
 
 - Read this file first, every session, in this folder.
