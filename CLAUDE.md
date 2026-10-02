@@ -1236,6 +1236,7 @@ On success, backfill and GEX results are logged as separate rows prefixed `[BACK
 | 2026-10-01T13:39:58 | 429 (blocked) | none. **First run of the trimmed probe:** `single_quota_test.py` now makes one direct request with the same URL and filters as `_fetch_raw_chain_paginated`, but `page[limit]=1` and no pagination, instead of pulling the ~545-record chain. JSONL log format unchanged. It also prints the token-redacted request URL and HTTP status to stdout. The success path is untested until the quota reopens. |
 | 2026-10-01T15:12:19 | 429 (blocked) | none (durable probe task; backfill and GEX untouched) |
 | 2026-10-01T20:23:01 | 429 (blocked) | none (durable probe task; backfill and GEX untouched) |
+| 2026-10-02T01:32:09 | 200 (no SMCI data) | [SMCI 9/28 ONE-TIME] EODHD has no SMCI options data for 9/28 (confirmed twice). 1 request, no errors; 38 records returned, all dated to other days (rejected by the id-date rule); gex_metrics unchanged at 1,088 rows. |
 
 ---
 
