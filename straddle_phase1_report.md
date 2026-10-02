@@ -10,7 +10,7 @@
   - 16 scattered ticker-days returned only other-day records, which the same-day filter rejected.
 
 ## 2. Pipeline checks
-- **Unit tests:** 19 hand-computed tests pass.
+- **Unit tests:** 14 test cases (51 hand-computed assertions) pass.
 - **Coverage:** 1,325 of 1,357 ticker-cycles evaluated. 32 were excluded: 7 splits in the holding window, 11 with under a year of price history (ARM), 14 with no quoted ATM pair.
 - **Data-quality findings in EODHD open interest, both handled in the open:**
   - It's **null** on many half-dollar strikes. Treated as unknown, a rule fixed before any result.

@@ -1289,7 +1289,7 @@ Takes Target C's slot (Sections 1, 60). Trial #12 in the program tally (Section 
 - **Measured request cost (AAPL, cycle 2024-03-18 → 2024-04-19): 2 requests per ticker-cycle.** The entry snapshot returned 328 contracts across 7 expirations, the exit snapshot 66, and the strike filter halves the records (670 unfiltered).
   - The retired backfill's logs show 1.0–2.1 pages per ticker-day without a strike filter (mean 1.2).
   - **DEV estimate: ~2,700–3,300 requests** (2,714 ticker-day snapshots), not the 6–13k guessed earlier: under half of one day's ~10k quota.
-- **`straddle_backtester.py` + `test_straddle_backtester.py`** (16 hand-computed tests, all passing). The tests caught two things:
+- **`straddle_backtester.py` + `test_straddle_backtester.py`** (14 test cases / 51 hand-computed assertions, all passing). The tests caught two things:
   - A $0.00 exit bid is a valid quote (the leg is worthless), not a missing one.
   - One of my own hand calculations was wrong.
 - **Rule fixed after the first snapshot, before any result:** EODHD leaves open interest **null** on many half-dollar strikes (e.g. AAPL 172.5, the ATM strike on 2024-03-18). Missing leg OI is treated as **unknown**, which skips the per-leg floor; the expiration-level floor (≥1,000, summed over known values) and the 5% spread rule still apply. The count of missing legs is recorded per trade (`leg_oi_missing`).
