@@ -1,0 +1,357 @@
+{
+ "n_cycles": 203,
+ "window": [
+  "2009-10-15",
+  "2026-09-17"
+ ],
+ "integrity": {
+  "CNDR": 0,
+  "BFLY": 0,
+  "PUT": 0,
+  "BXM": 0
+ },
+ "descriptive": {
+  "slope_mean": 0.11605443636025102,
+  "slope_min": -0.15344785679258804,
+  "slope_max": 0.2867088363652287,
+  "share_inverted_slope_lt_0": 0.09852216748768473,
+  "CNDR_xs_mean": -0.0005814327257298488,
+  "CNDR_xs_sd": 0.018448145699944175,
+  "CNDR_xs_min": -0.08998916456789095,
+  "CNDR_xs_max": 0.027678717352469916
+ },
+ "primary": {
+  "spearman_rho": -0.019997073598985515,
+  "p_one_sided": {
+   "42": 0.6104,
+   "43": 0.6117
+  },
+  "n": 203,
+  "significant_both_seeds": false,
+  "rho_ge_floor": false
+ },
+ "vrp_control_gate": {
+  "partial_rho": 0.05629715221707103,
+  "p_one_sided": {
+   "42": 0.2126,
+   "43": 0.2165
+  },
+  "pass": false
+ },
+ "sign_checks": {
+  "alternate_payoff:BFLY": {
+   "statistic": "spearman_rho",
+   "value": 0.022887611855940737,
+   "n": 203,
+   "hypothesized_sign": "+",
+   "pass": true,
+   "p_one_sided_seed42_info_only": 0.374
+  },
+  "alternate_payoff:PUT": {
+   "statistic": "spearman_rho",
+   "value": -0.27274057455006584,
+   "n": 203,
+   "hypothesized_sign": "+",
+   "pass": false,
+   "p_one_sided_seed42_info_only": 1.0
+  },
+  "alternate_payoff:BXM": {
+   "statistic": "spearman_rho",
+   "value": -0.3569864955200243,
+   "n": 203,
+   "hypothesized_sign": "+",
+   "pass": false,
+   "p_one_sided_seed42_info_only": 1.0
+  },
+  "alternate_statistic:pearson": {
+   "statistic": "pearson_r",
+   "value": 0.02392265329961941,
+   "n": 203,
+   "hypothesized_sign": "+",
+   "pass": true,
+   "p_one_sided_seed42_info_only": 0.3618
+  },
+  "alternate_signal:ln_vix6m_over_vix_from_2008": {
+   "statistic": "spearman_rho",
+   "value": -0.12376254537689516,
+   "n": 224,
+   "hypothesized_sign": "+",
+   "pass": false,
+   "p_one_sided_seed42_info_only": 0.9658,
+   "window": [
+    "2008-01-17",
+    "2026-09-17"
+   ]
+  },
+  "subsample:post_johnson_sample_2014plus": {
+   "statistic": "spearman_rho",
+   "value": -0.007114592089885798,
+   "n": 152,
+   "hypothesized_sign": "+",
+   "pass": false,
+   "p_one_sided_seed42_info_only": 0.5386
+  },
+  "subsample:post_index_launch_2015_08plus": {
+   "statistic": "spearman_rho",
+   "value": -0.046036053498740064,
+   "n": 133,
+   "hypothesized_sign": "+",
+   "pass": false,
+   "p_one_sided_seed42_info_only": 0.6969
+  },
+  "nonlinearity:bottom_quintile": {
+   "statistic": "mean_xs_bottom_minus_rest",
+   "value": 0.0015414356664847115,
+   "n_bottom": 34,
+   "n_rest": 133,
+   "mean_bottom": 0.0003294668748338505,
+   "mean_rest": -0.0012119687916508609,
+   "hypothesized_sign": "-",
+   "pass": false
+  },
+  "oos_r2_vs_historical_mean": {
+   "statistic": "oos_r2",
+   "value": -0.004836575057484804,
+   "n_forecasts": 143,
+   "pass_condition": "> 0",
+   "pass": "False"
+  },
+  "stambaugh_bias_corrected": {
+   "statistic": "amihud_hurvich_beta",
+   "value": 0.00622327803096618,
+   "beta_corrected": 0.00622327803096618,
+   "beta_ols": 0.005725626937599291,
+   "ar1_rho_hat": 0.21388804973591405,
+   "ar1_rho_corrected": 0.22209457779378478,
+   "hypothesized_sign": "+",
+   "pass": true
+  },
+  "partial_control:lagged_own_return": {
+   "statistic": "partial_spearman",
+   "value": -0.016211377624482902,
+   "p_one_sided_seed42_info_only": 0.5912,
+   "hypothesized_sign": "+",
+   "pass": false
+  },
+  "drop_top5_abs_return_cycles": {
+   "statistic": "spearman_rho",
+   "value": -0.01631832443249937,
+   "n": 198,
+   "hypothesized_sign": "+",
+   "pass": false,
+   "p_one_sided_seed42_info_only": 0.5932,
+   "dropped_signal_dates": [
+    "2011-07-14",
+    "2014-09-18",
+    "2018-09-20",
+    "2020-02-20",
+    "2022-04-13"
+   ]
+  },
+  "alternate_null:stationary_block_bootstrap": {
+   "statistic": "spearman_rho (primary)",
+   "value": -0.019997073598985515,
+   "p_one_sided": {
+    "42": 0.6139,
+    "43": 0.6123
+   },
+   "hypothesized_sign": "+",
+   "pass": false
+  }
+ },
+ "sign_check_failures": [
+  "alternate_payoff:PUT",
+  "alternate_payoff:BXM",
+  "alternate_signal:ln_vix6m_over_vix_from_2008",
+  "subsample:post_johnson_sample_2014plus",
+  "subsample:post_index_launch_2015_08plus",
+  "nonlinearity:bottom_quintile",
+  "oos_r2_vs_historical_mean",
+  "partial_control:lagged_own_return",
+  "drop_top5_abs_return_cycles",
+  "alternate_null:stationary_block_bootstrap"
+ ],
+ "verdict": "REJECTED",
+ "verdict_reasons": [
+  "primary not significant at 0.05 (both seeds required)",
+  "rho -0.020 < floor 0.15",
+  "vrp_control_gate failed (automatic REJECTED)",
+  "post-2014 subsample has the wrong sign (automatic REJECTED)",
+  "10 sign checks failed (max 1 allowed)"
+ ],
+ "economic_check": {
+  "cycles": 167,
+  "first_cycle_signal": "2012-10-18",
+  "fraction_held": 0.7964071856287425,
+  "cycles_in_tbills": 34,
+  "switches": 48,
+  "always_on_CNDR": {
+   "mean_excess_per_cycle": -0.0008981435661390035,
+   "ann_excess_return": -0.010777722793668043,
+   "ann_vol": 0.06413850724527002,
+   "sharpe": -0.1680382543431093,
+   "max_drawdown": 0.18385540932296895,
+   "worst_cycle_raw": -0.08875409607474027,
+   "total_growth_of_1": 1.0628022455303325
+  },
+  "timed": {
+   "mean_excess_per_cycle": -0.0009652206544285298,
+   "ann_excess_return": -0.011582647853142359,
+   "ann_vol": 0.058830461149544204,
+   "sharpe": -0.19688181304069372,
+   "max_drawdown": 0.19217344038495787,
+   "worst_cycle_raw": -0.08875409607474027,
+   "total_growth_of_1": 1.055606693745935
+  },
+  "breakeven_cost_per_roll_timed_excess_zero": -0.0012119687916508609,
+  "breakeven_cost_per_roll_always_on_excess_zero": -0.0008981435661390035,
+  "timed_vs_always_on": "timed mean excess < always-on at zero cost; costs narrow the gap",
+  "breakeven_cost_per_roll_timed_advantage_vanishes": 0.0003294668748338498,
+  "cost_estimate_spy_eod": {
+   "source": "gex_data_cache.db raw_records, SPY, EODHD end-of-day bid/ask, id-date matched",
+   "caveat": "SPY options (American, physically settled) as a proxy for SPX/XSP; 3 recent rolls only; end-of-day quotes, not 11:00 ET",
+   "per_roll": [
+    {
+     "date": "2026-06-18",
+     "expiry": "2026-07-17",
+     "legs": {
+      "short_put": {
+       "strike": 720,
+       "delta": -0.19946,
+       "bid": 3.94,
+       "ask": 3.99
+      },
+      "short_call": {
+       "strike": 771,
+       "delta": 0.197931,
+       "bid": 2.77,
+       "ask": 2.81
+      },
+      "long_put": {
+       "strike": 674,
+       "delta": -0.050782,
+       "bid": 1.05,
+       "ask": 1.07
+      },
+      "long_call": {
+       "strike": 789,
+       "delta": 0.050591,
+       "bid": 0.49,
+       "ask": 0.51
+      }
+     },
+     "sum_half_spreads": 0.06500000000000017,
+     "credit_mid": 5.195,
+     "max_loss": 40.805,
+     "cost_pct_of_cndr_account": 0.00015929420414164972,
+     "cost_pct_of_max_loss": 0.0015929420414164972
+    },
+    {
+     "date": "2026-07-17",
+     "expiry": "2026-08-21",
+     "legs": {
+      "short_put": {
+       "strike": 709,
+       "delta": -0.201578,
+       "bid": 5.28,
+       "ask": 5.32
+      },
+      "short_call": {
+       "strike": 769,
+       "delta": 0.203379,
+       "bid": 3.07,
+       "ask": 3.11
+      },
+      "long_put": {
+       "strike": 645,
+       "delta": -0.048853,
+       "bid": 1.39,
+       "ask": 1.41
+      },
+      "long_call": {
+       "strike": 788,
+       "delta": 0.050949,
+       "bid": 0.52,
+       "ask": 0.54
+      }
+     },
+     "sum_half_spreads": 0.06000000000000005,
+     "credit_mid": 6.46,
+     "max_loss": 57.54,
+     "cost_pct_of_cndr_account": 0.00010427528675703867,
+     "cost_pct_of_max_loss": 0.0010427528675703867
+    },
+    {
+     "date": "2026-08-21",
+     "expiry": "2026-09-18",
+     "legs": {
+      "short_put": {
+       "strike": 740,
+       "delta": -0.200245,
+       "bid": 3.82,
+       "ask": 3.84
+      },
+      "short_call": {
+       "strike": 787,
+       "delta": 0.195023,
+       "bid": 2.36,
+       "ask": 2.39
+      },
+      "long_put": {
+       "strike": 694,
+       "delta": -0.050266,
+       "bid": 1.02,
+       "ask": 1.03
+      },
+      "long_call": {
+       "strike": 803,
+       "delta": 0.049599,
+       "bid": 0.42,
+       "ask": 0.44
+      }
+     },
+     "sum_half_spreads": 0.04000000000000015,
+     "credit_mid": 4.75,
+     "max_loss": 41.25,
+     "cost_pct_of_cndr_account": 9.696969696969733e-05,
+     "cost_pct_of_max_loss": 0.0009696969696969733
+    }
+   ],
+   "median_cost_pct_of_cndr_account": 0.00010427528675703867,
+   "median_cost_pct_of_max_loss": 0.0010427528675703867
+  }
+ },
+ "experiment_id": "vix_termstructure_vrp_index_timing_v1_20261002",
+ "config_hash": "188828a66ad359c28692d923a8c7c57d8d91cdd507b1932f6427acb38e488d09",
+ "snapshot": "vrp_timing_20261002",
+ "snapshot_sha256": {
+  "VIX_History.csv": "2b28877e77b1b4b76875afb1a84c3a06eced2120a651c3b5ff7d91b32fa660b5",
+  "VIX3M_History.csv": "642e51b2440539129a4c223448893db7579bb9ef3a270cdda80181565faa89d1",
+  "VIX6M_History.csv": "bedb9c6063d91615ea839933296a733656ebd3a3eca6b5f218dfdd9ca4b3c985",
+  "SPX_History.csv": "d6e27fbc5fee598de95e280cc202fbcb93c21ac456e5f239c17d50dfe5a09484",
+  "CNDR_History.csv": "147b92d80628afee796c45ad460d02ec5488c02f7b5a7105df583a09110baff9",
+  "BFLY_History.csv": "6b129a5c4710f1bb593252eac0cb27993ef2da8cae5684f3483b27ddba5f5cb6",
+  "PUT_History.csv": "b026b1cc643fbd4c68cc05e0dee7beac56d299cc5ca653a340c86908dcd77da1",
+  "BXM_History.csv": "2c525ce59da29546d50a8b00a0dcb9b32a5c7ae70475e5b47d28256bdd335fcd",
+  "treasury_bill_rates_2007.csv": "a2f6c3f2a3dc6ab563e8bd616b369cc808883952f2800174c7329a9bfee31bc9",
+  "treasury_bill_rates_2008.csv": "ae9952c3f32d15847d7c31872e7b5482418dd211df4073dba4dd7fdc44199f0b",
+  "treasury_bill_rates_2009.csv": "0128872fa47454e7e6ff7194d0ed20dbc67a6876745779d91c7cc0a3014da4bc",
+  "treasury_bill_rates_2010.csv": "311f3e85657fe72c7cb8a3c88bc348bf3ea6a6ecd7a79ae84ed58aab44b1a3e7",
+  "treasury_bill_rates_2011.csv": "edd2051d6f0d9e45b80da85c753321fffb7129092954e07f16301c0bf9cbde40",
+  "treasury_bill_rates_2012.csv": "079bd2794dc126acbf0c0e13953baa60a9c7db7c104d7e099375ebeaad744ffd",
+  "treasury_bill_rates_2013.csv": "19ba4498b15996aa78cd7395cc4b4c807e150a84f9e518673f68d50d62271390",
+  "treasury_bill_rates_2014.csv": "a8a674730d6a42b9a696c02e9c91a29e9e90df565affbf714e8f81c7802e1836",
+  "treasury_bill_rates_2015.csv": "3bc18da6656ed036a3ab0920640758a424706f3a1164ed01cf56e83febe2e47b",
+  "treasury_bill_rates_2016.csv": "8660f61da6177d55912d14786b4d5bce0174d715e59a0fdf8ae1cee36982cd06",
+  "treasury_bill_rates_2017.csv": "acebac7efd6ae1641dd266d69cd95d7c0df5907b5e03964fd8dddd5d18a17c7f",
+  "treasury_bill_rates_2018.csv": "6f037e225a3f296613f620404667971df9f202743e70540d9ffbf5c7d30a3a51",
+  "treasury_bill_rates_2019.csv": "f0396ee6dfaa3a60ce676c593a026f8cfbb9bcd72af7b6aa8450c68a5d3ac98a",
+  "treasury_bill_rates_2020.csv": "cc29ccb650fe49ce04781e97332cecba11c20e466b053a08d6fb15b6b24dbd20",
+  "treasury_bill_rates_2021.csv": "e45398cf008aeca21679fe1ebcc7d051add07f0819ef62723fe472a1ea00377d",
+  "treasury_bill_rates_2022.csv": "4059b158b989b5bb4d295cc5e3356434bcceba44d89365e368a2aafbf2077859",
+  "treasury_bill_rates_2023.csv": "ca4d73d5e9856391c06ef0b3ec252d950019b1a5db97c934d92d9569fc4ba87c",
+  "treasury_bill_rates_2024.csv": "47cc8985d9474bbdaea37266ac5658f6b1b276d3310c54c7efd70358e80bc37b",
+  "treasury_bill_rates_2025.csv": "aa024dfde7700a971b287d7cc8284fd8c34f4dd6c66cb009cf39f501be33b562",
+  "treasury_bill_rates_2026.csv": "363eba1c4b65f23c3e895fa5daf247a8bf012021ac20e9ec4e549bd8acb42b69"
+ }
+}
