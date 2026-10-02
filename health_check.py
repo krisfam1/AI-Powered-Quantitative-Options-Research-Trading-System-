@@ -182,6 +182,19 @@ def check_data(state):
     except Exception as exc:
         add("data", "IV Stage 2 rows", "FAIL", f"query failed: {exc}")
 
+    # Section 62: DEV-window option snapshot collection progress (replaces the Target C backfill's quota).
+    try:
+        import option_snapshot_collector as osc
+        have, need = osc.status("dev")
+        prev = state.get("snapshots_dev")
+        ok_p, _, _ = probe_results_since(datetime.fromisoformat(state["checked_at_utc"]) if "checked_at_utc" in state
+                                         else datetime.now(timezone.utc) - timedelta(hours=24))
+        stalled = prev is not None and have <= prev and have < need and ok_p > 0
+        add("data", "option snapshots (DEV)", "WARN" if stalled else "OK",
+            f"{have}/{need} ticker-day snapshots (last check {prev})" + (" -- quota was open but no progress" if stalled else ""))
+        state["snapshots_dev"] = have
+    except Exception as exc:
+        add("data", "option snapshots (DEV)", "WARN", f"status failed: {exc}")
     # 2026-10-01: the 59-ticker Target C backfill is RETIRED (task disabled, probe no longer relaunches it).
     add("data", "59-ticker backfill", "OK", "retired 2026-10-01 with Target C; dataset kept as is")
     if False:

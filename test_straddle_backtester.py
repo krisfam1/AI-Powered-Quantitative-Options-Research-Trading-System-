@@ -58,6 +58,8 @@ class Pieces(unittest.TestCase):
         self.assertFalse(sb.liquidity_ok([0.04, 0.06, 0.07], (150, 120), 2000))   # median 6% > 5%
         self.assertFalse(sb.liquidity_ok([0.02], (150, 50), 2000))                # leg OI below 100
         self.assertFalse(sb.liquidity_ok([0.02], (150, 150), 900))                # expiry OI below 1000
+        self.assertTrue(sb.liquidity_ok([0.02], (None, None), 2000))              # missing leg OI = unknown
+        self.assertFalse(sb.liquidity_ok([0.02], (None, 50), 2000))               # known leg still checked
 
     def test_group_sizes(self):
         self.assertEqual(sb.group_sizes(25), 5)

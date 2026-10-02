@@ -77,7 +77,8 @@ def append_probe_rows(rows):
 
 
 def row(ts, result, action):
-    category = "BACKFILL" if action.startswith("[BACKFILL]") else "GEX" if action.startswith("[GEX CATCH-UP]") else "PROBE"
+    category = ("BACKFILL" if action.startswith("[BACKFILL]") else "GEX" if action.startswith("[GEX CATCH-UP]")
+                else "SNAPSHOTS" if action.startswith("[SNAPSHOTS]") else "PROBE")
     return (ts, result, category, action)
 
 
@@ -107,6 +108,40 @@ def backfill_procs(marker):
 
 
 TARGET_C_RETIRED = True   # 2026-10-01: Target C retired; its quota goes to the option snapshot collector
+SNAPSHOTS_ENABLED = True  # on since 2026-10-01 20:3x ET, after the measurement (2 requests per ticker-cycle)
+SNAPSHOT_SCRIPT = "option_snapshot_collector.py"
+SNAPSHOT_LOCK = os.path.join(ROOT, "option_snapshot_collection.lock")
+SNAPSHOT_STDOUT_LOG = os.path.join(ROOT, "option_snapshot_collection_stdout_log.txt")
+
+
+def do_snapshots():
+    """[SNAPSHOTS] launch the DEV-window option snapshot collector if incomplete and not running."""
+    if not SNAPSHOTS_ENABLED or DRY:
+        return "[SNAPSHOTS] not enabled"
+    import option_snapshot_collector as osc
+    have, need = osc.status("dev")
+    if have >= need:
+        return f"[SNAPSHOTS] DEV complete ({have}/{need}), nothing to do"
+    running = backfill_procs(SNAPSHOT_SCRIPT)
+    if running:
+        return f"[SNAPSHOTS] already running (PID {running}); {have}/{need}"
+    note = ""
+    if os.path.exists(SNAPSHOT_LOCK):
+        os.remove(SNAPSHOT_LOCK)
+        note = "stale lock removed; "
+    out_fh = open(SNAPSHOT_STDOUT_LOG, "ab")
+    try:
+        subprocess.Popen([PYTHONW, os.path.join(ROOT, SNAPSHOT_SCRIPT)], cwd=ROOT, stdout=out_fh,
+                         stderr=subprocess.STDOUT, stdin=subprocess.DEVNULL, creationflags=DETACH, close_fds=True)
+    except OSError:
+        note += "no job breakaway; "
+        subprocess.Popen([PYTHONW, os.path.join(ROOT, SNAPSHOT_SCRIPT)], cwd=ROOT, stdout=out_fh,
+                         stderr=subprocess.STDOUT, stdin=subprocess.DEVNULL,
+                         creationflags=DETACH & ~subprocess.CREATE_BREAKAWAY_FROM_JOB, close_fds=True)
+    out_fh.close()
+    time.sleep(30)
+    after = backfill_procs(SNAPSHOT_SCRIPT)
+    return f"[SNAPSHOTS] {note}{'launched' if len(after) == 1 else 'WARNING: %d processes' % len(after)} (PID {after}); was {have}/{need}"
 
 
 def do_backfill():
@@ -212,7 +247,9 @@ def main():
         append_probe_rows([row(ts, code, "none (durable probe task; backfill and GEX untouched)")])
         return
 
-    rows = [row(ts, "200 (cleared)", do_backfill()), row(ts, "200 (cleared)", do_gex())]
+    # GEX first (small, feeds the nightly EOD cost table), then the snapshot collection gets the rest
+    rows = [row(ts, "200 (cleared)", do_backfill()), row(ts, "200 (cleared)", do_gex()),
+            row(ts, "200 (cleared)", do_snapshots())]
     append_probe_rows(rows)
 
 

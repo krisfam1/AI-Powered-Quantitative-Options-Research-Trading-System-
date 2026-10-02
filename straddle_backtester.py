@@ -93,9 +93,13 @@ def hedge_pnl(path, K, sigma, expiry_days, cost_bp=HEDGE_COST_BP):
 
 
 def liquidity_ok(spread_history, leg_ois, exp_oi):
+    """Missing OI is UNKNOWN, not zero (EODHD leaves OI null on many half-dollar strikes; found on the
+    first measured snapshot, 2026-10-01, before any result existed): a leg with None skips the per-leg
+    floor. The expiration-level floor (sum of known OI) and the spread rule always apply."""
     if not spread_history or median(spread_history) > MAX_SPREAD:
         return False
-    return min(leg_ois) >= MIN_LEG_OI and exp_oi >= MIN_EXP_OI
+    known = [x for x in leg_ois if x is not None]
+    return all(x >= MIN_LEG_OI for x in known) and exp_oi >= MIN_EXP_OI
 
 
 def group_sizes(n):
@@ -110,7 +114,7 @@ def _chain(c, ticker, obs, kind, expiry):
                      (ticker, obs.isoformat(), kind, expiry.isoformat())).fetchall()
     out = {}
     for typ, k, b, a, oi, iv, d in rows:
-        out[(typ, float(k))] = {"bid": b or 0.0, "ask": a or 0.0, "oi": oi or 0, "iv": iv, "delta": d}
+        out[(typ, float(k))] = {"bid": b or 0.0, "ask": a or 0.0, "oi": oi, "iv": iv, "delta": d}   # oi may be None
     return out
 
 
@@ -145,9 +149,10 @@ def evaluate(c, ticker, cyc, prices, earnings, spread_hist):
     mid = (cl["bid"] + cl["ask"] + pu["bid"] + pu["ask"]) / 2
     spread = (cl["ask"] + pu["ask"] - cl["bid"] - pu["bid"]) / mid
     spread_hist.setdefault(ticker, []).append(spread)
-    exp_oi = sum(q["oi"] for q in ch.values())
+    exp_oi = sum(q["oi"] or 0 for q in ch.values())
+    known_leg = [x for x in (cl["oi"], pu["oi"]) if x is not None]
     res.update(signal=hv - iv, hv=hv, iv=iv, K=K, S0=S0, ST=ST, straddle_mid=mid, full_spread=spread,
-               leg_oi_min=min(cl["oi"], pu["oi"]), exp_oi=exp_oi,
+               leg_oi_min=min(known_leg) if known_leg else None, leg_oi_missing=2 - len(known_leg), exp_oi=exp_oi,
                earnings_in_window=None if earnings.get(ticker) is None else
                int(any(cyc["entry"] < e <= cyc["expiry"] for e in earnings[ticker])))
     res["eligible"] = int(liquidity_ok(spread_hist[ticker][-SPREAD_LOOKBACK:], (cl["oi"], pu["oi"]), exp_oi))
