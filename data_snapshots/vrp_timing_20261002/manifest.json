@@ -1,0 +1,147 @@
+{
+ "created_utc": "2026-10-02T20:01:09Z",
+ "experiment_id": "vix_termstructure_vrp_index_timing_v1_20261002",
+ "config_hash": "188828a66ad359c28692d923a8c7c57d8d91cdd507b1932f6427acb38e488d09",
+ "files": {
+  "VIX_History.csv": {
+   "url": "https://cdn.cboe.com/api/global/us_indices/daily_prices/VIX_History.csv",
+   "bytes": 473278,
+   "sha256": "2b28877e77b1b4b76875afb1a84c3a06eced2120a651c3b5ff7d91b32fa660b5"
+  },
+  "VIX3M_History.csv": {
+   "url": "https://cdn.cboe.com/api/global/us_indices/daily_prices/VIX3M_History.csv",
+   "bytes": 218560,
+   "sha256": "642e51b2440539129a4c223448893db7579bb9ef3a270cdda80181565faa89d1"
+  },
+  "VIX6M_History.csv": {
+   "url": "https://cdn.cboe.com/api/global/us_indices/daily_prices/VIX6M_History.csv",
+   "bytes": 240592,
+   "sha256": "bedb9c6063d91615ea839933296a733656ebd3a3eca6b5f218dfdd9ca4b3c985"
+  },
+  "SPX_History.csv": {
+   "url": "https://cdn.cboe.com/api/global/us_indices/daily_prices/SPX_History.csv",
+   "bytes": 292987,
+   "sha256": "d6e27fbc5fee598de95e280cc202fbcb93c21ac456e5f239c17d50dfe5a09484"
+  },
+  "CNDR_History.csv": {
+   "url": "https://cdn.cboe.com/api/global/us_indices/daily_prices/CNDR_History.csv",
+   "bytes": 222978,
+   "sha256": "147b92d80628afee796c45ad460d02ec5488c02f7b5a7105df583a09110baff9"
+  },
+  "BFLY_History.csv": {
+   "url": "https://cdn.cboe.com/api/global/us_indices/daily_prices/BFLY_History.csv",
+   "bytes": 222922,
+   "sha256": "6b129a5c4710f1bb593252eac0cb27993ef2da8cae5684f3483b27ddba5f5cb6"
+  },
+  "PUT_History.csv": {
+   "url": "https://cdn.cboe.com/api/global/us_indices/daily_prices/PUT_History.csv",
+   "bytes": 113560,
+   "sha256": "b026b1cc643fbd4c68cc05e0dee7beac56d299cc5ca653a340c86908dcd77da1"
+  },
+  "BXM_History.csv": {
+   "url": "https://cdn.cboe.com/api/global/us_indices/daily_prices/BXM_History.csv",
+   "bytes": 138944,
+   "sha256": "2c525ce59da29546d50a8b00a0dcb9b32a5c7ae70475e5b47d28256bdd335fcd"
+  },
+  "treasury_bill_rates_2007.csv": {
+   "url": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2007/all?type=daily_treasury_bill_rates&field_tdr_date_value=2007&page&_format=csv",
+   "bytes": 10455,
+   "sha256": "a2f6c3f2a3dc6ab563e8bd616b369cc808883952f2800174c7329a9bfee31bc9"
+  },
+  "treasury_bill_rates_2008.csv": {
+   "url": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2008/all?type=daily_treasury_bill_rates&field_tdr_date_value=2008&page&_format=csv",
+   "bytes": 12183,
+   "sha256": "ae9952c3f32d15847d7c31872e7b5482418dd211df4073dba4dd7fdc44199f0b"
+  },
+  "treasury_bill_rates_2009.csv": {
+   "url": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2009/all?type=daily_treasury_bill_rates&field_tdr_date_value=2009&page&_format=csv",
+   "bytes": 12960,
+   "sha256": "0128872fa47454e7e6ff7194d0ed20dbc67a6876745779d91c7cc0a3014da4bc"
+  },
+  "treasury_bill_rates_2010.csv": {
+   "url": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2010/all?type=daily_treasury_bill_rates&field_tdr_date_value=2010&page&_format=csv",
+   "bytes": 13038,
+   "sha256": "311f3e85657fe72c7cb8a3c88bc348bf3ea6a6ecd7a79ae84ed58aab44b1a3e7"
+  },
+  "treasury_bill_rates_2011.csv": {
+   "url": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2011/all?type=daily_treasury_bill_rates&field_tdr_date_value=2011&page&_format=csv",
+   "bytes": 12984,
+   "sha256": "edd2051d6f0d9e45b80da85c753321fffb7129092954e07f16301c0bf9cbde40"
+  },
+  "treasury_bill_rates_2012.csv": {
+   "url": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2012/all?type=daily_treasury_bill_rates&field_tdr_date_value=2012&page&_format=csv",
+   "bytes": 12968,
+   "sha256": "079bd2794dc126acbf0c0e13953baa60a9c7db7c104d7e099375ebeaad744ffd"
+  },
+  "treasury_bill_rates_2013.csv": {
+   "url": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2013/all?type=daily_treasury_bill_rates&field_tdr_date_value=2013&page&_format=csv",
+   "bytes": 12968,
+   "sha256": "19ba4498b15996aa78cd7395cc4b4c807e150a84f9e518673f68d50d62271390"
+  },
+  "treasury_bill_rates_2014.csv": {
+   "url": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2014/all?type=daily_treasury_bill_rates&field_tdr_date_value=2014&page&_format=csv",
+   "bytes": 12968,
+   "sha256": "a8a674730d6a42b9a696c02e9c91a29e9e90df565affbf714e8f81c7802e1836"
+  },
+  "treasury_bill_rates_2015.csv": {
+   "url": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2015/all?type=daily_treasury_bill_rates&field_tdr_date_value=2015&page&_format=csv",
+   "bytes": 13083,
+   "sha256": "3bc18da6656ed036a3ab0920640758a424706f3a1164ed01cf56e83febe2e47b"
+  },
+  "treasury_bill_rates_2016.csv": {
+   "url": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2016/all?type=daily_treasury_bill_rates&field_tdr_date_value=2016&page&_format=csv",
+   "bytes": 12968,
+   "sha256": "8660f61da6177d55912d14786b4d5bce0174d715e59a0fdf8ae1cee36982cd06"
+  },
+  "treasury_bill_rates_2017.csv": {
+   "url": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2017/all?type=daily_treasury_bill_rates&field_tdr_date_value=2017&page&_format=csv",
+   "bytes": 12968,
+   "sha256": "acebac7efd6ae1641dd266d69cd95d7c0df5907b5e03964fd8dddd5d18a17c7f"
+  },
+  "treasury_bill_rates_2018.csv": {
+   "url": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2018/all?type=daily_treasury_bill_rates&field_tdr_date_value=2018&page&_format=csv",
+   "bytes": 13875,
+   "sha256": "6f037e225a3f296613f620404667971df9f202743e70540d9ffbf5c7d30a3a51"
+  },
+  "treasury_bill_rates_2019.csv": {
+   "url": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2019/all?type=daily_treasury_bill_rates&field_tdr_date_value=2019&page&_format=csv",
+   "bytes": 15520,
+   "sha256": "f0396ee6dfaa3a60ce676c593a026f8cfbb9bcd72af7b6aa8450c68a5d3ac98a"
+  },
+  "treasury_bill_rates_2020.csv": {
+   "url": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2020/all?type=daily_treasury_bill_rates&field_tdr_date_value=2020&page&_format=csv",
+   "bytes": 15589,
+   "sha256": "cc29ccb650fe49ce04781e97332cecba11c20e466b053a08d6fb15b6b24dbd20"
+  },
+  "treasury_bill_rates_2021.csv": {
+   "url": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2021/all?type=daily_treasury_bill_rates&field_tdr_date_value=2021&page&_format=csv",
+   "bytes": 15581,
+   "sha256": "e45398cf008aeca21679fe1ebcc7d051add07f0819ef62723fe472a1ea00377d"
+  },
+  "treasury_bill_rates_2022.csv": {
+   "url": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2022/all?type=daily_treasury_bill_rates&field_tdr_date_value=2022&page&_format=csv",
+   "bytes": 16411,
+   "sha256": "4059b158b989b5bb4d295cc5e3356434bcceba44d89365e368a2aafbf2077859"
+  },
+  "treasury_bill_rates_2023.csv": {
+   "url": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2023/all?type=daily_treasury_bill_rates&field_tdr_date_value=2023&page&_format=csv",
+   "bytes": 18074,
+   "sha256": "ca4d73d5e9856391c06ef0b3ec252d950019b1a5db97c934d92d9569fc4ba87c"
+  },
+  "treasury_bill_rates_2024.csv": {
+   "url": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2024/all?type=daily_treasury_bill_rates&field_tdr_date_value=2024&page&_format=csv",
+   "bytes": 18074,
+   "sha256": "47cc8985d9474bbdaea37266ac5658f6b1b276d3310c54c7efd70358e80bc37b"
+  },
+  "treasury_bill_rates_2025.csv": {
+   "url": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2025/all?type=daily_treasury_bill_rates&field_tdr_date_value=2025&page&_format=csv",
+   "bytes": 20297,
+   "sha256": "aa024dfde7700a971b287d7cc8284fd8c34f4dd6c66cb009cf39f501be33b562"
+  },
+  "treasury_bill_rates_2026.csv": {
+   "url": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2026/all?type=daily_treasury_bill_rates&field_tdr_date_value=2026&page&_format=csv",
+   "bytes": 15766,
+   "sha256": "363eba1c4b65f23c3e895fa5daf247a8bf012021ac20e9ec4e549bd8acb42b69"
+  }
+ }
+}
