@@ -102,6 +102,14 @@ class ExperimentConfig:
                 "preregistration REFUSED rather than silently converting/stringifying it. " + str(e)
             )
 
+        # --- Tiered grading declaration (tiered_verdict.py, adopted 2026-10-02) ---
+        # Validation only: it never alters a field, so it cannot change any existing config hash.
+        import tiered_verdict
+        try:
+            tiered_verdict.validate_declaration(self.parameters, self.declared_robustness_checks)
+        except tiered_verdict.InvalidTieredDeclarationError as e:
+            raise InvalidExperimentConfigError("Invalid tiered_grading declaration: " + str(e))
+
         # --- Compute the canonical config hash (Fix 6, v4) ---
         # Must happen LAST, after every other field is in its final,
         # deep-frozen form -- config_hash is a pure function of everything else.

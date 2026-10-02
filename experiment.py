@@ -40,11 +40,18 @@ def _parse_declaration(declaration: str):
     raise PreregistrationError("Malformed testing_family_declaration (should have been caught at config construction): " + repr(declaration))
 
 
-def preregister_experiment(config: ExperimentConfig) -> Experiment:
+def preregister_experiment(config: ExperimentConfig, allow_legacy_grading: bool = False) -> Experiment:
     """
     Validates and persists a frozen ExperimentConfig as a PREREGISTERED
     experiment. This is the ONLY function that touches the database
     during preregistration -- ExperimentConfig itself never does.
+
+    Tiered grading (2026-10-02, CLAUDE.md Section 1): every new registration
+    must declare parameters["tiered_grading"] (hard gates vs soft checks,
+    see tiered_verdict.py), validated at config construction. Registering
+    a config without it requires allow_legacy_grading=True -- used only by
+    the framework's own legacy test fixtures. Experiments registered before
+    2026-10-02 are unaffected (their rows already exist).
 
     Transaction safety: family creation/registration and experiment
     persistence happen inside ONE database transaction. If ANY step
@@ -52,6 +59,12 @@ def preregister_experiment(config: ExperimentConfig) -> Experiment:
     (an orphaned family with no member, or a family membership with
     no corresponding experiment record) is ever left behind.
     """
+    import tiered_verdict
+    if tiered_verdict.declaration_from_parameters(config.parameters) is None and not allow_legacy_grading:
+        raise PreregistrationError(
+            "No tiered_grading declaration (hard_gates / soft_checks split, tiered_verdict.py). Required for every "
+            "pre-registration since 2026-10-02; pass allow_legacy_grading=True only for legacy test fixtures.")
+
     kind, family_id = _parse_declaration(config.testing_family_declaration)
     preregistered_at = datetime.now(timezone.utc).isoformat()
     insert_fn = db_interface.persist_preregistration(config, preregistered_at)

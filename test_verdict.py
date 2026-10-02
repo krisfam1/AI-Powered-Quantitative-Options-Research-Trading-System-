@@ -29,7 +29,7 @@ def make_and_preregister(exp_id, exp_type, applicability_lock, oos_claimed=False
         oos_validation_claimed=oos_claimed,
         declared_robustness_checks=[],
     )
-    return preregister_experiment(config)
+    return preregister_experiment(config, allow_legacy_grading=True)
 
 def rec(exp_id, gate_name, run, passed, summary="test"):
     return gates.evaluate_gate(exp_id, gate_name, run=run, passed=passed, evidence_summary=summary)

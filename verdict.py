@@ -1,6 +1,9 @@
 """
 verdict.py -- calculates the final PROMISING/INCONCLUSIVE/REJECTED
-verdict for a preregistered experiment. PURE, READ-ONLY calculation --
+verdict for a preregistered experiment (legacy rules), or, for experiments
+whose locked config declares parameters["tiered_grading"], the tiered
+REJECTED / HELD / VALIDATED_SMALL_SIZE_MONITOR / VALIDATED_FULL_CONFIDENCE
+verdict from tiered_verdict.py (adopted 2026-10-02; CLAUDE.md Section 1). PURE, READ-ONLY calculation --
 never modifies experiment config, gate records, V1, Feature Factory,
 or any existing research record. Has no execution/promotion capability.
 
@@ -160,6 +163,45 @@ def _check_gate_list(experiment_id: str, gate_names: list, experiment_record: di
     return {"missing": missing, "failed": failed}
 
 
+def _latest_robustness_results(experiment_id: str) -> dict:
+    """{check_name: survived} using the latest row per check (same convention as robustness.py)."""
+    with sqlite3.connect(db_interface.DB_PATH) as conn:
+        rows = conn.execute("SELECT test_type, survived FROM experiment_robustness_tests WHERE experiment_id=? "
+                            "ORDER BY id ASC", (experiment_id,)).fetchall()
+    return {name: bool(s) for name, s in rows}
+
+
+def _latest_primary_result(experiment_id: str):
+    import tiered_verdict
+    try:
+        with sqlite3.connect(db_interface.DB_PATH) as conn:
+            row = conn.execute("SELECT estimate, p_one_sided, p_opposite_one_sided, confidence_bound, n, t_stat "
+                               "FROM experiment_primary_results WHERE experiment_id=? ORDER BY id DESC LIMIT 1",
+                               (experiment_id,)).fetchone()
+    except sqlite3.OperationalError:  # table not created yet (run_experiment never imported)
+        return None
+    return None if row is None else tiered_verdict.PrimaryResult(*row[:5], t_stat=row[5])
+
+
+def _calculate_tiered_verdict(experiment_id: str, experiment_record: dict, reqs: dict) -> Verdict:
+    """Validity gates first (a validity failure means the experiment could not answer its question -> HELD);
+    then tiered_verdict.grade() on the locked declaration, the latest primary result and per-check results."""
+    import tiered_verdict
+    exp_type = experiment_record["experiment_type"]
+    validity_check = _check_gate_list(experiment_id, reqs["validity_required"], experiment_record)
+    if validity_check["missing"]:
+        return Verdict(tiered_verdict.INCOMPLETE, "required validity gates not yet run: " + str(validity_check["missing"]),
+                       None, experiment_id, exp_type)
+    if validity_check["failed"]:
+        return Verdict(tiered_verdict.HELD, "experiment invalid -- failed required validity gate(s): "
+                       + str(validity_check["failed"]) + " (could not answer its question; resumable)",
+                       tiered_verdict.DEPLOYMENT_MEANING[tiered_verdict.HELD], experiment_id, exp_type)
+    decl = tiered_verdict.validate_declaration(json.loads(experiment_record["parameters"]),
+                                               json.loads(experiment_record["declared_robustness_checks"] or "[]"))
+    tv = tiered_verdict.grade(decl, _latest_primary_result(experiment_id), _latest_robustness_results(experiment_id))
+    return Verdict(tv.status, tv.reasoning, tv.deployment_meaning, experiment_id, exp_type)
+
+
 def calculate_verdict(experiment_id: str) -> Verdict:
     """
     PURE, READ-ONLY calculation. Does not modify the experiment config,
@@ -173,6 +215,12 @@ def calculate_verdict(experiment_id: str) -> Verdict:
     if exp_type not in EXPERIMENT_TYPE_REQUIREMENTS:
         raise UnknownExperimentTypeError("Unknown experiment_type: " + repr(exp_type))
     reqs = EXPERIMENT_TYPE_REQUIREMENTS[exp_type]
+
+    # Tiered grading (tiered_verdict.py, 2026-10-02) applies ONLY to experiments that declared it in
+    # their locked config. Everything registered without it keeps the legacy rules below, unchanged.
+    import tiered_verdict
+    if tiered_verdict.declaration_from_parameters(json.loads(experiment_record["parameters"])) is not None:
+        return _calculate_tiered_verdict(experiment_id, experiment_record, reqs)
 
     # STEP 1: Required validity
     validity_check = _check_gate_list(experiment_id, reqs["validity_required"], experiment_record)

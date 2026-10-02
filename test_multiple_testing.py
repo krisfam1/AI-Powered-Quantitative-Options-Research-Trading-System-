@@ -29,7 +29,7 @@ def make_and_preregister(exp_id, family_decl):
         oos_validation_claimed=False,
         declared_robustness_checks=[],
     )
-    return preregister_experiment(config)
+    return preregister_experiment(config, allow_legacy_grading=True)
 
 
 print("=" * 90)
@@ -126,7 +126,7 @@ config_bad = ExperimentConfig(
     applicability_lock=[("lookahead_audit", True)], oos_validation_claimed=False,
     declared_robustness_checks=[],
 )
-preregister_experiment(config_bad)
+preregister_experiment(config_bad, allow_legacy_grading=True)
 try:
     mt.compute_per_test_alpha("mt_bad_method_exp2")
     check("Unsupported correction method rejected", False)
@@ -153,7 +153,7 @@ config_bh = ExperimentConfig(
     applicability_lock=[("lookahead_audit", True)], oos_validation_claimed=False,
     declared_robustness_checks=[],
 )
-preregister_experiment(config_bh)
+preregister_experiment(config_bh, allow_legacy_grading=True)
 try:
     mt.compute_per_test_alpha("mt_bh_exp")
     check("BH raises BenjaminiHochbergNotSupportedError", False)

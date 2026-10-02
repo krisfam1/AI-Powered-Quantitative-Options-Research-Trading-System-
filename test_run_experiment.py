@@ -30,7 +30,7 @@ def make_and_preregister(exp_id, exp_type, applicability_lock, declared_checks=N
         oos_validation_claimed=False,
         declared_robustness_checks=declared_checks or [],
     )
-    return preregister_experiment(config)
+    return preregister_experiment(config, allow_legacy_grading=True)
 
 FT_VALIDITY = ["data_integrity", "lookahead_audit", "timestamp_safety", "sample_size_adequacy", "statistical_testing", "reproduction"]
 FT_EVIDENCE = ["primary_test_significant", "effect_size_meets_threshold", "multiple_testing_survived"]

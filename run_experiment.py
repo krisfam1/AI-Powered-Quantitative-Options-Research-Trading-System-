@@ -54,6 +54,20 @@ def _init_runner_schema():
                 calculated_at TEXT
             )
         """)
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS experiment_primary_results (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                experiment_id TEXT,
+                execution_id INTEGER,
+                estimate REAL,
+                p_one_sided REAL,
+                p_opposite_one_sided REAL,
+                confidence_bound REAL,
+                n INTEGER,
+                t_stat REAL,
+                recorded_at TEXT
+            )
+        """)  # tiered grading (tiered_verdict.py): append-only; the latest row per experiment is effective
         conn.commit()
 
 
@@ -66,7 +80,11 @@ def run_experiment(experiment_id: str, executor, run_reason: str = None):
         "gate_results": {gate_name: {"run": bool, "passed": bool|None, "evidence_summary": str}, ...},
         "robustness_results": {check_name: {"survived": bool, "description": str}, ...},  # optional
         "primary_p_value": float,  # optional
+        "tiered_primary": {"estimate", "p_one_sided", "p_opposite_one_sided", "confidence_bound", "n",
+                           "t_stat" (optional)},  # required for tiered_grading experiments
     }
+    Tiered-grading experiments (tiered_verdict.py) are graded per check (hard gates vs soft checks),
+    so the legacy all-or-nothing robustness_survived gate is not computed for them.
     Contains NO research logic itself -- caller-supplied, fully external
     to this module.
     """
@@ -118,8 +136,24 @@ def run_experiment(experiment_id: str, executor, run_reason: str = None):
                 )
             conn.commit()
 
-        # ---- [3] Compute + record robustness_survived gate (if applicable) ----
+        # ---- [2b] Tiered grading: persist the primary result (append-only) ----
+        import tiered_verdict
+        is_tiered = tiered_verdict.declaration_from_parameters(json.loads(experiment_record["parameters"])) is not None
+        if is_tiered:
+            tp = raw_results.get("tiered_primary")
+            if tp is not None:
+                with sqlite3.connect(DB_PATH) as conn:
+                    conn.execute(
+                        "INSERT INTO experiment_primary_results (experiment_id, execution_id, estimate, p_one_sided, "
+                        "p_opposite_one_sided, confidence_bound, n, t_stat, recorded_at) VALUES (?,?,?,?,?,?,?,?,?)",
+                        (experiment_id, execution_id, tp["estimate"], tp["p_one_sided"], tp["p_opposite_one_sided"],
+                         tp["confidence_bound"], tp["n"], tp.get("t_stat"), datetime.now(timezone.utc).isoformat()))
+                    conn.commit()
+
+        # ---- [3] Compute + record robustness_survived gate (if applicable; legacy grading only) ----
         try:
+            if is_tiered:
+                raise gates.ApplicabilityNotLockedError("tiered grading: robustness graded per check")
             gates.get_locked_applicability(experiment_record, "robustness_survived")
             rb_result = robustness.compute_robustness_survival(experiment_id)
             gates.evaluate_gate(experiment_id, "robustness_survived",
@@ -143,7 +177,7 @@ def run_experiment(experiment_id: str, executor, run_reason: str = None):
         # ---- [5] Record all other executor-reported gates ----
         for gate_name, g in raw_results.get("gate_results", {}).items():
             if gate_name in ("robustness_survived", "multiple_testing_survived"):
-                continue  # already handled above via the computed path
+                continue  # already handled above via the computed path (robustness_survived: legacy only)
             gates.evaluate_gate(experiment_id, gate_name,
                                  run=g["run"], passed=g.get("passed"),
                                  evidence_summary=g.get("evidence_summary", ""))

@@ -2,7 +2,7 @@
 
 **Read this file at the start of every session in this folder.** It is the persistent memory for this research project, since each Claude Code session otherwise starts with zero history. Keep it updated as work progresses — when something here becomes stale (a bug gets fixed, an experiment closes out, a status changes), edit this file directly.
 
-**Last updated: 2026-10-02** (cross-sectional straddle HELD / INCONCLUSIVE, data-limited; ORATS declined. Section 62. Its slot reallocated to trial #13, VIX term-structure → CNDR, which was REJECTED at Stage 1 the same day. Section 63).
+**Last updated: 2026-10-02** (cross-sectional straddle HELD / INCONCLUSIVE, data-limited; ORATS declined. Section 62. Its slot reallocated to trial #13, VIX term-structure → CNDR, which was REJECTED at Stage 1 the same day. Section 63. **Tiered verdict framework `tiered_v1` adopted, go-forward only. Section 1**).
 
 **This memory is split across TWO files: `CLAUDE.md` (this file, loaded automatically) and `CLAUDE_ARCHIVE.md` (never loaded automatically, so open it deliberately).** Section numbers are unchanged across both. A section marked "Archived 2026-10-01" here is a stub: either a one-paragraph locator, or for still-active sections (3, 7, 40, 52, 60) a current-state summary whose full history lives in the archive. See Section 61 for the read-the-archive-first rule and the archived-identifier index.
 
@@ -12,6 +12,13 @@
 - **Both passes passed a byte-for-byte round-trip check:** putting the archived text back in place of the stubs reproduces the pre-pass file exactly. Nothing was edited or deleted, only relocated. Git isn't on PATH on this machine, so these `.bak` files are the only rollback.
 - **Known cross-document drift:** the claude.ai `research-manifest.md` (not synced) still shows RF v2 as Stage-1-VALIDATED. Here it's REJECTED on clean data (Sections 48/56/58). The manifest's section numbers also differ (e.g. its "Section 24" = Section 60 here). Fix the manifest by hand.
 - **To propagate to the manifest (2026-10-02):** the cross-sectional straddle hypothesis (trial #12, Section 62 here) is now **HELD / INCONCLUSIVE (data-limited)**, parked, with ORATS ($599) declined and no further spend. It is not rejected. Its slot went to **trial #13** (VIX term-structure slope → Cboe CNDR iron-condor returns; PREREGISTERED 2026-10-02, hash `188828a66ad359c28692d923a8c7c57d8d91cdd507b1932f6427acb38e488d09`; Section 63 here). **Trial #13 was then REJECTED at Stage 1 the same day:** ρ = −0.020, the volatility-control check failed, and 10 of 13 sign checks failed. Its slot is open.
+- **To propagate to the manifest (2026-10-02): new Section 1 rule, the tiered verdict framework `tiered_v1`.**
+  - **Tiers:** REJECTED (a clean, decisive negative; the only closed-forever tier) / HELD (the default for anything not cleanly negative; the signal library) / VALIDATED_SMALL_SIZE_MONITOR / VALIDATED_FULL_CONFIDENCE.
+  - **Declared before the hash locks:** every new pre-registration splits its checks into 1–3 hard gates (failure → REJECTED) and soft checks (which set the tier, never REJECTED alone).
+  - **Significance:** α is never loosened; an optional t ≥ 3 bar is available.
+  - **Scope:** go-forward only. Closed verdicts stand; IV v2 and SPY GEX v3 keep their locked rules unless re-versioned.
+  - **Code:** `tiered_verdict.py`, wired into `verdict.py` / `run_experiment.py` / `experiment.py`.
+  - **Section numbering:** the manifest's numbers differ from CLAUDE.md's. The vol-level control is §43 here, group fixed effects §1/§58, the economic check §33, and there is no live-capital checklist in CLAUDE.md §26.
 
 A parallel copy of this content lives in the claude.ai project "AI Option Trading Bot" (`research-manifest.md`) for cloud-session continuity. The two aren't automatically synced — if you make a significant update here, mention it back in that other conversation too (or vice versa).
 
@@ -32,6 +39,51 @@ A parallel copy of this content lives in the claude.ai project "AI Option Tradin
   - **DECIDED 2026-10-02 (user): the held straddle's slot goes to trial #13, VIX term-structure timing of index volatility selling (Section 63).** This is a deliberate reallocation to that specific replacement, not an automatic rule that "held" frees a slot.
   - **2026-10-02: trial #13 REJECTED at Stage 1 (Section 63), so its slot is OPEN.** Active: IV term-structure v2, SPY GEX v3. What fills the third slot is a user decision.
   - **DECIDED 2026-10-01 (user): slot swap, not an exception.** Target C was retired because it predicted (relative) realized vol, the same structural flaw the IV Stage 1 economic check exposed that evening (Section 33): forecasting RV mostly recovers the already-priced IV level, while a tradeable position pays RV − IV. The cross-sectional straddle hypothesis, whose payoff *is* the RV − IV gap, took its slot. The count stays at three; no exception was used.
+- **TIERED VERDICT FRAMEWORK, `tiered_v1` (user decision 2026-10-02; go-forward only).** Replaces the flat-OR rule (any failed robustness check → REJECTED) for every pre-registration from 2026-10-02 on.
+  - **Four tiers:**
+    - **REJECTED:** a clean, decisive negative. It is the only "closed forever" tier.
+    - **HELD:** couldn't cleanly resolve; resumable. It's the default for a failure that isn't a clean negative, and HELD rows form the **signal library** (trial #12 is its first member).
+    - **VALIDATED_SMALL_SIZE_MONITOR:** the primary bar and the hard gates pass, with some soft-check failures.
+    - **VALIDATED_FULL_CONFIDENCE:** everything passes.
+  - **Hard gates vs soft checks, declared before the hash locks:**
+    - Every new config must carry `parameters["tiered_grading"]` (see `tiered_verdict.py`).
+    - **Hard gates:** 1–3 checks whose failure means the signal isn't real or is a known confound, e.g. the group/ticker fixed-effects baseline (Sections 1 and 58), a volatility-level control (Section 43), or an economic-relevance check (Section 33). **Any hard-gate failure → REJECTED, no exceptions.**
+    - **Soft checks:** everything else. They set the tier (0 failures → FULL; up to a declared `max_soft_failures_for_small_size` → SMALL; more → HELD) and later capital sizing. **They never cause REJECTED by themselves.**
+    - Hard + soft must partition `declared_robustness_checks` exactly.
+  - **The significance bar is never loosened:**
+    - The declared α must be ≤ 0.05 one-sided, and should equal the design's Bonferroni-adjusted α (e.g. 0.0167 for 3 horizons). The config validator can't check that against `multiple_testing.py`, so the person registering must.
+    - Optional `min_abs_t_stat` (e.g. 3.0) adds a Harvey–Liu–Zhu t-bar on top.
+  - **Grading order (`tiered_verdict.grade`):**
+    1. Missing results → INCOMPLETE (not a verdict).
+    2. Any hard gate failed → REJECTED.
+    3. Primary estimate in the wrong direction → REJECTED if the design was adequately powered (≥ 80% at the declared floor) **or** the reversal is itself significant; otherwise HELD.
+    4. Primary bar not met (p ≥ α, below the effect floor, or t below `min_abs_t_stat`) → **REJECTED only if adequately powered AND the confidence bound excludes the floor (a "decisive null")**; otherwise HELD.
+    5. Primary bar met → FULL / SMALL / HELD by soft-failure count.
+  - **Two interpretations I made, flagged for your review:** steps 3 and 4 define "clean, decisive negative" for results that aren't a hard-gate failure. Without the power condition, every adequately tested null would land in HELD and never close, and an underpowered wrong-sign blip would close an idea forever. The 80% threshold is a framework constant, deliberately not declarable per experiment.
+  - **Hard-gate design guidance:** a gate written as "partial correlation must be *significant*" can fail from low power alone and then REJECT a real signal. Prefer gates that test for the confound itself (e.g. "the effect collapses when the control is added"), and give hard gates enough power.
+  - **Deployment ladder (informational only; nothing here makes the project ready for live capital):**
+    - FULL: start small with tight limits, compare live results with the research prediction, and scale only if they match.
+    - SMALL: the smallest rung only, monitoring the failed soft checks.
+    - HELD: library; resuming needs a new versioned pre-registration and a slot.
+    - REJECTED: closed.
+  - **Code:**
+    - **New:** `tiered_verdict.py` (tiers, declaration validation, pure `grade()`) and `test_tiered_verdict.py` (49 checks, all pass on a fresh schema).
+    - **Changed:**
+      - `experiment_config.py`: validates the declaration at construction; validation only, so no existing hash changes.
+      - `experiment.py`: `preregister_experiment()` refuses a config without the declaration unless `allow_legacy_grading=True`, which only the legacy test fixtures use.
+      - `run_experiment.py`: a new append-only table `experiment_primary_results`; tiered experiments skip the legacy all-or-nothing `robustness_survived` gate.
+      - `verdict.py`: a tiered path, used only when the locked config declares it.
+    - **Verified:**
+      - Legacy test results are identical before and after on a fresh schema. The only failures are the pre-existing "Phase 6/7 record" checks, which need production rows.
+      - All 6 registered configs still reproduce their registered hashes.
+      - The production `research_database.db` was untouched by the tests, which ran in a scratch directory.
+  - **Not retroactive:**
+    - Closed verdicts stand: V1, the GEX family, the ML chain, strike positioning, and trial #13.
+    - Open experiments keep their locked rules: IV term-structure v2 and SPY GEX v3.
+    - **Open option (user decision):** re-version an open experiment under `tiered_v1` with a new hash, using the SPY GEX v1→v2→v3 append-only pattern. Not done.
+  - **Future consideration: Harvey–Liu–Zhu (t ≥ 3, one-sided p ≈ 0.00135).**
+    - For a correlation test this needs |r| ≥ 0.29 at N = 100, 0.25 at N = 139, and 0.21 at N = 203. 80% power at r = 0.25 then needs N ≈ 229 instead of 139 (about 1.6×).
+    - Candidates for the stricter bar: designs with many researcher degrees of freedom (multiple tickers, horizons, or feature sets). The program is at 13 trials.
 - **Program-level hypothesis-trial tally** (added 2026-10-01). Every hypothesis whose outcome has been examined against data, or that is pre-registered and pending, counts once; any future Deflated Sharpe Ratio or multiple-testing assessment uses this count as the number of trials. Versions of one hypothesis (v1→v2→v3) count once.
   1. V1 entry signal / Phase 6 · 2. ML Experiment 1 · 3. GEX call-wall-distance · 4. GEX net gamma regime · 5. Strike-positioning OI skew · 6. XGBoost feature interactions · 7. XGBoost vol vs Ridge · 8. RF vol vs Ridge (v1+v2) · 9. Regularized XGBoost vol · 10. IV term-structure slope (pending Stage 2) · 11. SPY GEX call-wall vs vol (pending) · **12. Cross-sectional straddle, Goyal–Saretto RV−IV gap (Section 62, HELD / INCONCLUSIVE, data-limited, since 2026-10-02)** · **13. VIX term-structure slope → Cboe CNDR short-vol returns (Section 63, REJECTED at Stage 1 2026-10-02, hash `188828a6…`)**.
   - The tally counts hypotheses examined against data or pre-registered, not only formally pre-registered ones: #1 (V1) and #12 (straddle) were never pre-registered.
@@ -96,7 +148,7 @@ A parallel copy of this content lives in the claude.ai project "AI Option Tradin
 
 **ML Experiment 1 pipeline:** `features_underlying.py`, `features_options.py`, `features_regime.py` (Feature Factory, 11 features, 10 locked), `ml_experiment1_*.py`, `data_prep_experiment1.py`, `iv_percentile_batch.py`, `preregister_experiment1.py`, `execute_ml_experiment1.py`, `finalize_experiment1.py`. **Result: REJECTED**, robustness-tested.
 
-**Research framework (formal pipeline):** `experiment_config.py`, `gates.py`, `verdict.py`, `multiple_testing.py`, `robustness.py`, `run_experiment.py`, `canonical_hash.py`, `db_interface.py`, `experiment.py`, `create_research_db_schema.py`.
+**Research framework (formal pipeline):** `experiment_config.py`, `gates.py`, `verdict.py`, `multiple_testing.py`, `robustness.py`, `run_experiment.py`, `canonical_hash.py`, `db_interface.py`, `experiment.py`, `create_research_db_schema.py`, and since 2026-10-02 `tiered_verdict.py` (the tiered grading scheme, Section 1).
 
 **EODHD data-capability audits:** `eodhd_field_audit*.py`, `eodhd_audit_term_structure.py`, `eodhd_audit_strike_structure.py`, `eodhd_historical_coverage_audit.py` — confirmed real term-structure + strike-structure depth, 0% null rates on Greeks/IV/bid-ask/OI/volume.
 
@@ -336,6 +388,8 @@ The rule still applies: don't trust a V1 number that isn't in that table (read t
 ---
 
 ## 18. Experiment status registry
+
+**From 2026-10-02, new pre-registrations are graded in tiers** (Section 1, `tiered_v1`): REJECTED / HELD / VALIDATED_SMALL_SIZE_MONITOR / VALIDATED_FULL_CONFIDENCE. Rows below that were registered earlier keep the taxonomy they were graded under.
 
 Status taxonomy: **VALIDATED** (formally tested, methodology sound, result trustworthy) / **SUGGESTIVE** (real signal in the data, methodology reasonable, not formally preregistered/gated) / **INCONCLUSIVE** (test ran, no clear answer either way) / **NOT TESTABLE** (insufficient data or a structural blocker) / **INVALIDATED** (a real methodology flaw was found, don't trust the result) / **DESCRIPTIVE ONLY** (forensic/attribution work, not a hypothesis test with a formal verdict).
 

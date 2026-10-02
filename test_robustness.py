@@ -33,7 +33,7 @@ def make_and_preregister(exp_id, exp_type, declared_checks, applicability_lock=N
         oos_validation_claimed=False,
         declared_robustness_checks=declared_checks,
     )
-    return preregister_experiment(config)
+    return preregister_experiment(config, allow_legacy_grading=True)
 
 def record_robustness_test(exp_id, test_type, survived, description="test"):
     with sqlite3.connect(db_interface.DB_PATH) as conn:

@@ -31,7 +31,7 @@ def make_and_preregister(exp_id, applicability_lock):
         oos_validation_claimed=False,
         declared_robustness_checks=[],
     )
-    return preregister_experiment(config)
+    return preregister_experiment(config, allow_legacy_grading=True)
 
 
 print("=" * 90)
