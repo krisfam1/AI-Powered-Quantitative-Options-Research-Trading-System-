@@ -944,7 +944,11 @@ Rollback XML for the pythonw conversions: `task_backup_<task>.before_pythonw_202
   1. **Network wait:** `RunOnlyIfNetworkAvailable` + `StartWhenAvailable` on `GEX_Historical_Incremental_Update`, `IVTermStructure_Stage2_Nightly_Update` and `EODHD_Quota_Probe_And_Resume`; `GEX_Prospective_Daily_Collection` already had it. Each task's XML differs from its backup only in that element.
   2. **Keep awake:** new weekday task `CollectionWindow_KeepAwake`, 19:40–21:20 ET. The health check now checks it: OK while running; FAIL on a missed weekday window, a missing END, or heartbeat gaps over 3 min (meaning the machine slept anyway).
   3. **PreventSleep retired:** task disabled, script kept.
-  4. **Wi-Fi in standby: NOT applied.** `powercfg /setacvalueindex … F15576E8…` returned success but changed nothing, because this power plan doesn't define that setting. It needs the group-policy route in an **administrator** shell; the user to run it.
+  4. **Wi-Fi in standby: APPLIED 2026-10-05 via group policy** (the user ran the commands in an administrator shell).
+     - **Policy:** `HKLM\SOFTWARE\Policies\Microsoft\Power\PowerSettings\F15576E8-98B7-4186-B944-EAFA664402D9`, `ACSettingIndex = 1` and `DCSettingIndex = 1` (read back).
+     - **Effective setting:** `powercfg /qh SCHEME_CURRENT SUB_NONE F15576E8-98B7-4186-B944-EAFA664402D9` shows "Networking connectivity in Standby" (`CONNECTIVITYINSTANDBY`) at **AC index 1 and DC index 1 = Enable**.
+     - **Correction to the earlier note:** the setting IS defined on this machine; it's just hidden, so `powercfg /q` (which I used before) doesn't list it, and only `/qh` does. My earlier non-admin `powercfg /setacvalueindex` attempt was never confirmed to have done anything. The per-scheme registry key is still absent, so the effective value comes from the policy.
+     - **Still to prove in practice:** that the network is actually up while the laptop is in standby. Check tonight's task runs and the Task Scheduler Operational log.
 - **Still unverified:**
   - Whether the 19:40 wake + display request actually keeps the machine out of standby when it was already asleep. The keep-awake heartbeat log will show it from the first night.
   - Whether a task whose network condition isn't met starts later, once the network returns. Check the Task Scheduler Operational log.
