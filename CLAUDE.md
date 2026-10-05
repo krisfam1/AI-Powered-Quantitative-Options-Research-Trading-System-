@@ -4,12 +4,17 @@
 
 **Last updated: 2026-10-05** (tiered_v1 judgment calls user-approved; pre-live checklist with DSR; CPCV note; `hypothesis_ledger.csv`; Modern Standby root cause of the 10/4 task failures. Earlier, 2026-10-02: cross-sectional straddle HELD / INCONCLUSIVE, data-limited; ORATS declined. Section 62. Its slot reallocated to trial #13, VIX term-structure → CNDR, which was REJECTED at Stage 1 the same day. Section 63. **Tiered verdict framework `tiered_v1` adopted, go-forward only. Section 1**).
 
-**This memory is split across TWO files: `CLAUDE.md` (this file, loaded automatically) and `CLAUDE_ARCHIVE.md` (never loaded automatically, so open it deliberately).** Section numbers are unchanged across both. A section marked "Archived 2026-10-01" here is a stub: either a one-paragraph locator, or for still-active sections (3, 7, 40, 52, 60) a current-state summary whose full history lives in the archive. See Section 61 for the read-the-archive-first rule and the archived-identifier index.
+**This memory is split across TWO files: `CLAUDE.md` (this file, loaded automatically) and `CLAUDE_ARCHIVE.md` (never loaded automatically, so open it deliberately).** Section numbers are unchanged across both. A section marked "Archived 2026-10-01" or "Condensed 2026-10-05" here is a stub: either a one-paragraph locator, or for still-active sections (3, 7, 40, 52; and since pass 3, 26's operations part, 33, 43, 60, 62) a current-state summary whose full history lives in the archive. See Section 61 for the read-the-archive-first rule and the archived-identifier index.
 
 **Reorganization / correction notice history:**
-- **Archive passes:** pass 1 and pass 2 (2026-10-01) and pass 3 (2026-10-05) each moved text verbatim to `CLAUDE_ARCHIVE.md` and passed a byte-for-byte restore check. Backups and their SHA-256s are listed in each pass's header in `CLAUDE_ARCHIVE.md`.
+- **Archive passes:** pass 1 and pass 2 (2026-10-01) and pass 3 (2026-10-05) each moved text verbatim to `CLAUDE_ARCHIVE.md` and passed a byte-for-byte restore check. Backups and their SHA-256s are in `CLAUDE_ARCHIVE.md`: pass 3's header for pass 3, and pass 3's "Header" block for passes 1 and 2. Pass 3's round trip was verified by `archive_pass3_20261005.py` on the file as committed in `57079e8`. Later edits to condensed sections are ordinary updates, not part of the pass.
 - **Known cross-document drift:** the claude.ai `research-manifest.md` (not synced) still shows RF v2 as Stage-1-VALIDATED. Here it's REJECTED on clean data (Sections 48/56/58). The manifest's section numbers also differ (e.g. its "Section 24" = Section 60 here). Fix the manifest by hand.
 - **To propagate to the manifest (2026-10-02):** the cross-sectional straddle hypothesis (trial #12, Section 62 here) is now **HELD / INCONCLUSIVE (data-limited)**, parked, with ORATS ($599) declined and no further spend. It is not rejected. Its slot went to **trial #13** (VIX term-structure slope → Cboe CNDR iron-condor returns; PREREGISTERED 2026-10-02, hash `188828a66ad359c28692d923a8c7c57d8d91cdd507b1932f6427acb38e488d09`; Section 63 here). **Trial #13 was then REJECTED at Stage 1 the same day:** ρ = −0.020, the volatility-control check failed, and 10 of 13 sign checks failed. Its slot is open.
+- **To propagate to the manifest (2026-10-05, second batch):**
+  - Rule (b) re-confirmed with both conditions.
+  - IV literature caution added to Section 33: modest, time-varying effects; don't over-interpret r = −0.28.
+  - Sleep fixes applied: network-wait conditions, a weekday keep-awake window, PreventSleep retired. Wi-Fi-in-standby is still pending an admin shell.
+  - CLAUDE.md archive pass 3: 250k → 141k characters, ~146k after these notes (limit 150k).
 - **To propagate to the manifest (2026-10-05):**
   - The user approved both `tiered_v1` judgment calls, and IV v2 / SPY GEX v3 are NOT retrofitted.
   - New Section 1 items: the pre-live checklist (Deflated Sharpe ≥ 0.95, using N trials from the ledger), the CPCV note for future CV designs, and `hypothesis_ledger.csv` (13 trials).
@@ -64,7 +69,7 @@ A parallel copy of this content lives in the claude.ai project "AI Option Tradin
     5. Primary bar met → FULL / SMALL / HELD by soft-failure count.
   - **USER-APPROVED 2026-10-05: the two "clean, decisive negative" interpretations (steps 3 and 4), exactly as implemented in `tiered_verdict.py`.**
     - **(a) Wrong direction** is REJECTED only if the design had ≥ 80% power at the effect floor, or the reversal is itself significant at α. Otherwise it's HELD.
-    - **(b) No effect / below the floor** is REJECTED only if the design had ≥ 80% power at the floor **and** the confidence bound excludes the floor. Otherwise it's HELD.
+    - **(b) No effect / below the floor** is REJECTED only if the design had ≥ 80% power at the floor **and** the confidence bound excludes the floor. Otherwise it's HELD. **Both conditions explicitly re-confirmed by the user on 2026-10-05**; power alone is not enough.
     - Why: without the power condition, every adequately tested null would sit in HELD and never close, and an underpowered wrong-sign blip would close an idea forever.
     - The 80% threshold is a framework constant, deliberately not declarable per experiment.
   - **Hard-gate design guidance:** a gate written as "partial correlation must be *significant*" can fail from low power alone and then REJECT a real signal. Prefer gates that test for the confound itself (e.g. "the effect collapses when the control is added"), and give hard gates enough power.
@@ -665,6 +670,12 @@ The user's own instruction (item 18) is to build a permanent onboarding document
   - The slope-quintile trade nets −1.1% per round trip (95% CI −11% to +7%). Round-trip ~30-DTE straddle cost: 4.8% pooled median.
   - Before Stage 1 (2023-10-30→2026-01-14) slope→RV20 Spearman was −0.002, and the trade netted −8.8%.
   - **Read: r ≈ −0.28 mostly reflects the already-priced IV level. A VALIDATED Stage 2 would not by itself make this tradeable.**
+- **LITERATURE CAUTION (research-review item 6, added 2026-10-05 at the user's request; no change to the registered experiment).**
+  - Published studies of term-structure slope predicting realized vol report **modest, time-varying** effects, per the user's literature review. **Don't over-interpret Stage 1's r = −0.28** as a stable effect size.
+  - Two pieces of this project's own evidence point the same way:
+    - Over 2023-10-30→2026-01-14, before Stage 1's window, the same slope's Spearman correlation with RV20 was −0.002 (economic check above).
+    - The closely related VIX-term-structure result (Johnson 2017) did not carry over to Cboe strategy indices after 2009 (trial #13, Section 63).
+  - **Practical reading:** expect a smaller Stage 2 effect than Stage 1's, possibly below what N = 139 can detect (80% power only from r ≈ 0.25). A Stage 2 failure would be consistent with a real but weaker or regime-dependent effect, not just with "no effect".
 
 ---
 
@@ -911,13 +922,14 @@ The user's own instruction (item 18) is to build a permanent onboarding document
 
 | ET | Task | Notes |
 |---|---|---|
-| every 2h at :23 | `EODHD_Quota_Probe_And_Resume` | `quota_probe_and_resume.py` → `quota_probe_log.db`. On quota success it runs GEX catch-up (`gex_gap_check.py`, then the GEX task if anything is missing) and the straddle snapshot step (a no-op now). Never reads CLAUDE.md. |
-| 19:44 | `PreventSleep_DuringCollectionWindow` | `prevent_sleep_during_collection_window.py`: `SetThreadExecutionState(ES_SYSTEM_REQUIRED\|ES_AWAYMODE_REQUIRED)` for 65 min. |
-| 19:45 | `GEX_Historical_Incremental_Update` | `gex_historical_incremental_update.py` → `gex_metrics` (Section 40). |
-| 20:00 | `GEX_Prospective_Daily_Collection` | `daily_collection_run.py`; zero EODHD calls. `RestartOnFailure` removed 2026-09-29. |
+| every 2h at :23 | `EODHD_Quota_Probe_And_Resume` | `quota_probe_and_resume.py` → `quota_probe_log.db`. On quota success it runs GEX catch-up (`gex_gap_check.py`, then the GEX task if anything is missing) and the straddle snapshot step (a no-op now). Never reads CLAUDE.md. **Run only if a network is available** (since 2026-10-05). |
+| 19:40 Mon–Fri | `CollectionWindow_KeepAwake` | **Added 2026-10-05.** `keep_awake_collection_window.py` holds `ES_SYSTEM_REQUIRED\|ES_DISPLAY_REQUIRED` until 21:20 ET (wall clock), heartbeat every minute to `keep_awake_log.txt`. WakeToRun, StartWhenAvailable, runs on battery, 2 h limit. |
+| 19:44 | ~~`PreventSleep_DuringCollectionWindow`~~ | **Retired (disabled) 2026-10-05**: it never held the display, so it couldn't stop Modern Standby. Rollback XML `task_backup_PreventSleep_DuringCollectionWindow.before_sleepfix_20261005.xml`. |
+| 19:45 | `GEX_Historical_Incremental_Update` | `gex_historical_incremental_update.py` → `gex_metrics` (Section 40). **Run only if a network is available** (since 2026-10-05). |
+| 20:00 | `GEX_Prospective_Daily_Collection` | `daily_collection_run.py`; zero EODHD calls, uses Alpaca bars. Already had the network condition. `RestartOnFailure` removed 2026-09-29. |
 | 20:15 | ~~`RF_v2_Stage2_Nightly_Update`~~ | **Disabled 2026-10-01** (Section 52). |
 | 20:30 | ~~`BroaderUniverse_Volatility_Nightly_Update`~~ | **Disabled** (Target C retired). |
-| 20:45 | `IVTermStructure_Stage2_Nightly_Update` | Section 33. |
+| 20:45 | `IVTermStructure_Stage2_Nightly_Update` | Section 33. **Run only if a network is available** (since 2026-10-05). |
 | 21:05 | `ExecutionCost_EOD_Spreads` | Section 26; zero EODHD calls. |
 | 21:15 | `EODHD_Daily_Health_Check` | `health_check.py`, below. |
 
@@ -927,8 +939,17 @@ Rollback XML for the pythonw conversions: `task_backup_<task>.before_pythonw_202
 - On 2026-09-30 tasks were killed seconds after launch with `0xC000013A`; that root cause is still unknown.
 - On 2026-10-04 tasks ran inside Modern Standby with no network: the event logs show the machine re-entering standby a second after its wake timer.
 - `PreventSleep` didn't help: it held no display request, and its process ran ~20 h while suspended.
-- Proposed fixes: network-wait task conditions, Wi-Fi in standby, a weekday keep-awake window, and retiring PreventSleep.
-- Until fixed, verify scheduled runs against the databases, not their exit codes.
+- On this machine sleep is already set to "never"; **Modern Standby starts when the display turns off** (5 min on AC, 3 min on battery).
+- **Fixes applied 2026-10-05 (user-approved). Backups: `task_backup_<task>.before_sleepfix_20261005.xml` and `power_backup_scheme_sub_*.before_sleepfix_20261005.txt`.**
+  1. **Network wait:** `RunOnlyIfNetworkAvailable` + `StartWhenAvailable` on `GEX_Historical_Incremental_Update`, `IVTermStructure_Stage2_Nightly_Update` and `EODHD_Quota_Probe_And_Resume`; `GEX_Prospective_Daily_Collection` already had it. Each task's XML differs from its backup only in that element.
+  2. **Keep awake:** new weekday task `CollectionWindow_KeepAwake`, 19:40–21:20 ET. The health check now checks it: OK while running; FAIL on a missed weekday window, a missing END, or heartbeat gaps over 3 min (meaning the machine slept anyway).
+  3. **PreventSleep retired:** task disabled, script kept.
+  4. **Wi-Fi in standby: NOT applied.** `powercfg /setacvalueindex … F15576E8…` returned success but changed nothing, because this power plan doesn't define that setting. It needs the group-policy route in an **administrator** shell; the user to run it.
+- **Still unverified:**
+  - Whether the 19:40 wake + display request actually keeps the machine out of standby when it was already asleep. The keep-awake heartbeat log will show it from the first night.
+  - Whether a task whose network condition isn't met starts later, once the network returns. Check the Task Scheduler Operational log.
+  - The 2-hourly probe's GEX catch-up remains the backstop either way.
+- Until confirmed, verify scheduled runs against the databases, not their exit codes.
 
 **Daily health check** (`health_check.py`, 21:15 ET):
 - **(a) Data freshness**, **(b) tasks:** each ran on schedule with result 0 and its own log shows a completion marker, and **(c) bots:** running, with fresh heartbeats.
@@ -999,7 +1020,7 @@ Takes Target C's slot (Sections 1, 60). Trial #12 in the program tally (Section 
 - **Search both files.** When looking for a hash, file name, DB, task, or number, grep `CLAUDE.md` AND `CLAUDE_ARCHIVE.md`. The index below covers identifiers that appear only in the archive.
 - **When archiving more:** run a byte-for-byte round-trip check, keep a hashed `.bak`, never renumber, re-run the identifier cross-check, and log the change in the header's reorganization history.
 
-### Archived-identifier index (identifiers that appear only in `CLAUDE_ARCHIVE.md`, as of pass 2)
+### Archived-identifier index (identifiers that appear only in `CLAUDE_ARCHIVE.md`, as of pass 3)
 
 **Config hashes (full):**
 - `9820ed6e18c11f7fa069a931490823398081e469ee5c01c95cec7009b3745fde`: GEX call-wall, superseded (§32)
@@ -1036,3 +1057,19 @@ Takes Target C's slot (Sections 1, 60). Trial #12 in the program tally (Section 
 - §49: `investigate_american_vs_european_pricing.py`
 - §51 and §56: `preregister_xgboost_volatility_v2_experiment.py`, `xgboost_volatility_v2_stage1_execution.py` (constant `RF_V2_R2_DELTA` holds stale contaminated references), `xgboost_volatility_dataset.CONTAMINATED_20260927.db`, `xgboost_volatility_dataset.WRONG_ADJUSTED_SPOT_20260927.db`
 - §60: `eodhd_quota_probe_log.jsonl`, `run_iv_termstructure_stage2_update.bat`
+
+**Added by pass 3 (2026-10-05; identifiers now only in the archive's "Pass 3" block):**
+- Superseded hashes:
+  - §33 IV v1 drafts: `98e16643b9082db085f8d461b06edf5be7c13e223a95b348c241d84f7cf62a87`, `4e720d094afb417b7480433f7dbff27efbf172999cd9c62c856c783f5dd8bfa4`, `09bc383803cbbabe4141752c3ba66d023e91923e6a4f6975b7805a946ee653e4`.
+  - §43 SPY v1 drafts: `13db39e23b43e3585ef997183c9ed794b6e8f37969b711b3f92326a853691c01`, `39c8a075ccba1d872500c214e26081e1f3bf7b4679948e1b9c2d33d95c5aea41`, `1e84831a1e3daf2d77e7f7ce0d5889e1a02be9b7f502aaaaea50953cd3a38e99`.
+- Pass 1/2 backup SHA-256s (archive "Header" block): `6AD81931…` (`CLAUDE.md.pre_archive_20261001.bak`), `89DD1106…` (`CLAUDE.md.pre_archive_pass2_20261001.bak`), `9508C110…` (`CLAUDE_ARCHIVE.md.pre_pass2_20261001.bak`).
+- Files:
+  - §33: `preregister_iv_termstructure_experiment.py` (v1), `iv_stage1_economic_sanity_check.py`.
+  - §43: `preregister_spy_gex_volatility_experiment.py` (v1), `preregister_spy_gex_volatility_v2_experiment.py`.
+  - §26: `execution_cost_eod_log.txt`.
+  - §34: `trades.db`.
+  - §58: `ticker_fixed_effects_analysis_20260928.log`.
+  - §60: `generate_broader_universe_volatility_dataset.py`, `broader_universe_feasibility_report.md`, `target_design_comparison_v1.md`, `target_c_baseline_and_walkforward_design_v1.md`, `preregistration_prep_resolution_v1.md`, `eodhd_quota_safe.py`, `health_check_state.json`, `quota_probe_and_resume_log.txt`, `iv_termstructure_stage2_update_stdout_log.txt`, `broader_universe_volatility_generation.lock`, and `task_backup_<task>.before_pythonw_20261001.xml` for GEX_Historical / GEX_Prospective / IVTermStructure.
+  - §62: `daily_prices.db`, `earnings_dates.db`, `straddle_dev_analysis_results.json`, `test_straddle_backtester.py`.
+  - §63: `vrp_feasibility_check.py`, `research_database.db.pre_trial13_20261002.bak`, `research_database.db.pre_trial13_result_20261002.bak`.
+- Constants and environment variables: `EXECUTION_COST_OPTIONS_FEED`, `STARTUP_RETRY_DELAYS_SEC` (§26); `OPEN_END_AT_EXECUTION` (§43); `HEALTH_SMTP_HOST`, `HEALTH_ALERT_TO`, `TARGET_C_RETIRED` (§60).
