@@ -267,8 +267,52 @@ DAILY_TASKS = {
         r"^DAILY PROSPECTIVE COLLECTION RUN -- (\d{4}-\d\d-\d\d)", r"INTEGRITY CHECK: PASSED"),
     "IVTermStructure_Stage2_Nightly_Update": ("iv_termstructure_stage2_generation_log.txt",
         r"^=== RUN START (\S+) \|", r"=== RUN (COMPLETE|STOPPED EARLY \(QUOTA\))"),
-    "PreventSleep_DuringCollectionWindow": (None, None, None),
+    # PreventSleep_DuringCollectionWindow was retired (disabled) 2026-10-05; see check_keep_awake().
 }
+
+KEEP_AWAKE_TASK = "CollectionWindow_KeepAwake"      # weekdays 19:40-21:20 ET (keep_awake_collection_window.py)
+KEEP_AWAKE_START = time(19, 40)
+KEEP_AWAKE_LOG = "keep_awake_log.txt"
+KEEP_AWAKE_MAX_GAP = timedelta(minutes=3)            # heartbeats are 60 s apart; a longer gap = the machine slept
+
+
+def check_keep_awake():
+    """The weekday keep-awake window: ran for the latest scheduled weekday, ended cleanly, no heartbeat gaps."""
+    i = task_info([KEEP_AWAKE_TASK]).get(KEEP_AWAKE_TASK, {"State": "MISSING"})
+    if i["State"] in ("MISSING", "Disabled"):
+        add("tasks", KEEP_AWAKE_TASK, "FAIL", f"task state {i['State']}")
+        return
+    last = parse_dt(i["LastRun"])
+    if last.year < 2000:
+        add("tasks", KEEP_AWAKE_TASK, "WARN", "has never run yet (newly created task)")
+        return
+    due = NOW_ET.date() if NOW_ET.time() >= KEEP_AWAKE_START else NOW_ET.date() - timedelta(days=1)
+    while due.weekday() >= 5:                         # weekdays only
+        due -= timedelta(days=1)
+    due_dt = datetime.combine(due, KEEP_AWAKE_START, tzinfo=ET)
+    problems = []
+    if last < due_dt - timedelta(minutes=5):
+        problems.append(f"missed its {due_dt:%a %Y-%m-%d %H:%M} ET window (last run {last:%Y-%m-%d %H:%M} ET)")
+    block = run_block(read(os.path.join(ROOT, KEEP_AWAKE_LOG)), r"^KEEP-AWAKE WINDOW START -- (\S+)", last)
+    running = i["State"] == "Running"
+    if block is None:
+        problems.append(f"no window logged in {KEEP_AWAKE_LOG} at/after its last run")
+    else:
+        beats = [datetime.fromisoformat(m) for m in re.findall(r"^(?:KEEP-AWAKE WINDOW (?:START|END)|heartbeat) -*\s*(\S+)", block, re.M)]
+        gaps = [f"{a:%H:%M}->{b:%H:%M}" for a, b in zip(beats, beats[1:]) if b - a > KEEP_AWAKE_MAX_GAP]
+        if gaps:
+            problems.append(f"machine slept during the window anyway (heartbeat gaps {gaps})")
+        if not running and not re.search(r"^KEEP-AWAKE WINDOW END", block, re.M):
+            problems.append("window never logged its END (process killed or crashed)")
+        if "Traceback (most recent call last)" in block:
+            problems.append(f"traceback in {KEEP_AWAKE_LOG}")
+        src = re.search(r"^KEEP-AWAKE WINDOW START .*\| (AC|battery)", block, re.M)
+    if not running and i["Result"] != 0:
+        problems.append(f"LastTaskResult={i['Result']}")
+    on = f" on {src.group(1)}" if block is not None and src else ""
+    detail = "; ".join(problems) or (f"window in progress since {last:%H:%M} ET{on}" if running
+                                    else f"window {last:%Y-%m-%d %H:%M} ET ran to its end{on}, no gaps")
+    add("tasks", KEEP_AWAKE_TASK, "FAIL" if problems else "OK", detail)
 
 
 def check_tasks(state):
@@ -438,6 +482,7 @@ def main():
     state = json.loads(read(STATE_FILE) or "{}")
     check_data(state)
     check_tasks(state)
+    check_keep_awake()
     check_bots()
     check_execution_cost()
     fails = [r for r in results if r["status"] == "FAIL"]
