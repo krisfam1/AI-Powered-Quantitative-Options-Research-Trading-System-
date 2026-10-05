@@ -2,7 +2,7 @@
 
 **Read this file at the start of every session in this folder.** It is the persistent memory for this research project, since each Claude Code session otherwise starts with zero history. Keep it updated as work progresses — when something here becomes stale (a bug gets fixed, an experiment closes out, a status changes), edit this file directly.
 
-**Last updated: 2026-10-02** (cross-sectional straddle HELD / INCONCLUSIVE, data-limited; ORATS declined. Section 62. Its slot reallocated to trial #13, VIX term-structure → CNDR, which was REJECTED at Stage 1 the same day. Section 63. **Tiered verdict framework `tiered_v1` adopted, go-forward only. Section 1**).
+**Last updated: 2026-10-05** (tiered_v1 judgment calls user-approved; pre-live checklist with DSR; CPCV note; `hypothesis_ledger.csv`; Modern Standby root cause of the 10/4 task failures. Earlier, 2026-10-02: cross-sectional straddle HELD / INCONCLUSIVE, data-limited; ORATS declined. Section 62. Its slot reallocated to trial #13, VIX term-structure → CNDR, which was REJECTED at Stage 1 the same day. Section 63. **Tiered verdict framework `tiered_v1` adopted, go-forward only. Section 1**).
 
 **This memory is split across TWO files: `CLAUDE.md` (this file, loaded automatically) and `CLAUDE_ARCHIVE.md` (never loaded automatically, so open it deliberately).** Section numbers are unchanged across both. A section marked "Archived 2026-10-01" here is a stub: either a one-paragraph locator, or for still-active sections (3, 7, 40, 52, 60) a current-state summary whose full history lives in the archive. See Section 61 for the read-the-archive-first rule and the archived-identifier index.
 
@@ -12,6 +12,11 @@
 - **Both passes passed a byte-for-byte round-trip check:** putting the archived text back in place of the stubs reproduces the pre-pass file exactly. Nothing was edited or deleted, only relocated. Git isn't on PATH on this machine, so these `.bak` files are the only rollback.
 - **Known cross-document drift:** the claude.ai `research-manifest.md` (not synced) still shows RF v2 as Stage-1-VALIDATED. Here it's REJECTED on clean data (Sections 48/56/58). The manifest's section numbers also differ (e.g. its "Section 24" = Section 60 here). Fix the manifest by hand.
 - **To propagate to the manifest (2026-10-02):** the cross-sectional straddle hypothesis (trial #12, Section 62 here) is now **HELD / INCONCLUSIVE (data-limited)**, parked, with ORATS ($599) declined and no further spend. It is not rejected. Its slot went to **trial #13** (VIX term-structure slope → Cboe CNDR iron-condor returns; PREREGISTERED 2026-10-02, hash `188828a66ad359c28692d923a8c7c57d8d91cdd507b1932f6427acb38e488d09`; Section 63 here). **Trial #13 was then REJECTED at Stage 1 the same day:** ρ = −0.020, the volatility-control check failed, and 10 of 13 sign checks failed. Its slot is open.
+- **To propagate to the manifest (2026-10-05):**
+  - The user approved both `tiered_v1` judgment calls, and IV v2 / SPY GEX v3 are NOT retrofitted.
+  - New Section 1 items: the pre-live checklist (Deflated Sharpe ≥ 0.95, using N trials from the ledger), the CPCV note for future CV designs, and `hypothesis_ledger.csv` (13 trials).
+  - Status: SPY GEX v3 N = 61/139 (lock 2027-01-27); IV Stage 2 has 0 rows (first possible 2026-11-19, lock 2027-06-10).
+  - The 10/4 task failures were Modern Standby with no network.
 - **To propagate to the manifest (2026-10-02): new Section 1 rule, the tiered verdict framework `tiered_v1`.**
   - **Tiers:** REJECTED (a clean, decisive negative; the only closed-forever tier) / HELD (the default for anything not cleanly negative; the signal library) / VALIDATED_SMALL_SIZE_MONITOR / VALIDATED_FULL_CONFIDENCE.
   - **Declared before the hash locks:** every new pre-registration splits its checks into 1–3 hard gates (failure → REJECTED) and soft checks (which set the tier, never REJECTED alone).
@@ -59,7 +64,11 @@ A parallel copy of this content lives in the claude.ai project "AI Option Tradin
     3. Primary estimate in the wrong direction → REJECTED if the design was adequately powered (≥ 80% at the declared floor) **or** the reversal is itself significant; otherwise HELD.
     4. Primary bar not met (p ≥ α, below the effect floor, or t below `min_abs_t_stat`) → **REJECTED only if adequately powered AND the confidence bound excludes the floor (a "decisive null")**; otherwise HELD.
     5. Primary bar met → FULL / SMALL / HELD by soft-failure count.
-  - **Two interpretations I made, flagged for your review:** steps 3 and 4 define "clean, decisive negative" for results that aren't a hard-gate failure. Without the power condition, every adequately tested null would land in HELD and never close, and an underpowered wrong-sign blip would close an idea forever. The 80% threshold is a framework constant, deliberately not declarable per experiment.
+  - **USER-APPROVED 2026-10-05: the two "clean, decisive negative" interpretations (steps 3 and 4), exactly as implemented in `tiered_verdict.py`.**
+    - **(a) Wrong direction** is REJECTED only if the design had ≥ 80% power at the effect floor, or the reversal is itself significant at α. Otherwise it's HELD.
+    - **(b) No effect / below the floor** is REJECTED only if the design had ≥ 80% power at the floor **and** the confidence bound excludes the floor. Otherwise it's HELD.
+    - Why: without the power condition, every adequately tested null would sit in HELD and never close, and an underpowered wrong-sign blip would close an idea forever.
+    - The 80% threshold is a framework constant, deliberately not declarable per experiment.
   - **Hard-gate design guidance:** a gate written as "partial correlation must be *significant*" can fail from low power alone and then REJECT a real signal. Prefer gates that test for the confound itself (e.g. "the effect collapses when the control is added"), and give hard gates enough power.
   - **Deployment ladder (informational only; nothing here makes the project ready for live capital):**
     - FULL: start small with tight limits, compare live results with the research prediction, and scale only if they match.
@@ -80,11 +89,30 @@ A parallel copy of this content lives in the claude.ai project "AI Option Tradin
   - **Not retroactive:**
     - Closed verdicts stand: V1, the GEX family, the ML chain, strike positioning, and trial #13.
     - Open experiments keep their locked rules: IV term-structure v2 and SPY GEX v3.
-    - **Open option (user decision):** re-version an open experiment under `tiered_v1` with a new hash, using the SPY GEX v1→v2→v3 append-only pattern. Not done.
+    - **DECIDED 2026-10-05 (user): IV term-structure v2 and SPY GEX v3 are NOT retrofitted onto `tiered_v1`.** Each runs to completion under its own locked, legacy decision rules.
   - **Future consideration: Harvey–Liu–Zhu (t ≥ 3, one-sided p ≈ 0.00135).**
     - For a correlation test this needs |r| ≥ 0.29 at N = 100, 0.25 at N = 139, and 0.21 at N = 203. 80% power at r = 0.25 then needs N ≈ 229 instead of 139 (about 1.6×).
     - Candidates for the stricter bar: designs with many researcher degrees of freedom (multiple tickers, horizons, or feature sets). The program is at 13 trials.
+- **PRE-LIVE CHECKLIST (added 2026-10-05; research-review item). No hypothesis gets real capital until all of these hold.** Paper trading isn't gated by this.
+  1. A `tiered_v1` verdict of VALIDATED_FULL_CONFIDENCE or VALIDATED_SMALL_SIZE_MONITOR. A small-size verdict allows only the smallest rung.
+  2. An economic check using real costs (EODHD end-of-day spreads at base, 0.5× and 1.5×; Section 26) that is still positive.
+  3. **A Deflated Sharpe Ratio (Bailey & López de Prado 2014) of at least 0.95** on the strategy's out-of-sample return series.
+     - Use the number of trials in `hypothesis_ledger.csv`, currently 13.
+     - Use the actual skewness, kurtosis and track length of those returns.
+     - Disclosed limitation: most trials were correlation tests that produced no Sharpe ratio, so the variance of Sharpe ratios across trials must be estimated or bounded conservatively, and the method stated.
+     - No DSR code exists yet; write it, with tests, when the first candidate reaches this step.
+  4. A live or paper track compared with the research prediction before any scale-up (the deployment ladder above).
+  - **Section numbering:** CLAUDE.md §26 is the paper-bot audit, not a live-capital checklist. This bullet is the checklist.
+- **CROSS-VALIDATION RULE FOR FUTURE DESIGNS (added 2026-10-05; research-review item): CPCV upgrade note.**
+  - Any future design that uses cross-validation for model selection or evaluation (the ML track, walk-forward designs) should use **Combinatorial Purged Cross-Validation** (López de Prado 2018, *Advances in Financial Machine Learning*, ch. 7 and 12) instead of a single walk-forward path.
+  - Purge training rows whose labels overlap the test period: at least max(forward horizon, longest feature window), the rule first written for Target C (Section 60, `fold_structure.purge_rule`). Add an embargo after each test block.
+  - Report the distribution of out-of-sample results across paths, and the probability of backtest overfitting (PBO; Bailey et al. 2017).
+  - Applies to new pre-registrations only. Neither open experiment uses cross-validation (both are single correlation tests), so neither is affected.
 - **Program-level hypothesis-trial tally** (added 2026-10-01). Every hypothesis whose outcome has been examined against data, or that is pre-registered and pending, counts once; any future Deflated Sharpe Ratio or multiple-testing assessment uses this count as the number of trials. Versions of one hypothesis (v1→v2→v3) count once.
+  - **Machine-readable ledger (started 2026-10-05): `hypothesis_ledger.csv`**, one row per trial. Columns: status, resolution date, pre-registration type, experiment id, final config hash, primary result, failure classification, versions, section.
+    - Every new trial gets a row **when it is registered**, not when it resolves.
+    - Tools read the CSV, never this file.
+    - Closed trials' hashes and verdicts were checked against `CLAUDE_ARCHIVE.md` and `research_database.db` when it was created.
   1. V1 entry signal / Phase 6 · 2. ML Experiment 1 · 3. GEX call-wall-distance · 4. GEX net gamma regime · 5. Strike-positioning OI skew · 6. XGBoost feature interactions · 7. XGBoost vol vs Ridge · 8. RF vol vs Ridge (v1+v2) · 9. Regularized XGBoost vol · 10. IV term-structure slope (pending Stage 2) · 11. SPY GEX call-wall vs vol (pending) · **12. Cross-sectional straddle, Goyal–Saretto RV−IV gap (Section 62, HELD / INCONCLUSIVE, data-limited, since 2026-10-02)** · **13. VIX term-structure slope → Cboe CNDR short-vol returns (Section 63, REJECTED at Stage 1 2026-10-02, hash `188828a6…`)**.
   - The tally counts hypotheses examined against data or pre-registered, not only formally pre-registered ones: #1 (V1) and #12 (straddle) were never pre-registered.
   - Not counted: Target C (designed, never run, no outcome examined) and the 5-bar horizon exploration (exploratory, already invalidated).
@@ -795,7 +823,12 @@ The Stage 2 script is `generate_iv_termstructure_stage2_dataset.py` (task `IVTer
   - **v2 hash `1426199993aea7e934c8c15be8e0d8eb4cea7437fe8b6ea170c2afb784509647`**, file `preregister_iv_termstructure_v2_experiment.py`, `state=PREREGISTERED`, `preregistered_at=2026-10-01T21:15:38Z`, `related_experiment_ids=["…_v1_20260921"]`.
   - **The N requirement is split by stage — not "139 across the board":** Stage 1 (historical, executed 2026-09-21, 101 days, passed, SUGGESTIVE) stays governed by `min_n_per_stage = 100`, unchanged and not re-judged. The locked Stage 2 test is governed by a new parameter **`min_n_stage2 = 139`** (was 100). Explained in the new `min_n_stage_split` parameter. The N definition (distinct pooled days) is unchanged.
   - Config diff vs v1, verified field by field: `experiment_id`, `code_version`, the new `min_n_stage2` / `min_n_stage_split` / `supersedes` parameters, and the 139 / lock-date text in `min_n_definition`, `stage2_window_definition`, `stage2_locked_test_and_exploratory_rule`. Nothing else.
-  - **Lock date (night-by-night simulation on the real NYSE calendar, horizon 50 sessions, same method that reproduces the old 2027-04-15):** N ≥ 139 first on the night of **Thu 2027-06-10** (N = 138 on 2027-06-09); observation day #139 = 2027-03-31 (session #189 from 2026-09-10). Current Stage 2 N = **0**; 173 trading sessions / 252 calendar days to go.
+  - **Lock date (night-by-night simulation on the real NYSE calendar, horizon 50 sessions, same method that reproduces the old 2027-04-15):** N ≥ 139 first on the night of **Thu 2027-06-10** (N = 138 on 2027-06-09). Observation day #139 = 2027-03-31, which is session #139; the lock night is session #189 from 2026-09-10. Current Stage 2 N = **0**; 173 trading sessions / 252 calendar days to go.
+  - **Re-verified 2026-10-05 from the database and the Alpaca NYSE calendar:**
+    - Stage 2 has 0 rows and 0 days; 18 sessions have closed since 2026-09-10.
+    - **First possible row: the night of 2026-11-19**, when 2026-09-10 gets its 50 forward sessions. That's the health check's "0 expected before 2026-11-19".
+    - **Lock (N = 139 days): the night of 2027-06-10.**
+    - The two dates don't conflict: one is the first observation, the other is when the 139th observation completes. The lock assumes every session yields at least one valid observation; any day that doesn't pushes it later.
   - **Power at N = 139** (α = 0.0167 one-sided): **35.7% at r = 0.15, 59.3% at 0.20, 80.2% at 0.25, 89.0% at Stage 1's 0.28**; MDE at 80% = **0.249**.
   - **v1 row:** plan columns unchanged (fingerprinted before/after); annotated `status=SUPERSEDED`, `notes`, `related_experiment_ids=["…_v2_20261001"]`. v1 file byte-identical (SHA-256 `29F3EFA0…`), still hashes to `bfa05fe9…`.
   - **Framework α, read-only check on a scratch copy of `research_database.db`** (production SHA-256 unchanged): `compute_per_test_alpha` → `bonferroni_within_experiment`, **0.016667**, k = 3.
@@ -1037,6 +1070,10 @@ The Stage 2 script is `generate_iv_termstructure_stage2_dataset.py` (task `IVTer
   - Config diff vs v2, verified field by field: `experiment_id`, `code_version`, `min_n_per_stage` 100 → 139, `stage1_window_definition` ("lock on the first night N ≥ 139"), `supersedes`. Nothing else; the volatility-control gate and all checks carry over.
   - **Lock date (night-by-night simulation, real NYSE calendar + real SPY `gex_metrics` dates, horizon 20 sessions; reproduces the old 2026-11-30):** N ≥ 139 first on the night of **Wed 2027-01-27** (N = 138 on 2027-01-26); observation #139 = 2026-12-28. Current N = **59** (last closed session 2026-10-01); 80 trading sessions / 118 calendar days to go.
   - **Power at N = 139:** 35.7% / 59.3% / 80.2% / 89.0% at r = 0.15 / 0.20 / 0.25 / 0.28; MDE at 80% = 0.249.
+  - **Re-verified 2026-10-05 from `gex_metrics` and the Alpaca NYSE calendar:**
+    - SPY has 80 dates, 2026-06-10 → 2026-10-02, with no gaps.
+    - **N = 61 of 139** (dates with 20 closed sessions after them, through 10/05).
+    - Lock **still the night of 2027-01-27**, with observation #139 = 2026-12-28, assuming SPY GEX keeps covering every session.
   - **v2 row:** plan columns unchanged (fingerprinted before/after); annotated `status=SUPERSEDED`, `notes`, `related_experiment_ids=["…_v1_20260924", "…_v3_20261001"]` (backward link kept, forward link added). v2 file byte-identical (SHA-256 `15895820…`), still hashes to `ce0c2c0c…`.
   - **Framework α, scratch-copy check:** `compute_per_test_alpha` → `bonferroni_within_experiment`, **0.016667**, k = 3.
 
@@ -1254,6 +1291,19 @@ The Stage 2 script is `generate_iv_termstructure_stage2_dataset.py` (task `IVTer
   - `BroaderUniverse_Volatility_Nightly_Update` returned 0 on 9/30 only because it exited (`LOCK HELD`) in ~2s, before the kill.
 - **What to check:** each task's `LastTaskResult` and log tail, plus real DB growth: `gex_metrics` MAX date, broader-universe counts, `iv_termstructure_stage2_dataset.db`. RF v2 is now disabled, so its task should NOT fire; confirm it didn't (no new 20:15 `LastRunTime`). That leaves four collection tasks plus `PreventSleep` to verify.
 - **Root cause: UNRESOLVED, not sleep-related.** A separate investigation into what sends the signal is underway. Its notes haven't been written to a file yet, so this line is where they'll be referenced once they exist. Until then, a scheduled run's exit code and log can't be trusted as evidence that it did its work; verify against the databases.
+- **NEW EVIDENCE 2026-10-05: tasks run inside Modern Standby with no network (the 10/4 health-check FAILs).**
+  - **What happened** (System and Task Scheduler event logs):
+    - The 19:43:41 wake timer brought the laptop out of sleep, and it re-entered **Modern Standby at 19:43:42**.
+    - `GEX_Historical_Incremental_Update` ran at 19:45 with no DNS. It retried 3 times, then "Stopping this run cleanly, nothing corrupted" (result 0, but no `RESULT` marker → health-check FAIL).
+    - The machine entered Modern Standby again at 20:44:41. `IVTermStructure_Stage2_Nightly_Update` ran at 20:45, Alpaca DNS failed, and the unhandled `ConnectionError` crashed it (LastTaskResult=1).
+  - **No data lost:** 10/4 was a Sunday. `gex_metrics` is complete through 10/02, and IV Stage 2 has nothing eligible before 2026-11-19.
+  - **Fixed 2026-10-05 (commit `76851ba`):** the IV Stage 2 collector now skips a ticker whose daily-bar fetch fails and ends with `=== RUN INCOMPLETE (NETWORK)`, which the health check still flags. No change to what it saves.
+  - **`PreventSleep_DuringCollectionWindow` does not work on this machine.** Its 10/4 19:44 instance only finished at 10/5 15:59, so the health check's 267009 is `SCHED_S_TASK_RUNNING`, not an error. Its Python process was suspended during Modern Standby, so the 65-minute timer barely advanced, and `SetThreadExecutionState` didn't stop Modern Standby or keep Wi-Fi on.
+  - **Proposed, NOT applied (power and task settings need user approval):**
+    1. Set the task condition "Start only if a network connection is available" (`RunOnlyIfNetworkAvailable`) with `StartWhenAvailable` on the collection tasks, so they wait for the network instead of failing.
+    2. Turn on "Networking connectivity in Standby" in the power plan.
+    3. Keep the laptop plugged in and awake from 19:40 to 21:20 ET on weekdays.
+    4. Then retire or replace PreventSleep.
 
 **Reset of 2026-10-01 00:30:24 ET:** the backfill was killed mid-GS; the 3 surviving python processes are the NSSM services. Stale locks `broader_universe_volatility_generation.lock` and `xgboost_volatility_generation.lock` were cleared, and the backfill was resumed at 00:36 ET (it then stopped on quota, above). The prior probe job `1fe19d18` died with its session.
 
