@@ -224,9 +224,18 @@ def annualized_stdev(log_returns_window) -> float | None:
 # Main per-ticker loop
 # ---------------------------------------------------------------------------
 
+class BarFetchError(Exception):
+    """Alpaca daily-bar fetch failed (e.g. no network after a Modern Standby wake). The ticker is
+    skipped for this run; nothing is written for it, so the next run picks it up unchanged."""
+
+
 def process_ticker(ticker, conn, log_fh, seen):
     log(log_fh, f"\n=== {ticker}: fetching adjusted daily bars {STAGE2_START} to today ===")
-    bars = fetch_adjusted_closes(ticker)
+    try:
+        bars = fetch_adjusted_closes(ticker)
+    except Exception as exc:  # FIX 2026-10-05: a DNS failure here used to crash the whole run (exit 1)
+        log(log_fh, f"{ticker}: daily-bar fetch FAILED, ticker skipped this run, nothing written: {exc}")
+        raise BarFetchError(str(exc)) from exc
     cutoff, now_et = latest_usable_day()
     dropped = [b.timestamp.date() for b in bars if b.timestamp.date() > cutoff]
     bars = [b for b in bars if b.timestamp.date() <= cutoff]
@@ -333,9 +342,13 @@ def main():
 
             all_tallies = {}
             quota_exhausted = False
+            bar_fetch_failed = []
             for ticker in TICKERS:
                 try:
                     all_tallies[ticker] = process_ticker(ticker, conn, log_fh, seen)
+                except BarFetchError:
+                    bar_fetch_failed.append(ticker)
+                    continue
                 except QuotaExhaustedError as exc:
                     log(log_fh, f"\n=== STOPPED ON QUOTA EXHAUSTION at ticker={ticker}, {datetime.now(timezone.utc).isoformat()} ===")
                     log(log_fh, f"429 detected: {exc}")
@@ -351,6 +364,10 @@ def main():
             final_excluded = conn.execute("SELECT COUNT(*) FROM termstructure_stage2_excluded").fetchone()[0]
             if quota_exhausted:
                 log(log_fh, f"\n=== RUN STOPPED EARLY (QUOTA) {datetime.now(timezone.utc).isoformat()} -- NOT a clean completion ===")
+            elif bar_fetch_failed:
+                # Deliberately NOT "RUN COMPLETE": the health check must still flag a run that skipped tickers.
+                log(log_fh, f"\n=== RUN INCOMPLETE (NETWORK) {datetime.now(timezone.utc).isoformat()} -- daily bars unavailable for "
+                            f"{len(bar_fetch_failed)}/{len(TICKERS)} tickers: {', '.join(bar_fetch_failed)}; they are retried next run ===")
             else:
                 log(log_fh, f"\n=== RUN COMPLETE {datetime.now(timezone.utc).isoformat()} ===")
             log(log_fh, f"Final saved N (DB total, day-clustering NOT yet applied -- this is raw row count): {final_saved}")
