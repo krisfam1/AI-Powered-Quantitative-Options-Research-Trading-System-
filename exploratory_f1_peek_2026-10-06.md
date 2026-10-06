@@ -38,4 +38,4 @@ One-time look at the F1 earnings dataset (`earnings_event_dataset.db`), approved
 
 About 20% power at ρ = 0.07 (α = 0.05/14, 1,199 events, design effect 1.6). The smallest effect detectable with 80% power is ρ ≈ 0.13.
 
-Script: `f1_peek.py` (session scratchpad, not committed), SHA-256 `AFECD553D1A5DC338F22A5E8C6D7ABFBD083840CF0E9D472916F15F3E1E99680`. It opens the database read-only and doesn't import modules that load `.env`.
+Script: `f1_peek.py` (written in the session scratchpad; committed unchanged to the repo root in `45af241`), SHA-256 `AFECD553D1A5DC338F22A5E8C6D7ABFBD083840CF0E9D472916F15F3E1E99680`. It opens the database read-only and doesn't import modules that load `.env`.
