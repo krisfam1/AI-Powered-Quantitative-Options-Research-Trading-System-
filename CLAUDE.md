@@ -1012,6 +1012,8 @@ Takes Target C's slot (Sections 1, 60). Trial #12 in the program tally (Section 
 - **Counts:** 752 entry sessions 2023-10-02→2026-09-30; next-day expiry never found missing; entry quotes clean on ~97% of observed sessions (structure spread median ~3% of net credit). Usable N ≈ 100 with the specified exit (power 1.3% at the 3% floor); ≈ 728 with an intrinsic-settlement exit, but still only 7.4% power (MDE 8.5% of premium), so nothing beyond HELD is reachable.
 - **Account:** live ~$500 IBKR Pro (§62). Options level, 4-leg spread permission and XSP permission are **unverified**. Multi-leg credit spreads usually need a margin account ($2,000 FINRA minimum); check with IBKR.
 
+**Descriptive risk study, 2026-10-06 (not a trial; no verdict):** `risk_profile_option_selling_indexes_2026-10-06.md` (`risk_profile_study.py`, commit `e80e233`): two-week losses and drawdowns of BXM/PUT/CNDR/BFLY vs SPX price.
+
 ## 61. How to use this file
 
 - Read this file first, every session, in this folder.
