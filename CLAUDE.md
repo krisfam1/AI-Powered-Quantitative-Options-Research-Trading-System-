@@ -46,6 +46,7 @@ A parallel copy of this content lives in the claude.ai project "AI Option Tradin
   - **2026-10-02: the straddle hypothesis is HELD / INCONCLUSIVE (data-limited) and parked, with no further spend (Section 62).**
   - **DECIDED 2026-10-02 (user): the held straddle's slot goes to trial #13, VIX term-structure timing of index volatility selling (Section 63).** This is a deliberate reallocation to that specific replacement, not an automatic rule that "held" frees a slot.
   - **2026-10-02: trial #13 REJECTED at Stage 1 (Section 63), so its slot is OPEN.** Active: IV term-structure v2, SPY GEX v3. What fills the third slot is a user decision.
+  - **2026-10-06: candidate F1 (earnings) closed HELD before registration, data-limited (Section 64). The slot is still OPEN.**
   - **DECIDED 2026-10-01 (user): slot swap, not an exception.** Target C was retired because it predicted (relative) realized vol, the same structural flaw the IV Stage 1 economic check exposed that evening (Section 33): forecasting RV mostly recovers the already-priced IV level, while a tradeable position pays RV − IV. The cross-sectional straddle hypothesis, whose payoff *is* the RV − IV gap, took its slot. The count stays at three; no exception was used.
 - **TIERED VERDICT FRAMEWORK, `tiered_v1` (user decision 2026-10-02; go-forward only).** Replaces the flat-OR rule (any failed robustness check → REJECTED) for every pre-registration from 2026-10-02 on.
   - **Four tiers:**
@@ -1005,6 +1006,25 @@ Takes Target C's slot (Sections 1, 60). Trial #12 in the program tally (Section 
   - PUT and BXM went strongly the other way (ρ −0.27 / −0.36). Spotted after the fact, so not a finding.
 - **Economic check (2012-10→2026-09):** always-on CNDR returned −1.08%/yr vs T-bills (Sharpe −0.17, max drawdown 18.4%), and timing didn't help. Costs aren't the problem (~0.01% of account value per roll).
 - **Files:** `preregister_vix_termstructure_vrp_experiment.py`, `build_vrp_timing_dataset.py`, `data_snapshots/vrp_timing_20261002/` (SHA-256 manifest), `vrp_timing_stage1_execution.py`, `vrp_timing_stage1_results.json`.
+
+## 64. Candidate #14, earnings implied-vs-historical move (F1) — HELD before registration, data-limited (2026-10-06)
+
+**Not registered, hashed or run; it does not use the open slot and is not a ledger trial** (no outcome was examined, like Target C).
+- **Approvals (user, 2026-10-06):** F1 from the study doc "Final Hypothesis Slot: Options Research Study"; α = 0.05/14; point-in-time S&P 500 + Nasdaq-100 as of 2023-10-01 plus the 59 project names; hard gates, soft checks and `tiered_v1` as in the study; ~12k EODHD requests; Phase 1 data only.
+- **Collected:** `earnings_event_pipeline.py` → `earnings_event_dataset.db` (gitignored, unfrozen).
+  - 535 tickers; 11,431 EDGAR Item 2.02 8-Ks; 6,504 EODHD requests.
+  - Events Nov 2023 → Sep 2026: 6,183, minus 847 with an intraday 8-K (ambiguous timing) and 41 with too little history or no price (renamed tickers) = 5,295 candidates.
+- **Screens:**
+  - No expiry within 7 days after the reaction session: 2,383. ~170 names have only monthly expiries.
+  - Straddle spread over 10% of mid: 1,556.
+  - Mid under $1: 121.
+  - Close under $10: 36.
+  - **Survivors: 1,199** (3,000 needed). Exit quotes missing for 155 of them (12.9%; the soft-check limit is 5%).
+- **Power at 1,199** (design effect 1.6): **20% at ρ = 0.07**; detectable effect at 80% power ρ ≈ 0.13. A test would almost surely have graded HELD.
+- **Cause:** no weekly expirations for about a third of the universe, plus wide single-name spreads.
+- **Lesson:** check weekly-expiry availability, and spreads on a sample, **before** estimating event counts or power. The study's 3,500–4,500 estimate skipped this.
+- **Standing rule:** any revisit needs a new pre-design (universe, expiry rule, screens, power) approved before any data collection, and a hypothesis slot.
+- **2026-10-06: one-time exploratory peek, user-approved exception.** Exploratory only, no trial; results in `exploratory_f1_peek_2026-10-06.md`. **These 1,199 events are no longer blind.**
 
 ## 61. How to use this file
 
