@@ -2143,3 +2143,40 @@ Trial #13 (Section 1). Takes trial #12's slot by deliberate user reallocation. F
 - **Verify before running:** 203 cycles and the holiday rolls. Also check that the timing matches the methodology: the signal is taken at the close of the trading day before each roll, and the return runs from that close to the same point before the next roll.
 - **Run:** Stage 1 exactly as registered (primary, gate, 13 sign checks, economic check), then record the verdict.
 
+
+---
+
+# Pass 4 — archived 2026-10-06
+
+Verbatim from CLAUDE.md as of backup `CLAUDE.md.pre_archive_pass4_20261006.bak` (SHA-256 `A1CAA7529A04CC81EEC08BB98A0B4E4AC0E64FD383172377DE74C1476E61EDD2`); archive backup `CLAUDE_ARCHIVE.md.pre_pass4_20261006.bak` (SHA-256 `C8529BAEF1FA99143179C132E55224AF38DFAA35CA9705F8938BC6B62AB6ECB2`). User-approved 2026-10-06 to bring CLAUDE.md under 150,000 characters counted with CRLF. Each block below is the exact text a CLAUDE.md stub replaced, between its heading line and the end marker. Produced and verified by `archive_pass4_20261006.py`.
+
+## Header: manifest-propagation bullets (pass 4)
+- **To propagate to the manifest (2026-10-02):** the cross-sectional straddle hypothesis (trial #12, Section 62 here) is now **HELD / INCONCLUSIVE (data-limited)**, parked, with ORATS ($599) declined and no further spend. It is not rejected. Its slot went to **trial #13** (VIX term-structure slope → Cboe CNDR iron-condor returns; PREREGISTERED 2026-10-02, hash `188828a66ad359c28692d923a8c7c57d8d91cdd507b1932f6427acb38e488d09`; Section 63 here). **Trial #13 was then REJECTED at Stage 1 the same day:** ρ = −0.020, the volatility-control check failed, and 10 of 13 sign checks failed. Its slot is open.
+- **To propagate to the manifest (2026-10-05, second batch):**
+  - Rule (b) re-confirmed with both conditions.
+  - IV literature caution added to Section 33: modest, time-varying effects; don't over-interpret r = −0.28.
+  - Sleep fixes applied: network-wait conditions, a weekday keep-awake window, PreventSleep retired. Wi-Fi-in-standby is still pending an admin shell.
+  - CLAUDE.md archive pass 3: 250k → 141k characters, ~146k after these notes (limit 150k).
+- **To propagate to the manifest (2026-10-05):**
+  - The user approved both `tiered_v1` judgment calls, and IV v2 / SPY GEX v3 are NOT retrofitted.
+  - New Section 1 items: the pre-live checklist (Deflated Sharpe ≥ 0.95, using N trials from the ledger), the CPCV note for future CV designs, and `hypothesis_ledger.csv` (13 trials).
+  - Status: SPY GEX v3 N = 61/139 (lock 2027-01-27); IV Stage 2 has 0 rows (first possible 2026-11-19, lock 2027-06-10).
+  - The 10/4 task failures were Modern Standby with no network.
+- **To propagate to the manifest (2026-10-02): new Section 1 rule, the tiered verdict framework `tiered_v1`.**
+  - **Tiers:** REJECTED (a clean, decisive negative; the only closed-forever tier) / HELD (the default for anything not cleanly negative; the signal library) / VALIDATED_SMALL_SIZE_MONITOR / VALIDATED_FULL_CONFIDENCE.
+  - **Declared before the hash locks:** every new pre-registration splits its checks into 1–3 hard gates (failure → REJECTED) and soft checks (which set the tier, never REJECTED alone).
+  - **Significance:** α is never loosened; an optional t ≥ 3 bar is available.
+  - **Scope:** go-forward only. Closed verdicts stand; IV v2 and SPY GEX v3 keep their locked rules unless re-versioned.
+  - **Code:** `tiered_verdict.py`, wired into `verdict.py` / `run_experiment.py` / `experiment.py`.
+  - **Section numbering:** the manifest's numbers differ from CLAUDE.md's. The vol-level control is §43 here, group fixed effects §1/§58, the economic check §33, and there is no live-capital checklist in CLAUDE.md §26.
+<!-- end of pass-4 block -->
+
+## 5. Phase 6/7 forensic attribution block (pass 4)
+**Phase 6/7 forensic attribution — expanded with verified numbers, 2026-09-20.** The two lines above were previously the only durable record of this work. Surfaced via an old onboarding prompt, then independently re-verified this session by rerunning the actual scripts fresh (`phase6_primary_control.py`, `phase7_steps1to3.py`) and cross-checking `research_database.db`'s three backfilled rows (`phase6_signal_random_control_20260914`, `phase7_pnl_concentration_20260914`, `full_population_iv_repricing_20260914`). All numbers below **confirmed exactly**, not just trusted from a docstring or cached output. Note: these DB rows are explicitly self-labeled in their own `notes` field as "RETROACTIVE BACKFILL... does NOT constitute genuine preregistration" — real, honest research, but never run through the formal gates/verdict pipeline (Section 12).
+- **Phase 6 Monte Carlo control on the raw entry signal:** `T_obs = -0.2569%` (day-clustered mean 20-bar forward return, 579 valid signals, 60 days, 6 tickers). Ticker+regime-conditioned control (1000 replicates × 2 seeds): p=0.996 / p=0.997. Same-ticker-same-day control: p=1.0 both seeds, 100% signal coverage. This is the quantified version of the "no predictive edge beyond random chance" line above.
+- **Phase 7 exit attribution:** `stop_loss` exits: n=150, win_rate=0%, total P&L=**-$66,025.67**. `reversal_guard` exits: n=101, win_rate=100%, total P&L=**+$86,453.30**. Nets to the frozen $20,427.64 baseline. **Caveat:** the 0%/100% win rates are near-definitional given how these exit rules are constructed (stop_loss triggers on a loss by definition; reversal_guard only fires once unrealized gain ≥40%) — not evidence of exit-timing skill. The real information is in the magnitude split, not the win-rate extremes.
+- **Phase 7 concentration cascade:** full population **$20,427.64** (251 trades) → excluding top ticker (SMCI, $10,083.02): **$10,344.62** → excluding top 2 tickers (SMCI+MSTR, $8,351.96 combined): **$1,992.66** → excluding the top 5 individual trades: **$476.64**. Top-5-trades contribution = **97.7%** of total P&L. Per-ticker breakdown: AAPL +$1,469 (7.2%), TSLA +$1,285 (6.3%), NVDA -$3,246 (-15.9%), AMD +$2,484 (12.2%), SMCI +$10,083 (49.4%), MSTR +$8,352 (40.9%).
+- **Phase 7 position-sizing attribution:** actual position-sized total **$20,427.64** vs. equal-$1000-per-trade normalized total **$26,089.12** — position sizing *cost* -$5,661.48 relative to equal-weighting, driven by cheap options (<$2 premium) getting far more contracts on average (15.4) than expensive ones (≥$2, 2.2 contracts) — the sizing formula is premium-inverse and happened to load up on some of the cheaper, lower-conviction setups.
+- **Methodological note:** `phase7_steps1to3.py`'s underlying-price back-solve technique (recovering implied spot from saved option premiums via Black-Scholes inversion) validated at 251/251 trades within 0.5% of ground truth, median error 0.0001% — a trustworthy method for any future attribution work on this same trade population.
+<!-- end of pass-4 block -->
+
