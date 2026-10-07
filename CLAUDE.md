@@ -1014,6 +1014,11 @@ Takes Target C's slot (Sections 1, 60). Trial #12 in the program tally (Section 
 
 **Descriptive risk study, 2026-10-06 (not a trial; no verdict):** `risk_profile_option_selling_indexes_2026-10-06.md` (`risk_profile_study.py`, commit `e80e233`): two-week losses and drawdowns of BXM/PUT/CNDR/BFLY vs SPX price.
 
+## 66. Paper put-spread trial (2026-10-06): PAPER-ONLY forward trial, NOT a hypothesis test
+
+Operations, risk and fill-realism track record on the Alpaca paper account: SPY ~0.15-delta $5 put credit spreads, one per week. **Not a hypothesis test; uses no slot**, and gets no ledger row, hash or verdict. Rules fixed 2026-10-06 (`paper_putspread_trial/README.md`). **Phase 1 = dry run only; no orders.** Phase 2 needs separate user approval.
+- Script `paper_putspread_trial.py`, tests `test_paper_putspread_trial.py`. Open Phase 2 issue: the paper account is shared with the bots, and the options bot counts every option leg against its 3-position cap.
+
 ## 61. How to use this file
 
 - Read this file first, every session, in this folder.
