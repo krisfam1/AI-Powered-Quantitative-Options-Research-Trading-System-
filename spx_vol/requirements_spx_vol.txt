@@ -1,0 +1,35 @@
+# SPX volatility-state engine: pinned packages for its OWN virtual environment (spx_vol/.venv).
+# Created 2026-10-17 with Python 3.14.2: python -m venv spx_vol\.venv ; spx_vol\.venv\Scripts\python -m pip install -r spx_vol\requirements_spx_vol.txt
+# Not the system Python and not the bots' environment.
+# NOT INSTALLED: hmmlearn 0.3.3 and ruptures 1.1.9 have no Python 3.14 wheels and need Microsoft C++ Build Tools to compile.
+#   Open decision (Stage 0 report): a Python 3.12 venv, the build tools, or statsmodels-only regime/change-point code.
+arch==8.0.0
+certifi==2026.7.22
+charset-normalizer==3.5.2
+cloudpickle==3.1.2
+colorama==0.4.6
+formulaic==1.2.2
+idna==3.20
+interface_meta==2.0.1
+joblib==1.6.0
+lightgbm==4.7.0
+narwhals==2.27.1
+numpy==2.5.4
+packaging==26.3
+pandas==3.0.6
+patsy==1.0.3
+python-dateutil==2.9.0.post0
+python-dotenv==1.2.4
+requests==2.34.2
+scikit-learn==1.9.1
+scipy==1.18.1
+shap==0.54.1
+six==1.17.0
+slicer==0.0.8
+statsmodels==0.15.0
+threadpoolctl==3.7.0
+tqdm==4.70.1
+typing_extensions==4.16.0
+tzdata==2026.5
+urllib3==2.8.0
+wrapt==2.5.1

@@ -1019,6 +1019,11 @@ Takes Target C's slot (Sections 1, 60). Trial #12 in the program tally (Section 
 Operations, risk and fill-realism track record on the Alpaca paper account: SPY ~0.15-delta $5 put credit spreads, one per week. **Not a hypothesis test; uses no slot**, and gets no ledger row, hash or verdict. Rules fixed 2026-10-06 (`paper_putspread_trial/README.md`). **Phase 1 = dry run only; no orders.** Phase 2 needs separate user approval.
 - Script `paper_putspread_trial.py`, tests `test_paper_putspread_trial.py`. Open Phase 2 issue: the paper account is shared with the bots, and the options bot counts every option leg against its 3-position cap.
 
+## 67. SPX volatility-state engine (2026-10-17): design approved, Stage 0 data audit done; no slot used
+
+- Design `spx_vol_state_engine_design_v1.md`: discovery on 2004-2016 / validation 2017-2020; the last slot is spent only at confirmation (at most 3 frozen hypotheses, separate user approval). **Locked: 2021 onward; never examine its relationships before then.**
+- Stage 0: `stage0_spx_vol_engine_audit_2026-10-17.md`; data `data_snapshots/spx_vol_engine/` (manifest); code and own venv in `spx_vol/`; append-only `search_ledger` in `spx_vol/store/spx_vol.db` (log every combination tried). EODHD has no SPX/SPXW/VIX options.
+
 ## 61. How to use this file
 
 - Read this file first, every session, in this folder.
