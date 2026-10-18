@@ -1025,6 +1025,7 @@ Operations, risk and fill-realism track record on the Alpaca paper account: SPY 
 - Stage 0: `stage0_spx_vol_engine_audit_2026-10-17.md`; data `data_snapshots/spx_vol_engine/` (manifest); code and own venv in `spx_vol/`; append-only `search_ledger` in `spx_vol/store/spx_vol.db` (log every combination tried). EODHD has no SPX/SPXW/VIX options.
 - Stage 1 (dev 2008-2016 only): `stage1_spx_vol_engine_report_2026-10-17.md`, protocol `spx_vol/stage1_protocol.md` (commit `e2ff0b6`, before scoring). VIX beat every history-based RV forecast at 21 days; close-to-close RV adopted; 127 features; ledger 26 rows. `dev_guard()` blocks 2017+.
 - Stage 2 (`stage2_spx_vol_engine_report_2026-10-17.md`, protocol `ebdd22d`): futures slope, VVIX/VIX, SKEW all FAILED to beat VIX + trailing RV for G = VIX^2 - fwd 21d RV; validation skipped, 2017+ unread. Ledger 29.
+- Audit `spx_vol_engine_compliance_audit_2026-10-17.md` (`e6c0165`): complied, minor deviations.
 
 ## 61. How to use this file
 

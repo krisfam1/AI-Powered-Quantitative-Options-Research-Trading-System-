@@ -86,8 +86,9 @@ The free sample is SPX/SPXW, SPY, TSLA and KO options, 2022-07-01 → 2022-12-30
 ### 2.5 EODHD coverage check (read-only)
 
 - **Underlyings:** the endpoint lists 7,003. None of SPX, SPXW, VIX, XSP or VIXW is among them. The near matches are all ETFs or ETNs: SPXL, SPXS, SPXU, SPXC, SPXE, SPXN, SPXT, SPXV, USPX, UVIX, SVIX, VIXM, VIXY. SPY is listed.
-- **Direct queries** for SPX and VIX on 2026-10-15 returned 0 records.
-- **Requests:** 4 in total, no quota or error response. Logs: `data_snapshots/spx_vol_engine/eodhd_check/`; the token isn't stored.
+- **Direct queries** for 2026-10-15: SPX returned HTTP 200 with 0 records, and VIX returned **HTTP 404** (not found).
+- **Requests:** 4 in total, no quota error. The responses were 200, 200, 200 and 404, the 404 being the VIX query. Logs: `data_snapshots/spx_vol_engine/eodhd_check/`; the token isn't stored.
+- *Corrected 2026-10-17 after the compliance audit (`spx_vol_engine_compliance_audit_2026-10-17.md`, Part E). This section originally said "no quota or error response" and that both queries "returned 0 records". The conclusion, that EODHD has no SPX, SPXW or VIX options, is unchanged.*
 
 ### 2.6 Already in the repo, not downloaded again
 
