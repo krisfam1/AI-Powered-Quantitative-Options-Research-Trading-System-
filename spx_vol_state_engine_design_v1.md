@@ -110,7 +110,7 @@ spx_vol/
 
 ### 3.2 VIX futures curve (`curve.py`)
 
-- Per-contract daily settlements are turned into a **constant-maturity curve** at 30, 60, 90, 120 and 150 days by linear interpolation in variance time. That avoids the roll jumps a raw VX1/VX2 series has.
+- Per-contract daily settlements are turned into a **constant-maturity curve** at 30, 60, 90, 120 and 150 days by linear interpolation in days to expiry on price. That avoids the roll jumps a raw VX1/VX2 series has. *(Changed 2026-10-17 in `spx_vol/stage1_protocol.md`. This originally said "variance time", but futures prices are expected VIX levels, not variances.)*
 - Raw VX1 − VX2 and VX1/VX2 are computed too, because the spec asks for them. They are flagged as having roll artifacts.
 - **Slope** = CM60 − CM30. **Curvature** = CM30 − 2·CM60 + CM90.
 - **Futures-implied expected VIX change** = CM(h) − VIX spot. This is the market's own forecast, and the baseline for the VIX-change targets.
