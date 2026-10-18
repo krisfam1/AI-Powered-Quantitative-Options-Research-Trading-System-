@@ -20,8 +20,8 @@ CM_TENORS = (30, 60, 90, 120, 150)
 ROLL_MIN = 250
 
 
-def read_dev_csv(path, date_col):
-    """Read rows with DEV_START <= date <= LAST_DEV_SESSION; stop at the first later row (files are date-sorted)."""
+def read_dev_csv(path, date_col, last_date=LAST_DEV_SESSION, guard=dev_guard):
+    """Read rows with DEV_START <= date <= last_date; stop at the first later row (files are date-sorted)."""
     lo = DEV_START.strftime("%Y-%m-%d")
     buf = io.StringIO()
     with open(path, newline="") as f:
@@ -32,13 +32,13 @@ def read_dev_csv(path, date_col):
         w.writerow(header)
         for row in rdr:
             d = row[i][:10]
-            if d > LAST_DEV_SESSION:
+            if d > last_date:
                 break
             if d >= lo:
                 w.writerow(row)
     buf.seek(0)
     df = pd.read_csv(buf, parse_dates=[date_col])
-    dev_guard(df[date_col], f"read_dev_csv({path.name})")
+    guard(df[date_col], f"read_dev_csv({path.name})")
     return df
 
 
@@ -49,9 +49,9 @@ def load_dev():
     return spx, vol, vx
 
 
-def build_curve(vx, dates):
+def build_curve(vx, dates, guard=dev_guard):
     """Constant-maturity VIX futures (linear in DTE on price), VX1/VX2, roll and extrapolation flags."""
-    dev_guard(dates, "build_curve")
+    guard(dates, "build_curve")
     vx = vx[vx["trade_date"].isin(dates)]
     out = pd.DataFrame(index=pd.DatetimeIndex(dates, name="date"),
                        columns=[f"cm{t}" for t in CM_TENORS] + ["vx1", "vx2", "vx1_contract", "cm_extrapolated"],
