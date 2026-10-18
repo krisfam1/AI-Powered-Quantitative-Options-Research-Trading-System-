@@ -1019,13 +1019,10 @@ Takes Target C's slot (Sections 1, 60). Trial #12 in the program tally (Section 
 Operations, risk and fill-realism track record on the Alpaca paper account: SPY ~0.15-delta $5 put credit spreads, one per week. **Not a hypothesis test; uses no slot**, and gets no ledger row, hash or verdict. Rules fixed 2026-10-06 (`paper_putspread_trial/README.md`). **Phase 1 = dry run only; no orders.** Phase 2 needs separate user approval.
 - Script `paper_putspread_trial.py`, tests `test_paper_putspread_trial.py`. Open Phase 2 issue: the paper account is shared with the bots, and the options bot counts every option leg against its 3-position cap.
 
-## 67. SPX volatility-state engine (2026-10-17): design approved, Stage 0 data audit done; no slot used
+## 67. SPX volatility-state engine (2026-10-17): Stages 0-3 done, no slot used
 
-- Design `spx_vol_state_engine_design_v1.md`: discovery on 2004-2016 / validation 2017-2020; the last slot is spent only at confirmation (at most 3 frozen hypotheses, separate user approval). **Locked: 2021 onward; never examine its relationships before then.**
-- Stage 0: `stage0_spx_vol_engine_audit_2026-10-17.md`; data `data_snapshots/spx_vol_engine/` (manifest); code and own venv in `spx_vol/`; append-only `search_ledger` in `spx_vol/store/spx_vol.db` (log every combination tried). EODHD has no SPX/SPXW/VIX options.
-- Stage 1 (dev 2008-2016 only): `stage1_spx_vol_engine_report_2026-10-17.md`, protocol `spx_vol/stage1_protocol.md` (commit `e2ff0b6`, before scoring). VIX beat every history-based RV forecast at 21 days; close-to-close RV adopted; 127 features; ledger 26 rows. `dev_guard()` blocks 2017+.
-- Stage 2 (`stage2_spx_vol_engine_report_2026-10-17.md`, protocol `ebdd22d`): futures slope, VVIX/VIX, SKEW all FAILED to beat VIX + trailing RV for G = VIX^2 - fwd 21d RV; validation skipped, 2017+ unread. Ledger 29.
-- Audit `spx_vol_engine_compliance_audit_2026-10-17.md` (`e6c0165`): complied, minor deviations.
+- Design `spx_vol_state_engine_design_v1.md`; split dev 2008-2016 / val 2017-2020 / **locked 2021+**. The slot is spent only at confirmation (<=3 frozen hypotheses, user approval). Code, venv: `spx_vol/`; data `data_snapshots/spx_vol_engine/`; append-only `search_ledger` in `spx_vol/store/spx_vol.db` (34 rows).
+- Reports `stage{0,1,2,3}_spx_vol_engine_*_2026-10-17.md` + audit `spx_vol_engine_compliance_audit_2026-10-17.md`. VIX beats history-based RV; slope/VVIX/SKEW fail to predict G = VIX^2 - fwd RV; Stage 3 regime map is descriptive. Futures no-trade settlements kept (user decision A).
 
 ## 61. How to use this file
 
